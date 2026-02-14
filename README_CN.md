@@ -1,5 +1,9 @@
 # ReForged
 
+<p align="center">
+  <img src="src/main/resources/logo.png" alt="ReForged Logo" width="256"/>
+</p>
+
 🇨🇳 中文版 | [🇬🇧 English](./README.md)
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green.svg)](https://www.minecraft.net/)
