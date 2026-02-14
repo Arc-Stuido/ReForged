@@ -1,6 +1,14 @@
 package net.neoforged.neoforge.event.server;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.server.MinecraftServer;
 
-/** Proxy: NeoForge ServerAboutToStartEvent */
-public class ServerAboutToStartEvent extends Event {}
+/** Wrapper around Forge's {@link net.minecraftforge.event.server.ServerAboutToStartEvent}. */
+public class ServerAboutToStartEvent {
+    private final net.minecraftforge.event.server.ServerAboutToStartEvent delegate;
+
+    public ServerAboutToStartEvent(net.minecraftforge.event.server.ServerAboutToStartEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public MinecraftServer getServer() { return delegate.getServer(); }
+}

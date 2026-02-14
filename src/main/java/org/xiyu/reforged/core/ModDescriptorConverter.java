@@ -56,9 +56,16 @@ public final class ModDescriptorConverter {
         result = result.replace("type = \"required\"", "mandatory = true");
         result = result.replace("type=\"optional\"", "mandatory=false");
         result = result.replace("type = \"optional\"", "mandatory = false");
+        result = result.replace("type=\"incompatible\"", "mandatory=false");
+        result = result.replace("type = \"incompatible\"", "mandatory = false");
+        result = result.replace("type=\"discouraged\"", "mandatory=false");
+        result = result.replace("type = \"discouraged\"", "mandatory = false");
 
-        // 5. Remove any NeoForge-specific keys that Forge doesn't understand
+        // 5. Remove NeoForge-specific keys that Forge doesn't understand
         result = removeLines(result, "enumExtensions");
+        // Remove 'reason' key in dependency blocks (NeoForge-only)
+        result = removeLines(result, "reason=");
+        result = removeLines(result, "reason =");
 
         // 6. Extract all mod IDs for adding reforged dependency
         List<String> modIds = extractModIds(result);

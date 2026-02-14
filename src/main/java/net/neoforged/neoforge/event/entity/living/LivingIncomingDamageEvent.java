@@ -1,14 +1,22 @@
 package net.neoforged.neoforge.event.entity.living;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Event;
 
-/** Proxy: NeoForge LivingIncomingDamageEvent */
-public class LivingIncomingDamageEvent extends Event {
-    private final LivingEntity entity;
-    private float amount;
-    public LivingIncomingDamageEvent(LivingEntity entity, float amount) { this.entity = entity; this.amount = amount; }
-    public LivingEntity getEntity() { return entity; }
-    public float getAmount() { return amount; }
-    public void setAmount(float a) { this.amount = a; }
+/**
+ * Wrapper around Forge's {@link net.minecraftforge.event.entity.living.LivingAttackEvent}.
+ * NeoForge renamed LivingAttackEvent to LivingIncomingDamageEvent.
+ */
+public class LivingIncomingDamageEvent {
+    private final net.minecraftforge.event.entity.living.LivingAttackEvent delegate;
+
+    public LivingIncomingDamageEvent(net.minecraftforge.event.entity.living.LivingAttackEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public LivingEntity getEntity() { return delegate.getEntity(); }
+    public float getAmount() { return delegate.getAmount(); }
+    public DamageSource getSource() { return delegate.getSource(); }
+    /** NeoForge has setAmount; Forge's LivingAttackEvent doesn't — no-op. */
+    public void setAmount(float amount) { /* not supported by Forge LivingAttackEvent */ }
 }

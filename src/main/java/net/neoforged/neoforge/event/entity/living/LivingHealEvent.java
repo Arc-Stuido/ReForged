@@ -1,14 +1,16 @@
 package net.neoforged.neoforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Event;
 
-/** Proxy: NeoForge LivingHealEvent */
-public class LivingHealEvent extends Event {
-    private final LivingEntity entity;
-    private float amount;
-    public LivingHealEvent(LivingEntity entity, float amount) { this.entity = entity; this.amount = amount; }
-    public LivingEntity getEntity() { return entity; }
-    public float getAmount() { return amount; }
-    public void setAmount(float a) { this.amount = a; }
+/** Wrapper around Forge's {@link net.minecraftforge.event.entity.living.LivingHealEvent}. */
+public class LivingHealEvent {
+    private final net.minecraftforge.event.entity.living.LivingHealEvent delegate;
+
+    public LivingHealEvent(net.minecraftforge.event.entity.living.LivingHealEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public LivingEntity getEntity() { return delegate.getEntity(); }
+    public float getAmount() { return delegate.getAmount(); }
+    public void setAmount(float amount) { delegate.setAmount(amount); }
 }

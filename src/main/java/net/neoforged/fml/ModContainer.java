@@ -11,10 +11,30 @@ package net.neoforged.fml;
  */
 public class ModContainer {
 
+    private static net.neoforged.bus.api.IEventBus globalModBus;
+
     private final net.minecraftforge.fml.ModContainer delegate;
+    private net.neoforged.bus.api.IEventBus eventBus;
 
     public ModContainer(net.minecraftforge.fml.ModContainer delegate) {
         this.delegate = delegate;
+        this.eventBus = globalModBus;
+    }
+
+    /**
+     * Set the global mod event bus used by all NeoForge ModContainer wrappers.
+     * Called once during NeoForgeModLoader initialization.
+     */
+    public static void setGlobalModBus(net.neoforged.bus.api.IEventBus bus) {
+        globalModBus = bus;
+    }
+
+    /**
+     * Get the mod event bus for this container.
+     * NeoForge mods (e.g. TwilightForest BeanContext) call this to register listeners.
+     */
+    public net.neoforged.bus.api.IEventBus getEventBus() {
+        return eventBus;
     }
 
     /**
@@ -33,9 +53,10 @@ public class ModContainer {
 
     /**
      * Get the mod info.
+     * Returns NeoForge's IModInfo wrapping the underlying Forge info.
      */
-    public net.minecraftforge.fml.loading.moddiscovery.ModInfo getModInfo() {
-        return (net.minecraftforge.fml.loading.moddiscovery.ModInfo) delegate.getModInfo();
+    public net.neoforged.neoforgespi.language.IModInfo getModInfo() {
+        return net.neoforged.neoforgespi.language.IModInfo.wrap(delegate.getModInfo());
     }
 
     /**
@@ -50,6 +71,12 @@ public class ModContainer {
      */
     public static ModContainer wrap(net.minecraftforge.fml.ModContainer forgeContainer) {
         return new ModContainer(forgeContainer);
+    }
+
+    public static ModContainer wrap(net.minecraftforge.fml.ModContainer forgeContainer, net.neoforged.bus.api.IEventBus bus) {
+        ModContainer mc = new ModContainer(forgeContainer);
+        mc.eventBus = bus;
+        return mc;
     }
 
     /**

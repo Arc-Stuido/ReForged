@@ -38,15 +38,17 @@ public class DeferredRegister<T> {
             "neoforge:attachment_types"
     );
 
-    private final net.minecraftforge.registries.DeferredRegister<T> delegate; // null in no-op mode
+    protected final net.minecraftforge.registries.DeferredRegister<T> delegate; // null in no-op mode
     private final String modid;
-    private boolean isNoOp;
+    private final ResourceKey<? extends Registry<T>> registryKey; // stored for key generation
+    protected boolean isNoOp;
 
     protected DeferredRegister(net.minecraftforge.registries.DeferredRegister<T> delegate,
-                               String modid, boolean isNoOp) {
+                               String modid, boolean isNoOp, ResourceKey<? extends Registry<T>> registryKey) {
         this.delegate = delegate;
         this.modid = modid;
         this.isNoOp = isNoOp;
+        this.registryKey = registryKey;
     }
 
     /* ---------- Namespace remapping ---------- */
@@ -89,12 +91,12 @@ public class DeferredRegister<T> {
         if (shouldBeNoOp(registryName, remapped)) {
             LOGGER.info("[ReForged] Registry '{}' has no Forge equivalent. Using no-op DeferredRegister for mod '{}'",
                     registryName, modid);
-            return new DeferredRegister<>(null, modid, true);
+            return new DeferredRegister<>(null, modid, true, registryKey);
         }
 
         net.minecraftforge.registries.DeferredRegister<T> forgeReg =
                 net.minecraftforge.registries.DeferredRegister.create(remapped, modid);
-        return new DeferredRegister<>(forgeReg, modid, false);
+        return new DeferredRegister<>(forgeReg, modid, false, registryKey);
     }
 
     /**
@@ -103,7 +105,7 @@ public class DeferredRegister<T> {
     public static <B> DeferredRegister<B> create(IForgeRegistry<B> registry, String modid) {
         net.minecraftforge.registries.DeferredRegister<B> forgeReg =
                 net.minecraftforge.registries.DeferredRegister.create(registry, modid);
-        return new DeferredRegister<>(forgeReg, modid, false);
+        return new DeferredRegister<>(forgeReg, modid, false, null);
     }
 
     /**
@@ -116,18 +118,22 @@ public class DeferredRegister<T> {
     /**
      * NeoForge convenience factory with ResourceLocation.
      */
+    @SuppressWarnings("unchecked")
     public static <T> DeferredRegister<T> create(ResourceLocation registryName, String modid) {
         ResourceLocation remapped = remapRegistryName(registryName);
+
+        // Construct a registry key for tracking
+        ResourceKey<Registry<T>> rk = (ResourceKey<Registry<T>>) (ResourceKey<?>) ResourceKey.createRegistryKey(registryName);
 
         if (shouldBeNoOp(registryName, remapped)) {
             LOGGER.info("[ReForged] Registry '{}' has no Forge equivalent. Using no-op DeferredRegister for mod '{}'",
                     registryName, modid);
-            return new DeferredRegister<>(null, modid, true);
+            return new DeferredRegister<>(null, modid, true, rk);
         }
 
         net.minecraftforge.registries.DeferredRegister<T> forgeReg =
                 net.minecraftforge.registries.DeferredRegister.create(remapped, modid);
-        return new DeferredRegister<>(forgeReg, modid, false);
+        return new DeferredRegister<>(forgeReg, modid, false, rk);
     }
 
     /* ---------- Registration ---------- */
@@ -135,15 +141,24 @@ public class DeferredRegister<T> {
     /**
      * Register an entry — returns a DeferredHolder (NeoForge's RegistryObject).
      * In no-op mode, returns a direct holder backed by the supplier.
+     * The supplier is also stored as a fallback for late registration support.
      */
+    @SuppressWarnings("unchecked")
     public <I extends T> DeferredHolder<T, I> register(String name, Supplier<? extends I> sup) {
         if (isNoOp) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modid, name);
             LOGGER.debug("[ReForged] No-op register: {}", id);
+            if (registryKey != null) {
+                // Create a full ResourceKey for this entry so getKey() works downstream (Registrate)
+                ResourceKey<T> entryKey = ResourceKey.create((ResourceKey<Registry<T>>) registryKey, id);
+                return (DeferredHolder<T, I>) DeferredHolder.createDirect(entryKey, sup);
+            }
             return DeferredHolder.createDirect(id, sup);
         }
+        LOGGER.info("[ReForged] Registering entry '{}'  for mod '{}' via Forge DeferredRegister", name, modid);
         RegistryObject<I> obj = delegate.register(name, sup);
-        return DeferredHolder.wrap(obj);
+        LOGGER.info("[ReForged] RegistryObject created: {} (id={})", obj, obj.getId());
+        return DeferredHolder.wrap(obj, sup);
     }
 
     /**
@@ -155,7 +170,10 @@ public class DeferredRegister<T> {
             LOGGER.debug("[ReForged] Skipping no-op DeferredRegister.register() for mod '{}'", modid);
             return;
         }
+        LOGGER.info("[ReForged] DeferredRegister.register() for mod '{}', delegate entries: {}, delegate class: {}",
+                modid, delegate.getEntries().size(), delegate.getClass().getName());
         delegate.register(bus);
+        LOGGER.info("[ReForged] DeferredRegister.register() completed for mod '{}'", modid);
     }
 
     /**
@@ -171,6 +189,17 @@ public class DeferredRegister<T> {
      */
     public String getNamespace() {
         return this.modid;
+    }
+
+    /**
+     * Adds an alias that maps from one registry name to another.
+     * In Forge's DeferredRegister, aliases are not directly supported, so this is a no-op.
+     *
+     * @param from The source registry name to alias from.
+     * @param to   The target registry name to alias to.
+     */
+    public void addAlias(net.minecraft.resources.ResourceLocation from, net.minecraft.resources.ResourceLocation to) {
+        LOGGER.debug("[ReForged] DeferredRegister.addAlias({} -> {}) for mod '{}' — no-op in Forge shim", from, to, modid);
     }
 
     /**
@@ -201,7 +230,8 @@ public class DeferredRegister<T> {
         @SuppressWarnings("unchecked")
         protected DataComponents(String modid) {
             super(net.minecraftforge.registries.DeferredRegister.create(
-                    net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE, modid), modid, false);
+                    net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE, modid), modid, false,
+                    (ResourceKey<? extends Registry<net.minecraft.core.component.DataComponentType<?>>>) (ResourceKey<?>) net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE);
         }
 
         public static DataComponents createDataComponents(String modid) {
@@ -254,7 +284,8 @@ public class DeferredRegister<T> {
 
         protected Items(String modid) {
             super(net.minecraftforge.registries.DeferredRegister.create(
-                    net.minecraft.core.registries.Registries.ITEM, modid), modid, false);
+                    net.minecraft.core.registries.Registries.ITEM, modid), modid, false,
+                    net.minecraft.core.registries.Registries.ITEM);
         }
 
         /**
@@ -262,6 +293,21 @@ public class DeferredRegister<T> {
          */
         public static Items createItems(String modid) {
             return new Items(modid);
+        }
+
+        /**
+         * Override register to return DeferredItem instead of DeferredHolder.
+         * This is required because NeoForge mods expect Items.register() to return DeferredItem.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public <I extends net.minecraft.world.item.Item> DeferredItem<I> register(String name, Supplier<? extends I> sup) {
+            if (isNoOp) {
+                ResourceLocation id = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
+                return DeferredItem.createDirectItem(id, sup);
+            }
+            RegistryObject<I> obj = delegate.register(name, sup);
+            return DeferredItem.wrapItem(obj, sup);
         }
 
         /**
@@ -347,5 +393,85 @@ public class DeferredRegister<T> {
      */
     public static Items createItems(String modid) {
         return new Items(modid);
+    }
+
+    /* ---------- Blocks specialisation ---------- */
+
+    /**
+     * NeoForge's Blocks specialization of DeferredRegister.
+     * Provides {@code registerBlock()}, {@code registerSimpleBlock()}, and
+     * returns {@link DeferredBlock} from {@code register()}.
+     */
+    public static class Blocks extends DeferredRegister<net.minecraft.world.level.block.Block> {
+
+        protected Blocks(String modid) {
+            super(net.minecraftforge.registries.DeferredRegister.create(
+                    net.minecraft.core.registries.Registries.BLOCK, modid), modid, false,
+                    net.minecraft.core.registries.Registries.BLOCK);
+        }
+
+        /**
+         * Factory method matching NeoForge's {@code DeferredRegister.createBlocks(String)}.
+         */
+        public static Blocks createBlocks(String modid) {
+            return new Blocks(modid);
+        }
+
+        /**
+         * Override register to return DeferredBlock instead of DeferredHolder.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public <I extends net.minecraft.world.level.block.Block> DeferredBlock<I> register(String name, Supplier<? extends I> sup) {
+            if (isNoOp) {
+                ResourceLocation id = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
+                return new DeferredBlock<>(id, sup);
+            }
+            RegistryObject<I> obj = delegate.register(name, sup);
+            return new DeferredBlock<>(obj, sup);
+        }
+
+        /**
+         * Register a block using a factory function and specified properties.
+         */
+        @SuppressWarnings("unchecked")
+        public <B extends net.minecraft.world.level.block.Block> DeferredBlock<B>
+        registerBlock(String name,
+                      java.util.function.Function<net.minecraft.world.level.block.state.BlockBehaviour.Properties, ? extends B> func,
+                      net.minecraft.world.level.block.state.BlockBehaviour.Properties props) {
+            return (DeferredBlock<B>) (DeferredBlock<?>) this.register(name, () -> func.apply(props));
+        }
+
+        /**
+         * Register a block using a factory function and default properties.
+         */
+        public <B extends net.minecraft.world.level.block.Block> DeferredBlock<B>
+        registerBlock(String name,
+                      java.util.function.Function<net.minecraft.world.level.block.state.BlockBehaviour.Properties, ? extends B> func) {
+            return this.registerBlock(name, func, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+        }
+
+        /**
+         * Register a simple block with specified properties.
+         */
+        public DeferredBlock<net.minecraft.world.level.block.Block>
+        registerSimpleBlock(String name, net.minecraft.world.level.block.state.BlockBehaviour.Properties props) {
+            return this.registerBlock(name, net.minecraft.world.level.block.Block::new, props);
+        }
+
+        /**
+         * Register a simple block with default properties.
+         */
+        public DeferredBlock<net.minecraft.world.level.block.Block>
+        registerSimpleBlock(String name) {
+            return this.registerSimpleBlock(name, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+        }
+    }
+
+    /**
+     * NeoForge factory for Blocks.
+     */
+    public static Blocks createBlocks(String modid) {
+        return new Blocks(modid);
     }
 }

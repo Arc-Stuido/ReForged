@@ -1,11 +1,19 @@
 package org.xiyu.reforged.mixin;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -69,5 +77,25 @@ public abstract class ItemStackMixin {
 
     public <T> T update(Supplier<? extends DataComponentType<T>> type, T defaultValue, UnaryOperator<T> updater) {
         return this.update(type.get(), defaultValue, updater);
+    }
+
+    // ── Safe tooltip rendering ─────────────────────────────────────────────
+
+    private static final Logger REFORGED_TOOLTIP_LOGGER = LogManager.getLogger("ReForged");
+
+    @Redirect(
+        method = "getTooltipLines(Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/TooltipFlag;)Ljava/util/List;",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/item/Item;appendHoverText(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/Item$TooltipContext;Ljava/util/List;Lnet/minecraft/world/item/TooltipFlag;)V"
+        ),
+        remap = false
+    )
+    private void reforged$safeAppendHoverText(Item item, ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        try {
+            item.appendHoverText(stack, context, tooltip, flag);
+        } catch (Exception e) {
+            REFORGED_TOOLTIP_LOGGER.debug("[ReForged] Tooltip error for {}: {}", item.getClass().getName(), e.getMessage());
+        }
     }
 }

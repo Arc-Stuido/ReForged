@@ -1,5 +1,6 @@
 package net.neoforged.neoforge.attachment;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /** Proxy: NeoForge's AttachmentType for entity data attachments */
@@ -14,6 +15,18 @@ public class AttachmentType<T> {
 
     public static <T> Builder<T> builder(Supplier<T> defaultValue) {
         return new Builder<>(defaultValue);
+    }
+
+    /** NeoForge: serializable(Supplier) — creates a builder for INBTSerializable attachment types */
+    @SuppressWarnings("unchecked")
+    public static <S, T> Builder<T> serializable(Supplier<T> defaultValueSupplier) {
+        return new Builder<>(defaultValueSupplier);
+    }
+
+    /** NeoForge: serializable(Function) — creates a builder capturing the holder reference */
+    @SuppressWarnings("unchecked")
+    public static <S, T> Builder<T> serializable(Function<IAttachmentHolder, T> defaultValueConstructor) {
+        return new Builder<>(() -> defaultValueConstructor.apply(null));
     }
 
     public static class Builder<T> {

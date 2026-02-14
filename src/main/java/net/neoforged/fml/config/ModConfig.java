@@ -25,6 +25,13 @@ public class ModConfig {
         this(type, spec, container);
     }
 
+    /** Wrap a Forge ModConfig into our NeoForge shim. */
+    public ModConfig(net.minecraftforge.fml.config.ModConfig forgeConfig) {
+        this.type = Type.valueOf(forgeConfig.getType().name());
+        this.spec = forgeConfig.getSpec();
+        this.modId = forgeConfig.getModId();
+    }
+
     public Type getType() { return type; }
     public Object getSpec() { return spec; }
     public String getModId() { return modId; }

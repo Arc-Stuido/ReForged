@@ -5,10 +5,24 @@
     "refmap": "reforged.refmap.json",
     "mixins": [
         "ModFileInfoMixin",
-        "ItemStackMixin"
+        "ItemStackMixin",
+        "ItemPropertiesMixin",
+        "FoodPropertiesBuilderMixin",
+        "TagLoaderMixin",
+        "RegistryDataLoaderMixin",
+        "ForgeHooksMixin",
+        "DependencySorterMixin",
+        "RecipeManagerMixin",
+        "ChunkGeneratorStructureStateMixin",
+        "IngredientMixin",
+        "CreativeModeTabsMixin",
+        "EntityAttachmentMixin"
     ],
     "client": [
-        "ModListScreenMixin"
+        "ModListScreenMixin",
+        "GeometryLoaderManagerMixin",
+        "ClientTooltipComponentMixin",
+        "EntityRenderDispatcherMixin"
     ],
     "server": [],
     "injectors": {

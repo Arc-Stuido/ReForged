@@ -1,6 +1,14 @@
 package net.neoforged.neoforge.event.server;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.server.MinecraftServer;
 
-/** Proxy: NeoForge ServerStoppedEvent */
-public class ServerStoppedEvent extends Event {}
+/** Wrapper around Forge's {@link net.minecraftforge.event.server.ServerStoppedEvent}. */
+public class ServerStoppedEvent {
+    private final net.minecraftforge.event.server.ServerStoppedEvent delegate;
+
+    public ServerStoppedEvent(net.minecraftforge.event.server.ServerStoppedEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public MinecraftServer getServer() { return delegate.getServer(); }
+}

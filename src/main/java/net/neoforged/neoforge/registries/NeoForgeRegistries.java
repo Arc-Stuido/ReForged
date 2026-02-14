@@ -30,6 +30,50 @@ public final class NeoForgeRegistries {
                     ResourceLocation.fromNamespaceAndPath("neoforge", "global_loot_modifier_serializers"))
     );
 
+    @SuppressWarnings("unchecked")
+    public static final Registry<net.minecraft.network.syncher.EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS =
+            (Registry<net.minecraft.network.syncher.EntityDataSerializer<?>>) (Registry<?>) new StubRegistry<>(
+                    ResourceKey.createRegistryKey(
+                            ResourceLocation.fromNamespaceAndPath("neoforge", "entity_data_serializers"))
+            );
+
+    @SuppressWarnings("unchecked")
+    public static final Registry<net.neoforged.neoforge.fluids.FluidType> FLUID_TYPES =
+            (Registry<net.neoforged.neoforge.fluids.FluidType>) (Registry<?>) new StubRegistry<>(
+                    ResourceKey.createRegistryKey(
+                            ResourceLocation.fromNamespaceAndPath("neoforge", "fluid_type"))
+            );
+
+    public static final Registry<Object> BIOME_MODIFIER_SERIALIZERS = new StubRegistry<>(
+            ResourceKey.createRegistryKey(
+                    ResourceLocation.fromNamespaceAndPath("neoforge", "biome_modifier_serializers"))
+    );
+
+    public static final Registry<Object> STRUCTURE_MODIFIER_SERIALIZERS = new StubRegistry<>(
+            ResourceKey.createRegistryKey(
+                    ResourceLocation.fromNamespaceAndPath("neoforge", "structure_modifier_serializers"))
+    );
+
+    public static final Registry<Object> HOLDER_SET_TYPES = new StubRegistry<>(
+            ResourceKey.createRegistryKey(
+                    ResourceLocation.fromNamespaceAndPath("neoforge", "holder_set_type"))
+    );
+
+    public static final Registry<Object> INGREDIENT_TYPES = new StubRegistry<>(
+            ResourceKey.createRegistryKey(
+                    ResourceLocation.fromNamespaceAndPath("neoforge", "ingredient_serializer"))
+    );
+
+    public static final Registry<Object> FLUID_INGREDIENT_TYPES = new StubRegistry<>(
+            ResourceKey.createRegistryKey(
+                    ResourceLocation.fromNamespaceAndPath("neoforge", "fluid_ingredient_type"))
+    );
+
+    public static final Registry<Object> CONDITION_SERIALIZERS = new StubRegistry<>(
+            ResourceKey.createRegistryKey(
+                    ResourceLocation.fromNamespaceAndPath("neoforge", "condition_codecs"))
+    );
+
     /* ---------- Registry keys ---------- */
 
     public static final class Keys {
@@ -44,9 +88,47 @@ public final class NeoForgeRegistries {
                         ResourceLocation.fromNamespaceAndPath("neoforge", "global_loot_modifier_serializers"));
 
         @SuppressWarnings("unchecked")
+        public static final ResourceKey<Registry<net.minecraft.network.syncher.EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS =
+                (ResourceKey<Registry<net.minecraft.network.syncher.EntityDataSerializer<?>>>) (ResourceKey<?>) ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "entity_data_serializers"));
+
+        @SuppressWarnings("unchecked")
         public static final ResourceKey<Registry<Object>> CONDITION_CODECS =
                 (ResourceKey<Registry<Object>>) (ResourceKey<?>) ResourceKey.createRegistryKey(
                         ResourceLocation.fromNamespaceAndPath("neoforge", "condition_codecs"));
+
+        @SuppressWarnings("unchecked")
+        public static final ResourceKey<Registry<net.neoforged.neoforge.fluids.FluidType>> FLUID_TYPES =
+                (ResourceKey<Registry<net.neoforged.neoforge.fluids.FluidType>>) (ResourceKey<?>) ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "fluid_type"));
+
+        public static final ResourceKey<Registry<Object>> BIOME_MODIFIER_SERIALIZERS =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "biome_modifier_serializers"));
+
+        public static final ResourceKey<Registry<Object>> STRUCTURE_MODIFIER_SERIALIZERS =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "structure_modifier_serializers"));
+
+        public static final ResourceKey<Registry<Object>> HOLDER_SET_TYPES =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "holder_set_type"));
+
+        public static final ResourceKey<Registry<Object>> INGREDIENT_TYPES =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "ingredient_serializer"));
+
+        public static final ResourceKey<Registry<Object>> FLUID_INGREDIENT_TYPES =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "fluid_ingredient_type"));
+
+        public static final ResourceKey<Registry<Object>> BIOME_MODIFIERS =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "biome_modifier"));
+
+        public static final ResourceKey<Registry<Object>> STRUCTURE_MODIFIERS =
+                ResourceKey.createRegistryKey(
+                        ResourceLocation.fromNamespaceAndPath("neoforge", "structure_modifier"));
     }
 
     /* ---------- Internal stub registry ---------- */

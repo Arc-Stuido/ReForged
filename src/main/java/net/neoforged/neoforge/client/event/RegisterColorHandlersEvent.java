@@ -35,4 +35,6 @@ public class RegisterColorHandlersEvent {
             delegate.register(blockColor, blocks);
         }
     }
+
+    public static class ColorResolvers extends RegisterColorHandlersEvent {}
 }

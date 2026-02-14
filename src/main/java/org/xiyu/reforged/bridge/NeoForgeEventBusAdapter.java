@@ -56,8 +56,8 @@ public final class NeoForgeEventBusAdapter {
                             delegateMethod.setAccessible(true);
                             return delegateMethod.invoke(delegate, args);
                         }
-                    } catch (Exception e) {
-                        LOGGER.debug("[ReForged] Delegating {}() failed: {}", name, e.getMessage());
+                    } catch (Throwable t) {
+                        LOGGER.debug("[ReForged] Delegating {}() failed: {}", name, t.getMessage());
                     }
 
                     // Fallback for Object methods
@@ -124,22 +124,9 @@ public final class NeoForgeEventBusAdapter {
             boolean receiveCancelled = ann.receiveCanceled();
             method.setAccessible(true);
 
-            // Case 1: The parameter type IS a Forge Event subclass → direct registration
-            if (Event.class.isAssignableFrom(params[0])) {
-                Class<? extends Event> eventType = (Class<? extends Event>) params[0];
-                Object invokeTarget = target instanceof Class<?> ? null : target;
-                delegate.addListener(priority, receiveCancelled, eventType, event -> {
-                    try { method.invoke(invokeTarget, event); }
-                    catch (Exception e) { LOGGER.error("[ReForged] NeoForge handler error: {}", method.getName(), e); }
-                });
-                LOGGER.debug("[ReForged] Registered NeoForge @SubscribeEvent: {}.{}({})",
-                        method.getDeclaringClass().getSimpleName(), method.getName(), params[0].getSimpleName());
-                return;
-            }
-
-            // Case 2: The parameter type is a NeoForge wrapper (NOT a Forge Event subclass).
-            // Look for a constructor taking a single Forge Event subclass → register for
-            // that Forge type and wrap the event when it fires.
+            // Case 1 (preferred): Check if the parameter type is a NeoForge wrapper that
+            // has a constructor taking a Forge Event subclass. This maps the NeoForge event
+            // to the correct Forge event type so the handler fires when Forge dispatches it.
             Class<?> neoType = params[0];
             Constructor<?> wrapperCtor = findWrapperConstructor(neoType);
             if (wrapperCtor != null) {
@@ -151,14 +138,29 @@ public final class NeoForgeEventBusAdapter {
                     try {
                         Object neoEvent = wrapperCtor.newInstance(forgeEvent);
                         method.invoke(invokeTarget, neoEvent);
-                    } catch (Exception e) {
+                    } catch (Throwable t) {
                         LOGGER.error("[ReForged] NeoForge wrapped handler error: {}.{}",
-                                method.getDeclaringClass().getSimpleName(), method.getName(), e);
+                                method.getDeclaringClass().getSimpleName(), method.getName(), t);
                     }
                 });
                 LOGGER.info("[ReForged] Registered wrapped @SubscribeEvent: {}.{}({}) → Forge: {}",
                         method.getDeclaringClass().getSimpleName(), method.getName(),
                         neoType.getSimpleName(), forgeEventType.getSimpleName());
+                return;
+            }
+
+            // Case 2 (fallback): The parameter type IS a Forge Event subclass with no
+            // wrapper constructor → register directly. This handles cases where
+            // NeoForge shims extend Event directly (e.g. stub events).
+            if (Event.class.isAssignableFrom(neoType)) {
+                Class<? extends Event> eventType = (Class<? extends Event>) neoType;
+                Object invokeTarget = target instanceof Class<?> ? null : target;
+                delegate.addListener(priority, receiveCancelled, eventType, event -> {
+                    try { method.invoke(invokeTarget, event); }
+                    catch (Throwable t) { LOGGER.error("[ReForged] NeoForge handler error: {}", method.getName(), t); }
+                });
+                LOGGER.debug("[ReForged] Registered direct NeoForge @SubscribeEvent: {}.{}({})",
+                        method.getDeclaringClass().getSimpleName(), method.getName(), neoType.getSimpleName());
                 return;
             }
 

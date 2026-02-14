@@ -31,7 +31,17 @@ public final class ModListInjector {
      */
     public record NeoModData(String modId, String displayName, String version,
                               String description, String license, String logoFile,
-                              Object modInstance) {}
+                              Object modInstance,
+                              net.minecraftforge.forgespi.language.ModFileScanData scanData,
+                              java.nio.file.Path jarPath) {}
+
+    /** Backwards-compatible factory without scan data. */
+    public static NeoModData createNeoModData(String modId, String displayName, String version,
+                                               String description, String license, String logoFile,
+                                               Object modInstance) {
+        return new NeoModData(modId, displayName, version, description, license, logoFile,
+                modInstance, new net.minecraftforge.forgespi.language.ModFileScanData(), null);
+    }
 
     /**
      * Create a {@link NeoModContainer} (Forge ModContainer subclass) from a {@link NeoModData}.
@@ -42,7 +52,9 @@ public final class ModListInjector {
      * can be called with the correct container, ensuring configs register under the correct mod ID.</p>
      */
     public static NeoModContainer createContainer(NeoModData data) {
-        NeoModFileInfo fileInfo = new NeoModFileInfo(data);
+        NeoModFile modFile = new NeoModFile(data);
+        NeoModFileInfo fileInfo = new NeoModFileInfo(data, modFile);
+        modFile.setModFileInfo(fileInfo);
         NeoModInfo modInfo = new NeoModInfo(data, fileInfo);
         fileInfo.setModInfo(modInfo);
         return new NeoModContainer(modInfo, null);
@@ -103,10 +115,21 @@ public final class ModListInjector {
             for (NeoModContainer container : containers) {
                 IModInfo modInfo = container.getModInfo();
 
+                // Skip if already injected (e.g. early injection before construction)
+                if (newIndexed.containsKey(container.getModId())) continue;
+
                 newMods.add(container);
                 newIndexed.put(container.getModId(), container);
                 newSorted.add(container);
                 newSortedList.add(modInfo);
+
+                // Register in NeoForge ModList for getModFileById() fallback
+                IModFileInfo forgeFileInfo = container.getModInfo().getOwningFile();
+                if (forgeFileInfo != null) {
+                    net.neoforged.neoforgespi.language.IModFileInfo neoFileInfo =
+                            net.neoforged.neoforgespi.language.IModFileInfo.wrap(forgeFileInfo);
+                    net.neoforged.fml.ModList.registerNeoModFileInfo(container.getModId(), neoFileInfo);
+                }
 
                 LOGGER.info("[ReForged] Registered '{}' in Forge mod list", container.getModId());
             }
@@ -168,13 +191,98 @@ public final class ModListInjector {
     //  IModFileInfo implementation
     // ═══════════════════════════════════════════════════════════
 
+    // ═══════════════════════════════════════════════════════════
+    //  IModFile implementation (provides scan results to NeoForge mods)
+    // ═══════════════════════════════════════════════════════════
+
+    static class NeoModFile implements IModFile {
+        private final NeoModData data;
+        private NeoModFileInfo modFileInfo;
+
+        NeoModFile(NeoModData data) {
+            this.data = data;
+        }
+
+        void setModFileInfo(NeoModFileInfo info) {
+            this.modFileInfo = info;
+        }
+
+        @Override
+        public List<net.minecraftforge.forgespi.language.IModLanguageProvider> getLoaders() {
+            return List.of();
+        }
+
+        @Override
+        public java.nio.file.Path findResource(String... pathName) {
+            if (data.jarPath() == null) return null;
+            try {
+                java.nio.file.FileSystem fs = java.nio.file.FileSystems.newFileSystem(data.jarPath(), (ClassLoader) null);
+                return fs.getPath(String.join("/", pathName));
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        public java.util.function.Supplier<Map<String, Object>> getSubstitutionMap() {
+            return Map::of;
+        }
+
+        @Override
+        public Type getType() {
+            return Type.MOD;
+        }
+
+        @Override
+        public java.nio.file.Path getFilePath() {
+            return data.jarPath();
+        }
+
+        @Override
+        public cpw.mods.jarhandling.SecureJar getSecureJar() {
+            return null;
+        }
+
+        @Override
+        public void setSecurityStatus(cpw.mods.jarhandling.SecureJar.Status status) {
+        }
+
+        @Override
+        public List<net.minecraftforge.forgespi.language.IModInfo> getModInfos() {
+            return modFileInfo != null ? modFileInfo.getMods() : List.of();
+        }
+
+        @Override
+        public net.minecraftforge.forgespi.language.ModFileScanData getScanResult() {
+            return data.scanData() != null ? data.scanData()
+                    : new net.minecraftforge.forgespi.language.ModFileScanData();
+        }
+
+        @Override
+        public String getFileName() {
+            return data.jarPath() != null ? data.jarPath().getFileName().toString() : "unknown";
+        }
+
+        @Override
+        public net.minecraftforge.forgespi.locating.IModProvider getProvider() {
+            return null;
+        }
+
+        @Override
+        public IModFileInfo getModFileInfo() {
+            return modFileInfo;
+        }
+    }
+
     static class NeoModFileInfo implements IModFileInfo, IConfigurable {
 
         private final NeoModData data;
+        private final NeoModFile modFile;
         private List<IModInfo> mods = List.of();
 
-        NeoModFileInfo(NeoModData data) {
+        NeoModFileInfo(NeoModData data, NeoModFile modFile) {
             this.data = data;
+            this.modFile = modFile;
         }
 
         void setModInfo(IModInfo modInfo) {
@@ -189,7 +297,7 @@ public final class ModListInjector {
         @Override public String moduleName() { return "reforged.neo." + data.modId(); }
         @Override public String versionString() { return data.version(); }
         @Override public List<String> usesServices() { return List.of(); }
-        @Override public IModFile getFile() { return null; }
+        @Override public IModFile getFile() { return modFile; }
         @Override public IConfigurable getConfig() { return this; }
 
         @Override

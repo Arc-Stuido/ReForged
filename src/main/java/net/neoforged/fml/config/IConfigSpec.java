@@ -7,4 +7,7 @@ package net.neoforged.fml.config;
 public interface IConfigSpec {
     default boolean isEmpty() { return false; }
     default void validateSpec() {}
+
+    public interface ILoadedConfig {
+    }
 }

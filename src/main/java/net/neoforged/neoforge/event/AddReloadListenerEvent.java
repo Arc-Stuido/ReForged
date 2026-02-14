@@ -1,6 +1,16 @@
 package net.neoforged.neoforge.event;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
-/** Proxy: NeoForge AddReloadListenerEvent */
-public class AddReloadListenerEvent extends Event {}
+/** Wrapper around Forge's {@link net.minecraftforge.event.AddReloadListenerEvent}. */
+public class AddReloadListenerEvent {
+    private final net.minecraftforge.event.AddReloadListenerEvent delegate;
+
+    public AddReloadListenerEvent(net.minecraftforge.event.AddReloadListenerEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public void addListener(PreparableReloadListener listener) {
+        delegate.addListener(listener);
+    }
+}

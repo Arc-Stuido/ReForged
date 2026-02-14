@@ -1,6 +1,16 @@
 package net.neoforged.neoforge.client.event;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.client.player.Input;
+import net.minecraft.world.entity.player.Player;
 
-/** Proxy: NeoForge MovementInputUpdateEvent */
-public class MovementInputUpdateEvent extends Event {}
+/** Wrapper around Forge's {@link net.minecraftforge.client.event.MovementInputUpdateEvent}. */
+public class MovementInputUpdateEvent {
+    private final net.minecraftforge.client.event.MovementInputUpdateEvent delegate;
+
+    public MovementInputUpdateEvent(net.minecraftforge.client.event.MovementInputUpdateEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public Player getEntity() { return delegate.getEntity(); }
+    public Input getInput() { return delegate.getInput(); }
+}

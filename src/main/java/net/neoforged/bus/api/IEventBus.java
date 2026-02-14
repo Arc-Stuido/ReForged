@@ -10,5 +10,33 @@ package net.neoforged.bus.api;
  * will resolve through the inheritance chain to Forge's implementation.</p>
  */
 public interface IEventBus extends net.minecraftforge.eventbus.api.IEventBus {
-    // No additional methods — NeoForge's IEventBus API matches Forge's
+
+    /**
+     * NeoForge overload: addListener(NeoForge EventPriority, Consumer).
+     * Converts NeoForge priority to Forge priority and delegates.
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(EventPriority priority, java.util.function.Consumer<T> consumer) {
+        addListener(priority.toForge(), consumer);
+    }
+
+    /**
+     * NeoForge overload: addListener(NeoForge EventPriority, boolean, Consumer).
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(EventPriority priority, boolean receiveCancelled, java.util.function.Consumer<T> consumer) {
+        addListener(priority.toForge(), receiveCancelled, consumer);
+    }
+
+    /**
+     * NeoForge overload: addListener(NeoForge EventPriority, boolean, Class, Consumer).
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(EventPriority priority, boolean receiveCancelled, Class<T> eventType, java.util.function.Consumer<T> consumer) {
+        addListener(priority.toForge(), receiveCancelled, eventType, consumer);
+    }
+
+    /**
+     * NeoForge overload: addListener(Class, Consumer) — convenience with default priority.
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(Class<T> eventType, java.util.function.Consumer<T> consumer) {
+        addListener(net.minecraftforge.eventbus.api.EventPriority.NORMAL, false, eventType, consumer);
+    }
 }

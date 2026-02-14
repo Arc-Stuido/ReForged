@@ -3,12 +3,15 @@ package net.neoforged.neoforge.registries;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.serialization.Lifecycle;
 import net.neoforged.neoforge.registries.callback.AddCallback;
+import net.neoforged.neoforge.registries.callback.BakeCallback;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 /**
@@ -79,6 +82,17 @@ public class RegistryBuilder<T> {
         return this;
     }
 
+    /** NeoForge: called when the registry is baked (BakeCallback variant). No-op in shim. */
+    public RegistryBuilder<T> onBake(BakeCallback<T> callback) {
+        return this;
+    }
+
+    /** NeoForge: use intrusive holders for this registry. No-op in shim. */
+    @Deprecated
+    public RegistryBuilder<T> withIntrusiveHolders() {
+        return this;
+    }
+
     /** NeoForge: disallow modifications after registry freeze. No-op in shim. */
     public RegistryBuilder<T> disableSync() {
         return this;
@@ -94,8 +108,8 @@ public class RegistryBuilder<T> {
     }
 
     /**
-     * Build the registry. Returns a lightweight MappedRegistry backed by the key.
-     * This is a no-op shim — the registry exists only to satisfy API calls.
+     * Build the registry. Returns a MappedRegistry and registers it in the root
+     * registry (unfreezing temporarily if needed, similar to NeoForge's NewRegistryEvent).
      */
     @SuppressWarnings("unchecked")
     public Registry<T> build() {
@@ -105,7 +119,55 @@ public class RegistryBuilder<T> {
                     ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("reforged", "unknown"));
         }
         LOGGER.debug("[ReForged] Building shim registry for key: {}", registryKey.location());
-        return new MappedRegistry<>((ResourceKey<Registry<T>>) registryKey, Lifecycle.stable());
+        MappedRegistry<T> registry = new MappedRegistry<>((ResourceKey<Registry<T>>) registryKey, Lifecycle.stable());
+
+        // Register the custom registry in the root registry so lookups work.
+        // The root registry is likely frozen by this point, so we unfreeze temporarily.
+        try {
+            Registry<Registry<?>> rootRegistry = (Registry<Registry<?>>) (Registry<?>) BuiltInRegistries.REGISTRY;
+            if (!rootRegistry.containsKey(registryKey.location())) {
+                boolean unfrozen = false;
+                Field frozenField = null;
+                try {
+                    frozenField = findField(rootRegistry.getClass(), "frozen", "f_205845_");
+                    if (frozenField != null) {
+                        frozenField.setAccessible(true);
+                        if (frozenField.getBoolean(rootRegistry)) {
+                            frozenField.setBoolean(rootRegistry, false);
+                            unfrozen = true;
+                        }
+                    }
+                    Registry.register((Registry<Registry<?>>) rootRegistry, registryKey.location().toString(), (Registry<?>) registry);
+                    LOGGER.info("[ReForged] Registered custom registry '{}' in root registry", registryKey.location());
+                } catch (Exception e) {
+                    LOGGER.warn("[ReForged] Could not register custom registry '{}': {}", registryKey.location(), e.getMessage());
+                } finally {
+                    if (unfrozen && frozenField != null) {
+                        try { frozenField.setBoolean(rootRegistry, true); } catch (Exception ignored) {}
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("[ReForged] Failed to register custom registry in root: {}", e.getMessage());
+        }
+
+        return registry;
+    }
+
+    /**
+     * Find a declared field in the class hierarchy, trying multiple names (SRG/official).
+     */
+    private static Field findField(Class<?> clazz, String... names) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            for (String name : names) {
+                try {
+                    return current.getDeclaredField(name);
+                } catch (NoSuchFieldException ignored) {}
+            }
+            current = current.getSuperclass();
+        }
+        return null;
     }
 
     /**

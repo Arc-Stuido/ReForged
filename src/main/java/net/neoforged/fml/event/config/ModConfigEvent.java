@@ -1,24 +1,26 @@
 package net.neoforged.fml.event.config;
 
-import net.minecraftforge.eventbus.api.Event;
-
 /**
- * Proxy: NeoForge's ModConfigEvent fired when configs are loaded/reloaded.
+ * Wrapper around Forge's {@link net.minecraftforge.fml.event.config.ModConfigEvent}.
+ * Champions uses {@code @SubscribeEvent onConfigLoad(ModConfigEvent event)}.
  */
-public class ModConfigEvent extends Event {
-    private final net.neoforged.fml.config.ModConfig config;
+public class ModConfigEvent {
+    private final net.minecraftforge.fml.event.config.ModConfigEvent delegate;
 
-    public ModConfigEvent(net.neoforged.fml.config.ModConfig config) {
-        this.config = config;
+    public ModConfigEvent(net.minecraftforge.fml.event.config.ModConfigEvent delegate) {
+        this.delegate = delegate;
     }
 
-    public net.neoforged.fml.config.ModConfig getConfig() { return config; }
+    public net.neoforged.fml.config.ModConfig getConfig() {
+        // Wrap Forge's ModConfig into our NeoForge ModConfig shim
+        return new net.neoforged.fml.config.ModConfig(delegate.getConfig());
+    }
 
     public static class Loading extends ModConfigEvent {
-        public Loading(net.neoforged.fml.config.ModConfig config) { super(config); }
+        public Loading(net.minecraftforge.fml.event.config.ModConfigEvent delegate) { super(delegate); }
     }
 
     public static class Reloading extends ModConfigEvent {
-        public Reloading(net.neoforged.fml.config.ModConfig config) { super(config); }
+        public Reloading(net.minecraftforge.fml.event.config.ModConfigEvent delegate) { super(delegate); }
     }
 }

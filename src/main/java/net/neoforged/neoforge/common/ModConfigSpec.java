@@ -165,14 +165,13 @@ public final class ModConfigSpec implements IConfigSpec {
 
         @SuppressWarnings("unchecked")
         public <T> ConfigValue<List<? extends T>> defineListAllowEmpty(String path,
-                List<? extends T> defaultValue, Supplier<List<? extends T>> defaultSupplier,
+                List<? extends T> defaultValue, Supplier<T> newElementSupplier,
                 Predicate<Object> elementValidator) {
-            Supplier<List<? extends T>> safeSupplier = () -> {
-                List<? extends T> v = defaultSupplier.get();
-                return v != null ? v : List.of();
-            };
+            // NeoForge's 4-arg overload: the Supplier<T> is for new element creation (config UI),
+            // not for providing the default list. We ignore it and use defaultValue directly.
+            List<? extends T> safeDefault = defaultValue != null ? defaultValue : List.of();
             return new ConfigValue<>(delegate.defineListAllowEmpty(
-                    java.util.Collections.singletonList(path), safeSupplier, elementValidator));
+                    java.util.Collections.singletonList(path), () -> safeDefault, elementValidator));
         }
 
         @SuppressWarnings("unchecked")
@@ -186,10 +185,10 @@ public final class ModConfigSpec implements IConfigSpec {
                     java.util.Collections.singletonList(path), safeSupplier, elementValidator));
         }
 
-        // NeoForge variant: List<String> path, Supplier defaultSupplier, Supplier (ignored), Predicate
+        // NeoForge variant: List<String> path, Supplier defaultSupplier, Supplier<T> newElement (ignored), Predicate
         @SuppressWarnings("unchecked")
         public <T> ConfigValue<List<? extends T>> defineListAllowEmpty(List<String> path,
-                Supplier<List<? extends T>> defaultSupplier, Supplier<List<? extends T>> supplier2,
+                Supplier<List<? extends T>> defaultSupplier, Supplier<T> newElementSupplier,
                 Predicate<Object> elementValidator) {
             return new ConfigValue<>(delegate.defineListAllowEmpty(path, defaultSupplier, elementValidator));
         }

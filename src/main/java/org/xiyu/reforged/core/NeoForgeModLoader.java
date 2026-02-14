@@ -11,12 +11,16 @@ import org.xiyu.reforged.bridge.NeoForgeEventBusAdapter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * NeoForgeModLoader — Runtime discovery and loading of NeoForge mods.
@@ -42,6 +46,9 @@ public final class NeoForgeModLoader {
     /** NeoForge JAR paths that were successfully loaded (for resource pack registration). */
     private static final List<Path> loadedNeoJarPaths = new ArrayList<>();
 
+    /** Stored reference to Forge's mod event bus — used to dispatch NeoForge mod bus events. */
+    private static IEventBus storedModEventBus;
+
     /** Default metadata used when TOML parsing fails or a modId is not found in TOML. */
     private static final ModMetadata DEFAULT_METADATA =
             new ModMetadata("Unknown Mod", "1.0.0", "", "Unknown", null);
@@ -58,12 +65,37 @@ public final class NeoForgeModLoader {
     }
 
     /**
+     * Dispatch a NeoForge mod-bus event to all NeoForge mod listeners.
+     *
+     * <p>Since NeoForge's {@code net.neoforged.bus.api.Event} extends Forge's
+     * {@code net.minecraftforge.eventbus.api.Event}, NeoForge events can be posted
+     * directly on the Forge mod event bus. NeoForge mod handlers registered via
+     * {@link NeoForgeEventBusAdapter} will receive them.</p>
+     *
+     * @param event a NeoForge event instance (must extend Forge's Event through inheritance)
+     */
+    public static void dispatchNeoForgeModEvent(net.minecraftforge.eventbus.api.Event event) {
+        if (storedModEventBus == null) {
+            LOGGER.warn("[ReForged] Cannot dispatch NeoForge mod event {} — mod bus not yet initialised",
+                    event.getClass().getSimpleName());
+            return;
+        }
+        try {
+            storedModEventBus.post(event);
+        } catch (Throwable t) {
+            LOGGER.error("[ReForged] Failed to dispatch NeoForge mod event {}: {}",
+                    event.getClass().getSimpleName(), t.getMessage(), t);
+        }
+    }
+
+    /**
      * Discover and load all NeoForge mods from the given directory.
      *
      * @param modsDir   the mods directory to scan
      * @param modBus    Forge's mod event bus (from FMLJavaModLoadingContext)
      */
     public static void loadAll(Path modsDir, IEventBus modBus) {
+        storedModEventBus = modBus;
         if (!Files.isDirectory(modsDir)) {
             LOGGER.debug("[ReForged] Mods directory not found: {}", modsDir);
             return;
@@ -82,11 +114,43 @@ public final class NeoForgeModLoader {
         URLClassLoader neoClassLoader = createClassLoader(neoJars);
         if (neoClassLoader == null) return;
 
+        // Phase 2.5: Open game module packages to the URLClassLoader's unnamed module
+        // so NeoForge mod classes can access Minecraft/Forge classes across the module boundary.
+        openGameModulesToClassLoader(neoClassLoader);
+
+        // Phase 2.75: Process enum extensions from NeoForge mods
+        // Must happen BEFORE any mod classes are loaded / initialized
+        EnumExtensionHandler.processAll(neoJars, neoClassLoader);
+
         // Phase 3: Wrap the event bus as NeoForge's IEventBus
         net.neoforged.bus.api.IEventBus busAdapter = NeoForgeEventBusAdapter.wrap(modBus);
 
+        // Make the bus available to NeoForge ModContainer wrappers
+        net.neoforged.fml.ModContainer.setGlobalModBus(busAdapter);
+
+        // Phase 3.5: Temporarily unfreeze the root registry so NeoForge mods that
+        // directly call Registry.register() on BuiltInRegistries.REGISTRY (e.g. Create's
+        // CreateBuiltInRegistries) don't hit "Registry is already frozen".
+        Field rootFrozenField = null;
+        boolean rootWasFrozen = false;
+        try {
+            Object rootRegistry = net.minecraft.core.registries.BuiltInRegistries.REGISTRY;
+            rootFrozenField = findFrozenField(rootRegistry.getClass());
+            if (rootFrozenField != null) {
+                rootFrozenField.setAccessible(true);
+                rootWasFrozen = rootFrozenField.getBoolean(rootRegistry);
+                if (rootWasFrozen) {
+                    rootFrozenField.setBoolean(rootRegistry, false);
+                    LOGGER.info("[ReForged] Temporarily unfroze root registry for NeoForge mod loading");
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("[ReForged] Could not unfreeze root registry: {}", e.getMessage());
+        }
+
         // Phase 4: Scan and load each mod, collecting containers for ModList injection
         List<ModListInjector.NeoModContainer> neoContainers = new ArrayList<>();
+        List<String> failedMods = new ArrayList<>();
         for (Path jar : neoJars) {
             try {
                 int before = loadedModInstances.size();
@@ -95,11 +159,27 @@ public final class NeoForgeModLoader {
                     // At least one mod from this JAR loaded successfully — track it for resource packs
                     loadedNeoJarPaths.add(jar);
                 }
-            } catch (Exception e) {
-                LOGGER.error("[ReForged] Failed to load NeoForge mod from {}", jar.getFileName(), e);
+            } catch (Throwable e) {
+                String jarName = jar.getFileName().toString();
+                failedMods.add(jarName);
+                LOGGER.error("[ReForged] Failed to load NeoForge mod from {}", jarName, e);
             }
         }
 
+        // Phase 4.5: Re-freeze the root registry now that NeoForge mod construction is complete
+        if (rootWasFrozen && rootFrozenField != null) {
+            try {
+                rootFrozenField.setBoolean(net.minecraft.core.registries.BuiltInRegistries.REGISTRY, true);
+                LOGGER.info("[ReForged] Re-froze root registry after NeoForge mod loading");
+            } catch (Exception e) {
+                LOGGER.warn("[ReForged] Could not re-freeze root registry: {}", e.getMessage());
+            }
+        }
+
+        if (!failedMods.isEmpty()) {
+            LOGGER.warn("[ReForged] {} NeoForge mod JAR(s) had loading failures: {} — continuing without them",
+                    failedMods.size(), failedMods);
+        }
         LOGGER.info("[ReForged] Loaded {} NeoForge mod instance(s)", loadedModInstances.size());
 
         // Phase 5: Register NeoForge mods in Forge's ModList so they appear in the Mods screen
@@ -107,6 +187,24 @@ public final class NeoForgeModLoader {
 
         // Phase 6: Auto-register @EventBusSubscriber classes from NeoForge JARs
         registerEventBusSubscribers(neoJars, neoClassLoader, modBus);
+    }
+
+    /**
+     * Find the "frozen" field in a MappedRegistry (tries official + SRG names).
+     */
+    private static Field findFrozenField(Class<?> clazz) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            for (String name : new String[]{"frozen", "f_205845_"}) {
+                try {
+                    Field f = current.getDeclaredField(name);
+                    f.setAccessible(true);
+                    return f;
+                } catch (NoSuchFieldException ignored) {}
+            }
+            current = current.getSuperclass();
+        }
+        return null;
     }
 
     /**
@@ -119,7 +217,10 @@ public final class NeoForgeModLoader {
                 try (JarFile jar = new JarFile(path.toFile())) {
                     boolean hasNeo = jar.getJarEntry("META-INF/neoforge.mods.toml") != null;
                     boolean hasForge = jar.getJarEntry("META-INF/mods.toml") != null;
-                    if (hasNeo && !hasForge) {
+                    if (hasNeo && hasForge) {
+                        LOGGER.info("[ReForged] Skipping Forgix-packaged JAR {} — has both mods.toml and neoforge.mods.toml, letting Forge handle it",
+                                path.getFileName());
+                    } else if (hasNeo && !hasForge) {
                         result.add(path);
                     }
                 } catch (Exception e) {
@@ -274,17 +375,195 @@ public final class NeoForgeModLoader {
         }
     }
 
+    // ═══════════════════════════════════════════════════════════
+    //  JPMS module access: open game-layer packages to unnamed module
+    // ═══════════════════════════════════════════════════════════
+
+    /**
+     * Open all packages from game-layer modules (minecraft, forge, etc.) to the
+     * unnamed module of the given classloader.
+     *
+     * <p><b>Why this is needed:</b> NeoForge mod classes are loaded by a
+     * {@link URLClassLoader} and end up in its <em>unnamed</em> module. Minecraft
+     * and Forge classes live in <em>named</em> JPMS modules ({@code minecraft@1.21.1},
+     * {@code forge}, etc.). The JVM blocks cross-module access unless the named
+     * module explicitly exports its packages to the reader module.</p>
+     *
+     * <p>We use the same technique as Forge's own {@code ForgeMod.addOpen()}:
+     * reflective access to {@code Module.implAddExportsOrOpens} via
+     * {@code sun.misc.Unsafe} to bypass module encapsulation.</p>
+     *
+     * @param neoClassLoader the URLClassLoader whose unnamed module needs access
+     */
+    @SuppressWarnings("deprecation") // Unsafe.objectFieldOffset is deprecated since JDK 18 but still functional
+    private static void openGameModulesToClassLoader(URLClassLoader neoClassLoader) {
+        try {
+            // ── Step 1: Obtain sun.misc.Unsafe ───────────────────────────────
+            Field theUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            theUnsafeField.setAccessible(true);
+            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) theUnsafeField.get(null);
+
+            // ── Step 2: Find Class.module field offset via Unsafe ────────────
+            long moduleFieldOffset = -1;
+            for (Field f : Class.class.getDeclaredFields()) {
+                if ("module".equals(f.getName())) {
+                    moduleFieldOffset = unsafe.objectFieldOffset(f);
+                    break;
+                }
+            }
+            if (moduleFieldOffset == -1) {
+                LOGGER.error("[ReForged] Cannot find 'module' field in java.lang.Class — " +
+                        "module access hack unavailable, NeoForge mods may crash");
+                return;
+            }
+
+            // ── Step 3: Get Module.implAddExportsOrOpens reflectively ────────
+            // We must bypass setAccessible() module checks by temporarily
+            // pretending our class belongs to java.base (same trick as
+            // Forge's UnsafeHacks and cpw.mods.securejarhandler).
+            Object originalModule = unsafe.getObject(NeoForgeModLoader.class, moduleFieldOffset);
+            Object javaBaseModule = unsafe.getObject(Object.class, moduleFieldOffset); // Object.class → java.base
+            unsafe.putObject(NeoForgeModLoader.class, moduleFieldOffset, javaBaseModule);
+
+            Method implAddExportsOrOpens;
+            try {
+                implAddExportsOrOpens = Module.class.getDeclaredMethod(
+                        "implAddExportsOrOpens",
+                        String.class,   // package name
+                        Module.class,   // target module
+                        boolean.class,  // open (true) vs export-only (false)
+                        boolean.class   // syncVM
+                );
+                implAddExportsOrOpens.setAccessible(true);
+            } finally {
+                // Restore original module immediately
+                unsafe.putObject(NeoForgeModLoader.class, moduleFieldOffset, originalModule);
+            }
+
+            // ── Step 4: Collect all named modules from game / parent layers ──
+            Module unnamedModule = neoClassLoader.getUnnamedModule();
+            ClassLoader gameClassLoader = NeoForgeModLoader.class.getClassLoader();
+
+            Set<Module> modulesToOpen = new LinkedHashSet<>();
+
+            // Try to discover the game ModuleLayer by loading a known MC class
+            String[] probeClasses = {
+                    "net.minecraft.world.entity.Entity",       // minecraft module
+                    "net.minecraftforge.common.MinecraftForge", // forge module
+                    "net.minecraftforge.fml.ModList",           // fml module
+            };
+            for (String probeName : probeClasses) {
+                try {
+                    Class<?> probe = Class.forName(probeName, false, gameClassLoader);
+                    Module mod = probe.getModule();
+                    if (mod.isNamed()) {
+                        modulesToOpen.add(mod);
+                        // Also grab all sibling modules from the same layer
+                        ModuleLayer layer = mod.getLayer();
+                        if (layer != null) {
+                            for (Module sibling : layer.modules()) {
+                                if (sibling.isNamed()) {
+                                    modulesToOpen.add(sibling);
+                                }
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException ignored) {
+                    // Probe class not available — skip
+                }
+            }
+
+            if (modulesToOpen.isEmpty()) {
+                LOGGER.warn("[ReForged] No named game modules found — " +
+                        "module access hack skipped (classes may already be in unnamed module)");
+                return;
+            }
+
+            // ── Step 5: Open every package of every game module ──────────────
+            int totalPackages = 0;
+            for (Module module : modulesToOpen) {
+                Set<String> packages = module.getPackages();
+                for (String pkg : packages) {
+                    try {
+                        implAddExportsOrOpens.invoke(
+                                module,
+                                pkg,
+                                unnamedModule,
+                                /* open = */ true,
+                                /* syncVM = */ true
+                        );
+                    } catch (Exception e) {
+                        LOGGER.debug("[ReForged] Failed to open {}/{} — {}",
+                                module.getName(), pkg, e.getMessage());
+                    }
+                }
+                totalPackages += packages.size();
+            }
+
+            LOGGER.info("[ReForged] Opened {} packages across {} modules to NeoForge classloader's unnamed module",
+                    totalPackages, modulesToOpen.size());
+
+        } catch (Exception e) {
+            LOGGER.error("[ReForged] Failed to open game module packages — " +
+                    "NeoForge mods extending Minecraft classes will likely crash with IllegalAccessError", e);
+        }
+    }
+
     /**
      * Create a URLClassLoader for the NeoForge mod JARs.
      * Parent is the current classloader (game + Forge + ReForged).
+     * <p>
+     * Also extracts nested Jar-in-Jar (JiJ) dependencies from
+     * {@code META-INF/jarjar/} inside each mod JAR and adds them
+     * to the classloader so library classes are available.
      */
     private static URLClassLoader createClassLoader(List<Path> jars) {
         try {
-            URL[] urls = new URL[jars.size()];
-            for (int i = 0; i < jars.size(); i++) {
-                urls[i] = jars.get(i).toUri().toURL();
+            List<URL> urls = new ArrayList<>();
+            // Add top-level mod JARs
+            for (Path jar : jars) {
+                urls.add(jar.toUri().toURL());
             }
-            return new URLClassLoader(urls, NeoForgeModLoader.class.getClassLoader());
+            // Extract Jar-in-Jar (JiJ) dependencies
+            Path jijTemp = Files.createTempDirectory("reforged-jij-");
+            jijTemp.toFile().deleteOnExit();
+            for (Path jar : jars) {
+                try (JarFile jarFile = new JarFile(jar.toFile())) {
+                    var entries = jarFile.entries();
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
+                        String name = entry.getName();
+                        if (name.startsWith("META-INF/jarjar/") && name.endsWith(".jar") && !entry.isDirectory()) {
+                            // Extract nested JAR to temp directory
+                            String fileName = name.substring(name.lastIndexOf('/') + 1);
+                            Path extracted = jijTemp.resolve(fileName);
+                            try (InputStream is = jarFile.getInputStream(entry)) {
+                                Files.copy(is, extracted, StandardCopyOption.REPLACE_EXISTING);
+                            }
+                            extracted.toFile().deleteOnExit();
+                            urls.add(extracted.toUri().toURL());
+                            LOGGER.info("[ReForged] Extracted JiJ dependency: {} from {}", fileName, jar.getFileName());
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("[ReForged] Failed to extract JiJ from {}: {}", jar.getFileName(), e.getMessage());
+                }
+            }
+            return new URLClassLoader(urls.toArray(new URL[0]), NeoForgeModLoader.class.getClassLoader()) {
+                /**
+                 * Override findClass so that any thread loading a NeoForge mod class
+                 * automatically has its context classloader set to this URLClassLoader.
+                 * This is critical for ServiceLoader (used by Create/Catnip) to find
+                 * service implementations in NeoForge mod JARs, even when invoked
+                 * from ForkJoinPool worker threads that have a different default
+                 * context classloader.
+                 */
+                @Override
+                protected Class<?> findClass(String name) throws ClassNotFoundException {
+                    Thread.currentThread().setContextClassLoader(this);
+                    return super.findClass(name);
+                }
+            };
         } catch (Exception e) {
             LOGGER.error("[ReForged] Failed to create classloader", e);
             return null;
@@ -305,6 +584,14 @@ public final class NeoForgeModLoader {
         // Parse TOML metadata from the JAR
         Map<String, ModMetadata> metadata = parseModMetadata(jarPath);
 
+        // Perform a full annotation scan of the JAR so NeoForge mods
+        // (e.g. Twilight Forest BeanContext) can find their annotated classes
+        // through ModFileScanData.getAnnotatedBy().
+        net.minecraftforge.forgespi.language.ModFileScanData jarScanData = scanJarAnnotations(jarPath);
+        LOGGER.info("[ReForged] Scanned {} annotations and {} classes from {}",
+                jarScanData.getAnnotations().size(), jarScanData.getClasses().size(),
+                jarPath.getFileName());
+
         for (ModInfo info : modClasses) {
             LOGGER.info("[ReForged] Loading NeoForge mod: '{}' (class: {})", info.modId, info.className);
             try {
@@ -319,15 +606,30 @@ public final class NeoForgeModLoader {
                         meta.description(),
                         meta.license(),
                         meta.logoFile(),
-                        null  // instance not yet available
+                        null,  // instance not yet available
+                        jarScanData,
+                        jarPath
                 );
                 ModListInjector.NeoModContainer neoContainer = ModListInjector.createContainer(neoModData);
+
+                // Pre-register the NeoForge mod file info so ModList.getModFileById()
+                // works during static class initialization (before inject() completes)
+                var forgeFileInfo = neoContainer.getModInfo().getOwningFile();
+                if (forgeFileInfo != null) {
+                    var neoFileInfo = net.neoforged.neoforgespi.language.IModFileInfo.wrap(forgeFileInfo);
+                    net.neoforged.fml.ModList.registerNeoModFileInfo(info.modId, neoFileInfo);
+                }
 
                 // Swap Forge's active container to our NeoForge container so configs
                 // registered during construction use the correct mod ID
                 var forgeCtx = net.minecraftforge.fml.ModLoadingContext.get();
                 var oldContainer = forgeCtx.getActiveContainer();
                 forgeCtx.setActiveContainer(neoContainer);
+
+                // Inject the container into ModList BEFORE construction,
+                // so mods that look themselves up (e.g. TwilightForest BeanContext)
+                // can find their container during static initialization.
+                ModListInjector.inject(List.of(neoContainer));
 
                 Object instance;
                 try {
@@ -343,8 +645,16 @@ public final class NeoForgeModLoader {
                     collector.add(neoContainer);
                     LOGGER.info("[ReForged] ✓ Successfully loaded NeoForge mod '{}'", info.modId);
                 }
-            } catch (Exception e) {
-                LOGGER.error("[ReForged] ✗ Failed to load mod class '{}': {}", info.className, e.getMessage(), e);
+            } catch (Throwable e) {
+                // Catch Throwable (not just Exception) to handle ExceptionInInitializerError,
+                // NoClassDefFoundError, VerifyError, etc. from NeoForge mod static initializers.
+                // We log the failure but continue loading remaining mod classes from this JAR.
+                String cause = e.getMessage();
+                if (e instanceof java.lang.reflect.InvocationTargetException && e.getCause() != null) {
+                    cause = e.getCause().getClass().getSimpleName() + ": " + e.getCause().getMessage();
+                }
+                LOGGER.error("[ReForged] ✗ Failed to load mod class '{}': {} — skipping this mod, continuing",
+                        info.className, cause, e);
             }
         }
     }
@@ -383,6 +693,184 @@ public final class NeoForgeModLoader {
     }
 
     /**
+     * Perform a full ASM scan of a JAR, collecting ALL annotation data and class hierarchy
+     * information into a Forge {@link net.minecraftforge.forgespi.language.ModFileScanData}.
+     *
+     * <p>This allows NeoForge mods (like Twilight Forest's BeanContext) to discover their
+     * annotated classes (e.g. {@code @BeanProcessor}, {@code @Bean}, {@code @Component})
+     * through the standard {@code ModFileScanData.getAnnotatedBy()} / {@code getAnnotations()} APIs.</p>
+     */
+    private static net.minecraftforge.forgespi.language.ModFileScanData scanJarAnnotations(Path jarPath) {
+        net.minecraftforge.forgespi.language.ModFileScanData scanData =
+                new net.minecraftforge.forgespi.language.ModFileScanData();
+        try (JarFile jar = new JarFile(jarPath.toFile())) {
+            var entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (!entry.getName().endsWith(".class")) continue;
+                if (entry.getName().startsWith("META-INF/")) continue;
+
+                try (InputStream is = jar.getInputStream(entry)) {
+                    ClassReader reader = new ClassReader(is);
+                    FullAnnotationScanner scanner = new FullAnnotationScanner(scanData);
+                    reader.accept(scanner, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
+                } catch (Exception e) {
+                    // Skip unreadable class files
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("[ReForged] Failed to scan JAR annotations: {}", jarPath.getFileName(), e);
+        }
+        return scanData;
+    }
+
+    /**
+     * ASM visitor that collects ALL annotations (class-level, method-level, field-level)
+     * and class hierarchy data into a Forge ModFileScanData.
+     *
+     * <p>This mirrors what NeoForge's ModFile scanner does, allowing third-party mods
+     * that rely on annotation scanning (like Twilight Forest's beanification framework)
+     * to work correctly under ReForged.</p>
+     */
+    private static class FullAnnotationScanner extends ClassVisitor {
+        private final net.minecraftforge.forgespi.language.ModFileScanData scanData;
+        private Type classType;
+
+        FullAnnotationScanner(net.minecraftforge.forgespi.language.ModFileScanData scanData) {
+            super(Opcodes.ASM9);
+            this.scanData = scanData;
+        }
+
+        @Override
+        public void visit(int version, int access, String name, String signature,
+                          String superName, String[] interfaces) {
+            this.classType = Type.getObjectType(name);
+            Type parentType = superName != null ? Type.getObjectType(superName) : Type.getType(Object.class);
+            Set<Type> ifaceTypes = new LinkedHashSet<>();
+            if (interfaces != null) {
+                for (String iface : interfaces) {
+                    ifaceTypes.add(Type.getObjectType(iface));
+                }
+            }
+            scanData.getClasses().add(
+                    new net.minecraftforge.forgespi.language.ModFileScanData.ClassData(
+                            classType, parentType, ifaceTypes));
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+            return new ScanAnnotationVisitor(descriptor, java.lang.annotation.ElementType.TYPE,
+                    classType, "", scanData);
+        }
+
+        @Override
+        public FieldVisitor visitField(int access, String name, String descriptor,
+                                        String signature, Object value) {
+            return new FieldVisitor(Opcodes.ASM9) {
+                @Override
+                public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                    return new ScanAnnotationVisitor(desc, java.lang.annotation.ElementType.FIELD,
+                            classType, name, scanData);
+                }
+            };
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String descriptor,
+                                          String signature, String[] exceptions) {
+            return new MethodVisitor(Opcodes.ASM9) {
+                @Override
+                public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                    return new ScanAnnotationVisitor(desc, java.lang.annotation.ElementType.METHOD,
+                            classType, name, scanData);
+                }
+
+                @Override
+                public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+                    return new ScanAnnotationVisitor(desc, java.lang.annotation.ElementType.PARAMETER,
+                            classType, name, scanData);
+                }
+            };
+        }
+    }
+
+    /**
+     * ASM AnnotationVisitor that collects annotation data (including nested values,
+     * arrays, and enum constants) into a Map, then adds it to the scan data.
+     */
+    private static class ScanAnnotationVisitor extends AnnotationVisitor {
+        private final Type annotationType;
+        private final java.lang.annotation.ElementType targetType;
+        private final Type classType;
+        private final String memberName;
+        private final net.minecraftforge.forgespi.language.ModFileScanData scanData;
+        private final Map<String, Object> values = new LinkedHashMap<>();
+
+        ScanAnnotationVisitor(String descriptor, java.lang.annotation.ElementType targetType,
+                              Type classType, String memberName,
+                              net.minecraftforge.forgespi.language.ModFileScanData scanData) {
+            super(Opcodes.ASM9);
+            this.annotationType = Type.getType(descriptor);
+            this.targetType = targetType;
+            this.classType = classType;
+            this.memberName = memberName;
+            this.scanData = scanData;
+        }
+
+        @Override
+        public void visit(String name, Object value) {
+            values.put(name, value);
+        }
+
+        @Override
+        public void visitEnum(String name, String descriptor, String value) {
+            values.put(name, new net.neoforged.fml.loading.modscan.ModAnnotation.EnumHolder(descriptor, value));
+        }
+
+        @Override
+        public AnnotationVisitor visitArray(String name) {
+            List<Object> list = new ArrayList<>();
+            values.put(name, list);
+            return new AnnotationVisitor(Opcodes.ASM9) {
+                @Override
+                public void visit(String n, Object value) {
+                    list.add(value);
+                }
+
+                @Override
+                public void visitEnum(String n, String desc, String value) {
+                    list.add(new net.neoforged.fml.loading.modscan.ModAnnotation.EnumHolder(desc, value));
+                }
+            };
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(String name, String descriptor) {
+            // Nested annotations — store as a map
+            Map<String, Object> nested = new LinkedHashMap<>();
+            values.put(name, nested);
+            return new AnnotationVisitor(Opcodes.ASM9) {
+                @Override
+                public void visit(String n, Object value) {
+                    nested.put(n, value);
+                }
+
+                @Override
+                public void visitEnum(String n, String desc, String value) {
+                    nested.put(n, new net.neoforged.fml.loading.modscan.ModAnnotation.EnumHolder(desc, value));
+                }
+            };
+        }
+
+        @Override
+        public void visitEnd() {
+            scanData.getAnnotations().add(
+                    new net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData(
+                            annotationType, targetType, classType, memberName, values));
+        }
+    }
+
+    /**
      * Instantiate a NeoForge mod class, trying multiple constructor patterns.
      */
     private static Object instantiateMod(Class<?> modClass, net.neoforged.bus.api.IEventBus busAdapter,
@@ -412,6 +900,17 @@ public final class NeoForgeModLoader {
                     new net.neoforged.fml.ModContainer(
                             net.minecraftforge.fml.ModLoadingContext.get().getActiveContainer());
             return ctor.newInstance(busAdapter, container);
+        } catch (NoSuchMethodException ignored) {}
+
+        // Pattern 5: (net.neoforged.bus.api.IEventBus, net.neoforged.api.distmarker.Dist)
+        try {
+            Constructor<?> ctor = modClass.getDeclaredConstructor(
+                    net.neoforged.bus.api.IEventBus.class,
+                    net.neoforged.api.distmarker.Dist.class);
+            ctor.setAccessible(true);
+            net.neoforged.api.distmarker.Dist currentDist =
+                    net.neoforged.fml.loading.FMLEnvironment.dist;
+            return ctor.newInstance(busAdapter, currentDist);
         } catch (NoSuchMethodException ignored) {}
 
         // Pattern 4: no-arg constructor
