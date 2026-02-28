@@ -80,12 +80,16 @@ public final class ModListInjector {
             Field sortedContainersField = ModList.class.getDeclaredField("sortedContainers");
             Field sortedListField = ModList.class.getDeclaredField("sortedList");
             Field scanDataField = ModList.class.getDeclaredField("modFileScanData");
+            Field modFilesField = ModList.class.getDeclaredField("modFiles");
+            Field fileByIdField = ModList.class.getDeclaredField("fileById");
 
             modsField.setAccessible(true);
             indexedModsField.setAccessible(true);
             sortedContainersField.setAccessible(true);
             sortedListField.setAccessible(true);
             scanDataField.setAccessible(true);
+            modFilesField.setAccessible(true);
+            fileByIdField.setAccessible(true);
 
             @SuppressWarnings("unchecked")
             List<ModContainer> existingMods =
@@ -99,6 +103,12 @@ public final class ModListInjector {
             @SuppressWarnings("unchecked")
             List<IModInfo> existingSortedList =
                     (List<IModInfo>) sortedListField.get(modList);
+                @SuppressWarnings("unchecked")
+                List<IModFileInfo> existingModFiles =
+                    (List<IModFileInfo>) modFilesField.get(modList);
+                @SuppressWarnings("unchecked")
+                Map<String, IModFileInfo> existingFileById =
+                    (Map<String, IModFileInfo>) (Map<?, ?>) fileByIdField.get(modList);
 
             // Force modFileScanData to be populated BEFORE we modify sortedList.
             // getAllScanData() lazily iterates sortedList; if we add our entries first,
@@ -111,6 +121,9 @@ public final class ModListInjector {
             Map<String, ModContainer> newIndexed = new HashMap<>(existingIndexed);
             List<ModContainer> newSorted = new ArrayList<>(existingSorted);
             List<IModInfo> newSortedList = new ArrayList<>(existingSortedList);
+
+            boolean modFilesMutated = false;
+            boolean fileByIdMutated = false;
 
             for (NeoModContainer container : containers) {
                 IModInfo modInfo = container.getModInfo();
@@ -126,6 +139,13 @@ public final class ModListInjector {
                 // Register in NeoForge ModList for getModFileById() fallback
                 IModFileInfo forgeFileInfo = container.getModInfo().getOwningFile();
                 if (forgeFileInfo != null) {
+                    if (!existingModFiles.contains(forgeFileInfo)) {
+                        existingModFiles.add(forgeFileInfo);
+                        modFilesMutated = true;
+                    }
+                    existingFileById.put(container.getModId(), forgeFileInfo);
+                    fileByIdMutated = true;
+
                     net.neoforged.neoforgespi.language.IModFileInfo neoFileInfo =
                             net.neoforged.neoforgespi.language.IModFileInfo.wrap(forgeFileInfo);
                     net.neoforged.fml.ModList.registerNeoModFileInfo(container.getModId(), neoFileInfo);
@@ -139,8 +159,19 @@ public final class ModListInjector {
             indexedModsField.set(modList, Collections.unmodifiableMap(newIndexed));
             sortedContainersField.set(modList, Collections.unmodifiableList(newSorted));
             sortedListField.set(modList, Collections.unmodifiableList(newSortedList));
-            // modFileScanData is already cached (we called getAllScanData() above),
-            // so it won't re-iterate sortedList and NPE on our entries.
+            List<net.minecraftforge.forgespi.language.ModFileScanData> newScanData = newSortedList.stream()
+                    .map(IModInfo::getOwningFile)
+                    .filter(Objects::nonNull)
+                    .map(IModFileInfo::getFile)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .map(IModFile::getScanResult)
+                    .filter(Objects::nonNull)
+                    .toList();
+            scanDataField.set(modList, newScanData);
+
+            LOGGER.info("[ReForged] ModList injection complete: +{} mods, modFilesMutated={}, fileByIdMutated={}",
+                    containers.size(), modFilesMutated, fileByIdMutated);
 
         } catch (Exception e) {
             LOGGER.error("[ReForged] Failed to inject NeoForge mods into Forge ModList", e);
