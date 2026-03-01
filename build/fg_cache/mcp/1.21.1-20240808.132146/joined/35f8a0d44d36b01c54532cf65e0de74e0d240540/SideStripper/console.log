@@ -1,0 +1,9 @@
+JVM:         /home/xiyu/.vscode/extensions/redhat.java-1.53.0-linux-x64/jre/21.0.10-linux-x86_64/bin/java
+JVM Args:    
+Run Args:    "--strip", "--input", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/AccessTransformer/output.jar", "--output", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/SideStripper/output.jar", "--data", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/SideStripper/string_data.sas"
+Classpath:   /home/xiyu/.gradle/caches/forge_gradle/maven_downloader/net/minecraftforge/mergetool/1.1.7/mergetool-1.1.7-fatjar.jar
+Working Dir: /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/SideStripper
+Main Class:  net.minecraftforge.mergetool.ConsoleMerger
+Input:  /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/AccessTransformer/output.jar
+Output: /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/SideStripper/output.jar
+Data:   /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/35f8a0d44d36b01c54532cf65e0de74e0d240540/SideStripper/string_data.sas

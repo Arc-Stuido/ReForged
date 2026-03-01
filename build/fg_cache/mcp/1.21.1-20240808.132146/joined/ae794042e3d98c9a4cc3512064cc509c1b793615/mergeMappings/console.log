@@ -1,0 +1,16 @@
+JVM:         /home/xiyu/.vscode/extensions/redhat.java-1.53.0-linux-x64/jre/21.0.10-linux-x86_64/bin/java
+JVM Args:    
+Run Args:    "--task", "MERGE_MAPPING", "--left", "config/joined.tsrg", "--right", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/downloadClientMappings/client_mappings.txt", "--right-names", "right,left", "--classes", "--output", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/mergeMappings/output.jar"
+Classpath:   /home/xiyu/.gradle/caches/forge_gradle/maven_downloader/net/minecraftforge/installertools/1.2.0/installertools-1.2.0-fatjar.jar
+Working Dir: /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/mergeMappings
+Main Class:  net.minecraftforge.installertools.ConsoleTool
+Task: MERGE_MAPPING
+Left:    config/joined.tsrg
+         null
+Right:   /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/downloadClientMappings/client_mappings.txt
+         right,left
+Classes: true
+Fields:  false
+Methods: false
+Params:  false
+Output:  /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/mergeMappings/output.jar

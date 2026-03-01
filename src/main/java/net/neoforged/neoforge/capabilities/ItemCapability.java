@@ -1,5 +1,6 @@
 package net.neoforged.neoforge.capabilities;
 
+import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -8,12 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import org.xiyu.reforged.shim.capabilities.ForgeCapabilityBridge;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 /**
- * Stub: NeoForge's ItemCapability — capability lookup for items.
+ * NeoForge's ItemCapability — capability lookup for items.
+ * <p>Falls back to Forge's capability system on the ItemStack when no provider is found.</p>
  */
 public final class ItemCapability<T, C extends @Nullable Object> extends BaseCapability<T, C> {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Map<ResourceLocation, ItemCapability<?, ?>> registry = new ConcurrentHashMap<>();
 
     final Map<Item, List<ICapabilityProvider<ItemStack, C, T>>> providers = new IdentityHashMap<>();
@@ -38,12 +45,35 @@ public final class ItemCapability<T, C extends @Nullable Object> extends BaseCap
         return new ArrayList<>(registry.values());
     }
 
+    /**
+     * Query an item capability.
+     * <ol>
+     *   <li>First checks registered NeoForge-style providers</li>
+     *   <li>Falls back to Forge's capability on ItemStack</li>
+     * </ol>
+     */
     @Nullable
+    @SuppressWarnings("unchecked")
     public T getCapability(ItemStack stack, C context) {
         if (stack.isEmpty()) return null;
+
+        // 1. Try NeoForge-style providers
         for (var provider : providers.getOrDefault(stack.getItem(), List.of())) {
             var ret = provider.getCapability(stack, context);
             if (ret != null) return ret;
+        }
+
+        // 2. Fall back to Forge capability system
+        try {
+            Capability<T> forgeCap = ForgeCapabilityBridge.findForgeCapability(name(), typeClass());
+            if (forgeCap != null) {
+                LazyOptional<T> lazyOpt = stack.getCapability(forgeCap);
+                if (lazyOpt.isPresent()) {
+                    return lazyOpt.orElse(null);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.debug("[ReForged] ItemCapability Forge fallback failed for {}: {}", name(), e.getMessage());
         }
         return null;
     }

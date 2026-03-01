@@ -1,0 +1,48 @@
+--- a/net/minecraft/world/entity/animal/Sheep.java
++++ b/net/minecraft/world/entity/animal/Sheep.java
+@@ -212,7 +_,7 @@
+     @Override
+     public InteractionResult mobInteract(Player p_29853_, InteractionHand p_29854_) {
+         ItemStack itemstack = p_29853_.getItemInHand(p_29854_);
+-        if (itemstack.is(Items.SHEARS)) {
++        if (false && itemstack.is(Items.SHEARS)) { // Forge: Moved to onSheared
+             if (!this.level().isClientSide && this.readyForShearing()) {
+                 this.shear(SoundSource.PLAYERS);
+                 this.gameEvent(GameEvent.SHEAR, p_29853_);
+@@ -228,12 +_,24 @@
+ 
+     @Override
+     public void shear(SoundSource p_29819_) {
++        dropShearedItems(shearInternal(p_29819_));
++    }
++
++    private java.util.List<ItemStack> shearInternal(SoundSource p_29819_) {
+         this.level().playSound(null, this, SoundEvents.SHEEP_SHEAR, p_29819_, 1.0F, 1.0F);
+         this.setSheared(true);
+         int i = 1 + this.random.nextInt(3);
+ 
++        var ret = new java.util.ArrayList<ItemStack>();
+         for (int j = 0; j < i; j++) {
+-            ItemEntity itementity = this.spawnAtLocation(ITEM_BY_DYE.get(this.getColor()), 1);
++            ret.add(new ItemStack(ITEM_BY_DYE.get(this.getColor())));
++        }
++        return ret;
++    }
++
++    private void dropShearedItems(java.util.List<ItemStack> items) {
++        for (var stack : items) {
++            ItemEntity itementity = this.spawnAtLocation(stack, 1);
+             if (itementity != null) {
+                 itementity.setDeltaMovement(
+                     itementity.getDeltaMovement()
+@@ -366,5 +_,10 @@
+ 
+     private static CraftingInput makeCraftInput(DyeColor p_344668_, DyeColor p_344678_) {
+         return CraftingInput.of(2, 1, List.of(new ItemStack(DyeItem.byColor(p_344668_)), new ItemStack(DyeItem.byColor(p_344678_))));
++    }
++
++    @Override
++    public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, BlockPos pos, int fortune) {
++       return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
+     }
+ }

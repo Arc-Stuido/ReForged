@@ -1,0 +1,20 @@
+{
+  "type": "forge:conditional",
+  "forge:condition": {
+    "type": "forge:true"
+  },
+  "recipes": [
+    {
+      "recipe": {
+        "type": "minecraft:stonecutting",
+        "ingredient": {
+          "item": "minecraft:redstone_ore"
+        },
+        "result": {
+          "count": 1,
+          "id": "minecraft:diamond_block"
+        }
+      }
+    }
+  ]
+}

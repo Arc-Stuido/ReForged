@@ -49,6 +49,19 @@ public final class NeoForgeEventBusAdapter {
                         return null;
                     }
 
+                    // Intercept ALL addListener() calls — NeoForge events need wrapping
+                    // before they can be registered on the Forge bus.  Forge's EventBus
+                    // cannot resolve NeoForge event types from Consumer generics.
+                    if ("addListener".equals(name) && args != null && args.length > 0) {
+                        handleAddListener(delegate, args);
+                        return null;
+                    }
+
+                    // Invoke default methods on the NeoForge IEventBus interface directly.
+                    if (method.isDefault()) {
+                        return java.lang.reflect.InvocationHandler.invokeDefault(proxy, method, args);
+                    }
+
                     // Delegate all other calls to the Forge event bus
                     try {
                         Method delegateMethod = findMatchingMethod(delegate.getClass(), method);
@@ -179,7 +192,6 @@ public final class NeoForgeEventBusAdapter {
      *
      * @return the wrapper constructor, or {@code null} if none found
      */
-    @SuppressWarnings("unchecked")
     private static Constructor<?> findWrapperConstructor(Class<?> neoType) {
         for (Constructor<?> ctor : neoType.getDeclaredConstructors()) {
             Class<?>[] ctorParams = ctor.getParameterTypes();
@@ -188,6 +200,121 @@ public final class NeoForgeEventBusAdapter {
             }
         }
         return null;
+    }
+
+    /**
+     * Intercept all addListener() calls and bridge NeoForge event types to Forge.
+     * Parses all NeoForge addListener overloads (8 variants), extracts the event type
+     * from an explicit Class arg or via TypeResolver on the Consumer generic, then
+     * registers the appropriate Forge listener with wrapper logic.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void handleAddListener(net.minecraftforge.eventbus.api.IEventBus delegate, Object[] args) {
+        EventPriority priority = EventPriority.NORMAL;
+        boolean receiveCancelled = false;
+        Class<?> eventType = null;
+        Consumer<?> consumer = null;
+
+        // The Consumer is always the last argument in all addListener overloads
+        if (args[args.length - 1] instanceof Consumer<?> c) {
+            consumer = c;
+        }
+        if (consumer == null) {
+            LOGGER.warn("[ReForged] addListener called with no Consumer argument");
+            return;
+        }
+
+        // Parse remaining args (priority, receiveCancelled, eventType)
+        for (int i = 0; i < args.length - 1; i++) {
+            Object arg = args[i];
+            if (arg instanceof net.neoforged.bus.api.EventPriority nep) {
+                priority = nep.toForge();
+            } else if (arg instanceof EventPriority fp) {
+                priority = fp;
+            } else if (arg instanceof Boolean b) {
+                receiveCancelled = b;
+            } else if (arg instanceof Class<?> c) {
+                eventType = c;
+            }
+        }
+
+        // If event type not explicitly provided, extract from Consumer's generic type
+        if (eventType == null) {
+            eventType = extractEventTypeFromConsumer(consumer);
+        }
+        if (eventType == null) {
+            LOGGER.warn("[ReForged] Could not determine event type for addListener — Consumer: {}",
+                    consumer.getClass().getName());
+            return;
+        }
+
+        // Case 1: NeoForge wrapper event (has constructor taking a Forge Event subclass)
+        Constructor<?> wrapperCtor = findWrapperConstructor(eventType);
+        if (wrapperCtor != null) {
+            Class<? extends Event> forgeEventType = (Class<? extends Event>) wrapperCtor.getParameterTypes()[0];
+            wrapperCtor.setAccessible(true);
+            Consumer<?> finalConsumer = consumer;
+            Class<?> finalEventType = eventType;
+            delegate.addListener(priority, receiveCancelled, forgeEventType, forgeEvent -> {
+                try {
+                    Object neoEvent = wrapperCtor.newInstance(forgeEvent);
+                    ((Consumer<Object>) finalConsumer).accept(neoEvent);
+                } catch (Throwable t) {
+                    String message = t.getMessage() != null ? t.getMessage() : "";
+                    boolean balmConfigNull = finalEventType.getSimpleName().equals("ServerAboutToStartEvent")
+                            && message.contains("config")
+                            && message.contains("null")
+                            && stackContains(t, "net.blay09.mods.balm");
+                    if (balmConfigNull) {
+                        LOGGER.warn("[ReForged] Suppressed Balm ServerAboutToStart config-null handler error; config not ready yet");
+                        return;
+                    }
+                    LOGGER.error("[ReForged] Wrapped addListener handler error for {}: {}",
+                            finalEventType.getSimpleName(), t.getMessage(), t);
+                }
+            });
+            LOGGER.info("[ReForged] Registered wrapped addListener: {} → {}",
+                    eventType.getSimpleName(), forgeEventType.getSimpleName());
+            return;
+        }
+
+        // Case 2: Direct Forge Event subclass — register directly on Forge bus
+        if (Event.class.isAssignableFrom(eventType)) {
+            try {
+                delegate.addListener(priority, receiveCancelled,
+                    (Class) eventType, (Consumer) consumer);
+                LOGGER.info("[ReForged] Registered direct addListener for {}", eventType.getSimpleName());
+            } catch (Throwable t) {
+                LOGGER.warn("[ReForged] Failed to register direct addListener for {}: {}",
+                        eventType.getName(), t.getMessage());
+            }
+            return;
+        }
+
+        LOGGER.warn("[ReForged] Cannot register addListener for {} — not a Forge Event or NeoForge wrapper",
+                eventType.getName());
+    }
+
+    /**
+     * Extract the event type T from a Consumer&lt;T&gt; using Forge's TypeResolver.
+     * Uses reflection to access typetools (transitive dependency of Forge EventBus).
+     */
+    private static Class<?> extractEventTypeFromConsumer(Consumer<?> consumer) {
+        try {
+            Class<?> resolverClass = Class.forName("net.jodah.typetools.TypeResolver");
+            java.lang.reflect.Method resolveMethod = resolverClass.getMethod(
+                    "resolveRawArgument", Class.class, Class.class);
+            Class<?> type = (Class<?>) resolveMethod.invoke(null, Consumer.class, consumer.getClass());
+            // Check for TypeResolver.Unknown sentinel
+            Class<?> unknownClass = Class.forName("net.jodah.typetools.TypeResolver$Unknown");
+            if (type == unknownClass) {
+                return null;
+            }
+            return type;
+        } catch (Throwable t) {
+            LOGGER.debug("[ReForged] Failed to resolve event type from Consumer: {}", t.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -206,5 +333,22 @@ public final class NeoForgeEventBusAdapter {
             }
             return null;
         }
+    }
+
+    private static boolean stackContains(Throwable throwable, String token) {
+        if (throwable == null || token == null || token.isBlank()) {
+            return false;
+        }
+        Throwable current = throwable;
+        while (current != null) {
+            for (StackTraceElement element : current.getStackTrace()) {
+                String className = element.getClassName();
+                if (className != null && className.contains(token)) {
+                    return true;
+                }
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

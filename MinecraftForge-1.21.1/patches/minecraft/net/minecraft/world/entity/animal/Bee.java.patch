@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/entity/animal/Bee.java
++++ b/net/minecraft/world/entity/animal/Bee.java
+@@ -491,7 +_,7 @@
+             return false;
+         } else {
+             BlockEntity blockentity = this.level().getBlockEntity(this.hivePos);
+-            return blockentity != null && blockentity.getType() == BlockEntityType.BEEHIVE;
++            return blockentity instanceof BeehiveBlockEntity;
+         }
+     }
+ 
+@@ -640,13 +_,22 @@
+     }
+ 
+     @Override
+-    protected void jumpInLiquid(TagKey<Fluid> p_204061_) {
+-        this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.01, 0.0));
+-    }
+-
+-    @Override
+     public Vec3 getLeashOffset() {
+         return new Vec3(0.0, (double)(0.5F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.2F));
++    }
++
++    @Deprecated // FORGE: use jumpInFluid instead
++    protected void jumpInLiquid(TagKey<Fluid> p_204061_) {
++        this.jumpInLiquidInternal();
++    }
++
++    private void jumpInLiquidInternal() {
++        this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.01D, 0.0D));
++    }
++
++    @Override
++    public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
++        this.jumpInLiquidInternal();
+     }
+ 
+     boolean closerThan(BlockPos p_27817_, int p_27818_) {

@@ -1,0 +1,33 @@
+--- a/net/minecraft/resources/DelegatingOps.java
++++ b/net/minecraft/resources/DelegatingOps.java
+@@ -216,11 +_,29 @@
+ 
+     @Override
+     public ListBuilder<T> listBuilder() {
+-        return new Builder<>(this);
++        return new ListBuilder.Builder<>(this);
+     }
+ 
+     @Override
+     public RecordBuilder<T> mapBuilder() {
+         return new MapBuilder<>(this);
++    }
++
++    // Forge start
++    java.util.Map<ResourceLocation, Object> ctx = new java.util.HashMap<>();
++
++    @SuppressWarnings("unchecked")
++    public <R> R getContext(ResourceLocation rl) {
++        var ret = (R)this.ctx.get(rl);
++        if (ret == null && this.delegate instanceof DelegatingOps parent) {
++            return (R)parent.getContext(rl);
++        }
++        return ret;
++    }
++
++    @SuppressWarnings("unchecked")
++    public <R> R withContext(ResourceLocation key, Object ctx) {
++        this.ctx.put(key, ctx);
++        return (R)this;
+     }
+ }

@@ -12,6 +12,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.*;
 
@@ -233,6 +234,35 @@ public final class ModListInjector {
         NeoModFile(NeoModData data) {
             this.data = data;
         }
+                private static final net.minecraftforge.forgespi.locating.IModProvider FALLBACK_PROVIDER =
+                        (net.minecraftforge.forgespi.locating.IModProvider) Proxy.newProxyInstance(
+                                net.minecraftforge.forgespi.locating.IModProvider.class.getClassLoader(),
+                                new Class<?>[]{net.minecraftforge.forgespi.locating.IModProvider.class},
+                                (proxy, method, args) -> {
+                                    if (method.getDeclaringClass() == Object.class) {
+                                        return switch (method.getName()) {
+                                            case "toString" -> "ReForgedNeoBridgeProvider";
+                                            case "hashCode" -> System.identityHashCode(proxy);
+                                            case "equals" -> proxy == args[0];
+                                            default -> null;
+                                        };
+                                    }
+                                    if ("name".equals(method.getName())) {
+                                        return "ReForgedNeoBridge";
+                                    }
+                                    Class<?> returnType = method.getReturnType();
+                                    if (returnType == boolean.class) return false;
+                                    if (returnType == byte.class) return (byte) 0;
+                                    if (returnType == short.class) return (short) 0;
+                                    if (returnType == int.class) return 0;
+                                    if (returnType == long.class) return 0L;
+                                    if (returnType == float.class) return 0f;
+                                    if (returnType == double.class) return 0d;
+                                    if (returnType == char.class) return '\0';
+                                    return null;
+                                }
+                        );
+
 
         void setModFileInfo(NeoModFileInfo info) {
             this.modFileInfo = info;
@@ -296,7 +326,7 @@ public final class ModListInjector {
 
         @Override
         public net.minecraftforge.forgespi.locating.IModProvider getProvider() {
-            return null;
+            return FALLBACK_PROVIDER;
         }
 
         @Override

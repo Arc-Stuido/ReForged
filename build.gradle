@@ -90,11 +90,18 @@ dependencies {
     // jopt-simple
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
-    // test forge
-    runtimeOnly "maven.modrinth:jei:rsCHKGSa"
+    // ── Test Mods (Forge) ──────────────────────────────────
+    runtimeOnly "maven.modrinth:jei:rsCHKGSa"                              // JEI — Forge reference
 
-    // test (neo)forge
-    runtimeOnly "maven.modrinth:jade:15.10.5+neoforge"
+    // ── Test Mods (NeoForge) ───────────────────────────────
+    // Each mod exercises different NeoForge API surfaces:
+    //   Jade        → Events, Capabilities, Network, Client extensions
+    //   Waystones   → Registries, Network payloads, Data attachments, Config
+    //   Balm        → Abstraction layer lib, Registries, Events, Network
+    compileOnly "maven.modrinth:balm:21.0.41+neoforge-1.21.1"            // Compile against Balm API; do not bundle classes
+    runtimeOnly "maven.modrinth:jade:15.10.5+neoforge"                     // Jade — tooltip overlay
+    runtimeOnly "maven.modrinth:waystones:21.1.19+neoforge-1.21.1"        // Waystones — teleport
+    runtimeOnly "maven.modrinth:balm:21.0.41+neoforge-1.21.1"             // Balm — Waystones dep (>= 21.0.39 required)
 }
 
 tasks.named('processResources', ProcessResources).configure {

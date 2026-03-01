@@ -1,0 +1,6 @@
+JVM:         /home/xiyu/.vscode/extensions/redhat.java-1.53.0-linux-x64/jre/21.0.10-linux-x86_64/bin/java
+JVM Args:    
+Run Args:    "--client", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/stripClient/output.jar", "--server", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/stripServer/output.jar", "--ann", "1.21.1", "--output", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/merge/output.jar", "--inject", "false"
+Classpath:   /home/xiyu/.gradle/caches/forge_gradle/maven_downloader/net/minecraftforge/mergetool/1.2.3/mergetool-1.2.3-fatjar.jar
+Working Dir: /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/ae794042e3d98c9a4cc3512064cc509c1b793615/merge
+Main Class:  net.minecraftforge.mergetool.ConsoleMerger

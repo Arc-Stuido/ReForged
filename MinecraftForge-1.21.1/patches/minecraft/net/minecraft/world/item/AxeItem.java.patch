@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/item/AxeItem.java
++++ b/net/minecraft/world/item/AxeItem.java
+@@ -60,7 +_,8 @@
+         if (playerHasShieldUseIntent(p_40529_)) {
+             return InteractionResult.PASS;
+         } else {
+-            Optional<BlockState> optional = this.evaluateNewBlockState(level, blockpos, player, level.getBlockState(blockpos));
++            var modded = level.getBlockState(blockpos).getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_STRIP, false);
++            Optional<BlockState> optional = modded != null ? Optional.of(modded) : this.evaluateNewBlockState(level, blockpos, player, level.getBlockState(blockpos));
+             if (optional.isEmpty()) {
+                 return InteractionResult.PASS;
+             } else {
+@@ -113,5 +_,21 @@
+     private Optional<BlockState> getStripped(BlockState p_150691_) {
+         return Optional.ofNullable(STRIPPABLES.get(p_150691_.getBlock()))
+             .map(p_150689_ -> p_150689_.defaultBlockState().setValue(RotatedPillarBlock.AXIS, p_150691_.getValue(RotatedPillarBlock.AXIS)));
++    }
++
++    @Override
++    public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++        return net.minecraftforge.common.ToolActions.DEFAULT_AXE_ACTIONS.contains(toolAction);
++    }
++
++    @org.jetbrains.annotations.Nullable
++    public static BlockState getAxeStrippingState(BlockState originalState) {
++        Block block = STRIPPABLES.get(originalState.getBlock());
++        return block != null ? block.defaultBlockState().setValue(RotatedPillarBlock.AXIS, originalState.getValue(RotatedPillarBlock.AXIS)) : null;
++    }
++
++    @Override
++    public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
++        return true;
+     }
+ }

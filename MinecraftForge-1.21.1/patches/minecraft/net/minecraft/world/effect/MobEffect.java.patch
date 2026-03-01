@@ -1,0 +1,56 @@
+--- a/net/minecraft/world/effect/MobEffect.java
++++ b/net/minecraft/world/effect/MobEffect.java
+@@ -35,7 +_,8 @@
+ import net.minecraft.world.flag.FeatureFlagSet;
+ import net.minecraft.world.flag.FeatureFlags;
+ 
+-public class MobEffect implements FeatureElement {
++
++public class MobEffect implements FeatureElement, net.minecraftforge.common.extensions.IForgeMobEffect {
+     public static final Codec<Holder<MobEffect>> CODEC = BuiltInRegistries.MOB_EFFECT.holderByNameCodec();
+     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<MobEffect>> STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.MOB_EFFECT);
+     private static final int AMBIENT_ALPHA = Mth.floor(38.25F);
+@@ -56,12 +_,14 @@
+             int i = p_326747_.isAmbient() ? AMBIENT_ALPHA : 255;
+             return ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, FastColor.ARGB32.color(i, p_19452_));
+         };
++        initClient();
+     }
+ 
+     protected MobEffect(MobEffectCategory p_335432_, int p_334901_, ParticleOptions p_331136_) {
+         this.category = p_335432_;
+         this.color = p_334901_;
+         this.particleFactory = p_326745_ -> p_331136_;
++        initClient();
+     }
+ 
+     public int getBlendDurationTicks() {
+@@ -186,4 +_,28 @@
+             return new AttributeModifier(this.id, this.amount * (double)(p_332230_ + 1), this.operation);
+         }
+     }
++
++    // FORGE START
++    private Object effectRenderer;
++
++    /*
++       DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
++       Call RenderProperties.getEffectRenderer instead
++     */
++    public Object getEffectRendererInternal() {
++        return effectRenderer;
++    }
++
++    private void initClient() {
++        // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
++            initializeClient(properties -> {
++                this.effectRenderer = properties;
++            });
++        }
++    }
++
++    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientMobEffectExtensions> consumer) {
++    }
++    // END FORGE
+ }

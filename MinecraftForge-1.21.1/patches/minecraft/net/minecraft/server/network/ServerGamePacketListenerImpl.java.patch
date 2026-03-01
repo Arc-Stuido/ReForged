@@ -1,0 +1,44 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -1014,9 +_,10 @@
+         switch (serverboundplayeractionpacket$action) {
+             case SWAP_ITEM_WITH_OFFHAND:
+                 if (!this.player.isSpectator()) {
+-                    ItemStack itemstack = this.player.getItemInHand(InteractionHand.OFF_HAND);
+-                    this.player.setItemInHand(InteractionHand.OFF_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND));
+-                    this.player.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
++                    var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.player);
++                    if (event.isCanceled()) return;
++                    this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
++                    this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
+                     this.player.stopUsingItem();
+                 }
+ 
+@@ -1207,8 +_,9 @@
+                 }
+ 
+                 CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
+-                Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
++                Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
+                 this.chatMessageChain.append(completablefuture, p_296589_ -> {
++                    if (component == null) return;
+                     PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
+                     this.broadcastChatMessage(playerchatmessage1);
+                 });
+@@ -1531,7 +_,7 @@
+ 
+                         @Override
+                         public void onInteraction(InteractionHand p_143682_, Vec3 p_143683_) {
+-                            this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> p_143687_.interactAt(p_143686_, p_143683_, p_143688_));
++                            this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_143687_, p_143686_, p_143683_, p_143688_));
+                         }
+ 
+                         @Override
+@@ -1812,6 +_,7 @@
+ 
+     @Override
+     public void handleCustomPayload(ServerboundCustomPayloadPacket p_329963_) {
++        net.minecraftforge.common.ForgeHooks.onCustomPayload(p_329963_.payload(), this.connection);
+     }
+ 
+     @Override

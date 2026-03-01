@@ -1,0 +1,236 @@
+---- Minecraft Crash Report ----
+// Shall we play a game?
+
+Time: 2026-03-01 08:46:40
+Description: Unexpected error
+
+java.lang.NoSuchMethodError: 'net.neoforged.neoforge.client.ItemDecoratorHandler net.neoforged.neoforge.client.ItemDecoratorHandler.of(net.minecraft.world.item.ItemStack)'
+	at snownee.jade.util.ClientProxy.renderItemDecorationsExtra(ClientProxy.java:326) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.DisplayHelper.renderGuiItemDecorations(DisplayHelper.java:98) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.DisplayHelper.drawItem(DisplayHelper.java:167) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.ui.ItemStackElement.render(ItemStackElement.java:51) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.ui.BoxElement.render(BoxElement.java:195) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.OverlayRenderer.renderOverlay(OverlayRenderer.java:206) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.OverlayRenderer.renderOverlay478757(OverlayRenderer.java:164) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onRenderTick(ClientProxy.java:187) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.lambda$init$0(ClientProxy.java:133) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.gui.Gui.handler$zzj000$reforged$onRenderGuiPost(Gui.java:1366) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.gui.Gui.render(Gui.java:202) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:876) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1181) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:795) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+Transformer Audit:
+  java.lang.reflect.Method
+    REASON: mixin
+  net.minecraft.client.Minecraft
+    REASON: classloading
+    PLUGIN: accesstransformer:BEFORE
+    PLUGIN: runtimedistcleaner:AFTER
+  net.minecraft.client.gui.Gui
+    REASON: mixin
+    PLUGIN: accesstransformer:BEFORE
+    REASON: classloading
+    PLUGIN: accesstransformer:BEFORE
+    PLUGIN: mixin:APP:reforged.mixins.json:GuiRenderMixin
+    PLUGIN: mixin:AFTER
+  net.minecraft.client.main.Main
+    REASON: classloading
+  net.minecraft.client.renderer.GameRenderer
+    REASON: classloading
+    PLUGIN: accesstransformer:BEFORE
+    PLUGIN: runtimedistcleaner:AFTER
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at snownee.jade.util.ClientProxy.renderItemDecorationsExtra(ClientProxy.java:326) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.overlay.DisplayHelper.renderGuiItemDecorations(DisplayHelper.java:98) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.overlay.DisplayHelper.drawItem(DisplayHelper.java:167) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.impl.ui.ItemStackElement.render(ItemStackElement.java:51) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.impl.ui.BoxElement.render(BoxElement.java:195) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.overlay.OverlayRenderer.renderOverlay(OverlayRenderer.java:206) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.overlay.OverlayRenderer.renderOverlay478757(OverlayRenderer.java:164) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onRenderTick(ClientProxy.java:187) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.lambda$init$0(ClientProxy.java:133) ~[jade-15.10.5+neoforge.jar!/:15.10.5+neoforge]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.gui.Gui.handler$zzj000$reforged$onRenderGuiPost(Gui.java:1366) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar%230!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.gui.Gui.render(Gui.java:202) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar%230!/:?]
+Transformer Audit:
+  net.minecraft.client.gui.Gui
+    REASON: mixin
+    PLUGIN: accesstransformer:BEFORE
+    REASON: classloading
+    PLUGIN: accesstransformer:BEFORE
+    PLUGIN: mixin:APP:reforged.mixins.json:GuiRenderMixin
+    PLUGIN: mixin:AFTER
+-- Uptime --
+Details:
+	JVM uptime: 20.541s
+	Wall uptime: 13.033s
+	High-res time: 18.937s
+	Client ticks: 185 ticks / 9.250s
+Stacktrace:
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.fillReport(Minecraft.java:2377) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.emergencySaveAndCrash(Minecraft.java:856) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:816) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+Transformer Audit:
+  java.lang.reflect.Method
+    REASON: mixin
+  net.minecraft.client.Minecraft
+    REASON: classloading
+    PLUGIN: accesstransformer:BEFORE
+    PLUGIN: runtimedistcleaner:AFTER
+  net.minecraft.client.main.Main
+    REASON: classloading
+
+
+-- Affected level --
+Details:
+	All players: 1 total; [LocalPlayer['Dev'/9, l='ClientLevel', x=291.80, y=-60.00, z=105.11]]
+	Chunk stats: 5041, 338
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (0,-60,0), Section: (at 0,4,0 in 0,-4,0; chunk contains blocks 0,-64,0 to 15,319,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,-64,0 to 511,319,511)
+	Level time: 77288 game time, 63882 day time
+	Server brand: forge
+	Server type: Integrated singleplayer server
+	Tracked entity count: 157
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla, neomod:waystones-21.1.19+neoforge-1.21.1, neomod:jade-15.10.5+neoforge, neomod:balm-21.0.41+neoforge-1.21.1, mod_resources
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.1
+	Minecraft Version ID: 1.21.1
+	Operating System: Linux (amd64) version 6.17.0-14-generic
+	Java Version: 21.0.10, Ubuntu
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Ubuntu
+	Memory: 151989544 bytes (144 MiB) / 939524096 bytes (896 MiB) up to 8128561152 bytes (7752 MiB)
+	CPUs: 24
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) Ultra 9 275HX
+	Identifier: Intel64 Family 6 Model 198 Stepping 2
+	Microarchitecture: unknown
+	Frequency (GHz): 5.40
+	Number of physical packages: 1
+	Number of physical CPUs: 24
+	Number of logical CPUs: 24
+	Graphics card #0 name: Arrow Lake-S [Intel Graphics]
+	Graphics card #0 vendor: Intel Corporation (0x8086)
+	Graphics card #0 VRAM (MiB): 272.00
+	Graphics card #0 deviceId: 0x7d67
+	Graphics card #0 versionInfo: unknown
+	Graphics card #1 name: GB205M [GeForce RTX 5070 Ti Mobile]
+	Graphics card #1 vendor: NVIDIA Corporation (0x10de)
+	Graphics card #1 VRAM (MiB): 16416.00
+	Graphics card #1 deviceId: 0x2f58
+	Graphics card #1 versionInfo: unknown
+	Graphics card #2 name: Device
+	Graphics card #2 vendor: Intel Corporation (0x8086)
+	Graphics card #2 VRAM (MiB): 0.00
+	Graphics card #2 deviceId: 0x7f2f
+	Graphics card #2 versionInfo: unknown
+	Virtual memory max (MiB): 23693.17
+	Virtual memory used (MiB): 29424.89
+	Swap memory total (MiB): 8192.00
+	Swap memory used (MiB): 5724.95
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 15376.07, total: 15501.18
+	Space in storage for workdir (MiB): available: 444902.28, total: 959270.44
+	JVM Flags: 0 total; 
+	Launched Version: MOD_DEV
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2 GL version 4.6.0 NVIDIA 590.48.01, NVIDIA Corporation
+	Window size: 854x480
+	GFLW Platform: x11
+	GL Caps: Using framebuffer using OpenGL 3.2
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'forge'; Server brand changed to 'forge'
+	Universe: 400921fb54442d18
+	Type: Integrated Server (map_client.txt)
+	Graphics mode: fancy
+	Render Distance: 32/32 chunks
+	Resource Packs: vanilla, neomod:waystones-21.1.19+neoforge-1.21.1 (incompatible), neomod:jade-15.10.5+neoforge (incompatible), neomod:balm-21.0.41+neoforge-1.21.1 (incompatible), mod_resources
+	Current Language: zh_cn
+	Locale: zh_CN
+	System encoding: UTF-8
+	File encoding: UTF-8
+	CPU: 24x Intel(R) Core(TM) Ultra 9 275HX
+	Server Running: true
+	Player Count: 1 / 8; [ServerPlayer['Dev'/9, l='ServerLevel[New World]', x=291.80, y=-60.00, z=105.11]]
+	Active Data Packs: vanilla, mod:forge, mod:reforged (incompatible), mod:jei (incompatible), neomod:jade-15.10.5+neoforge (incompatible), neomod:balm-21.0.41+neoforge-1.21.1 (incompatible), neomod:waystones-21.1.19+neoforge-1.21.1 (incompatible), mod:jade (incompatible), mod:waystones (incompatible), mod:balm (incompatible)
+	Available Data Packs: bundle, mod:balm (incompatible), mod:forge, mod:jade (incompatible), mod:jei (incompatible), mod:reforged (incompatible), mod:waystones (incompatible), neomod:balm-21.0.41+neoforge-1.21.1 (incompatible), neomod:jade-15.10.5+neoforge (incompatible), neomod:waystones-21.1.19+neoforge-1.21.1 (incompatible), trade_rebalance, vanilla
+	Enabled Feature Flags: minecraft:vanilla
+	World Generation: Experimental
+	World Seed: -5992912983777339668
+	ModLauncher: 10.2.4
+	ModLauncher launch target: forge_userdev_client
+	ModLauncher naming: mcp
+	ModLauncher services: 
+		/ slf4jfixer PLUGINSERVICE 
+		/ runtimedistcleaner PLUGINSERVICE 
+		/ runtime_enum_extender PLUGINSERVICE 
+		/ object_holder_definalize PLUGINSERVICE 
+		/ capability_token_subclass PLUGINSERVICE 
+		/ accesstransformer PLUGINSERVICE 
+		/ eventbus PLUGINSERVICE 
+		/ mixin PLUGINSERVICE 
+		/ fml TRANSFORMATIONSERVICE 
+		/ mixin TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		lowcodefml@52
+		minecraft@1.0
+		javafml@52.1.10
+	Mod List: ERR
+	Crash Report UUID: 37d3b483-7a35-45a9-b8de-7e4994852d52
+	FML: 0.0
+	Forge: net.minecraftforge:52.1.10

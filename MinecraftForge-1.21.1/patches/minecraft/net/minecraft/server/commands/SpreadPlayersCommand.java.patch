@@ -1,0 +1,23 @@
+--- a/net/minecraft/server/commands/SpreadPlayersCommand.java
++++ b/net/minecraft/server/commands/SpreadPlayersCommand.java
+@@ -257,11 +_,17 @@
+                 spreadplayerscommand$position = p_138732_[i++];
+             }
+ 
++            var event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportSpreadPlayersCommand(entity,
++                (double)Mth.floor(spreadplayerscommand$position.x) + 0.5D,
++                (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_),
++                (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D
++            );
++            if (!event.isCanceled())
+             entity.teleportTo(
+                 p_138731_,
+-                (double)Mth.floor(spreadplayerscommand$position.x) + 0.5,
+-                (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_),
+-                (double)Mth.floor(spreadplayerscommand$position.z) + 0.5,
++                event.getTargetX(),
++                event.getTargetY(),
++                event.getTargetZ(),
+                 Set.of(),
+                 entity.getYRot(),
+                 entity.getXRot()

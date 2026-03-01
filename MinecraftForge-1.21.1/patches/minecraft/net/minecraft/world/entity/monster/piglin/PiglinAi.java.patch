@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/monster/piglin/PiglinAi.java
++++ b/net/minecraft/world/entity/monster/piglin/PiglinAi.java
+@@ -635,7 +_,7 @@
+     public static boolean isWearingGold(LivingEntity p_34809_) {
+         for (ItemStack itemstack : p_34809_.getArmorAndBodyArmorSlots()) {
+             Item item = itemstack.getItem();
+-            if (item instanceof ArmorItem && ((ArmorItem)item).getMaterial().is(ArmorMaterials.GOLD)) {
++            if (itemstack.makesPiglinsNeutral(p_34809_)) {
+                 return true;
+             }
+         }
+@@ -779,7 +_,7 @@
+     }
+ 
+     private static boolean hasCrossbow(LivingEntity p_34919_) {
+-        return p_34919_.isHolding(Items.CROSSBOW);
++        return p_34919_.isHolding(is -> is.getItem() instanceof net.minecraft.world.item.CrossbowItem);
+     }
+ 
+     private static void admireGoldItem(LivingEntity p_34939_) {
+@@ -791,7 +_,7 @@
+     }
+ 
+     private static boolean isBarterCurrency(ItemStack p_149968_) {
+-        return p_149968_.is(BARTERING_ITEM);
++        return p_149968_.is(BARTERING_ITEM) || p_149968_.isPiglinCurrency();
+     }
+ 
+     private static boolean isFood(ItemStack p_149970_) {

@@ -10,6 +10,7 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -55,13 +56,20 @@ public class Reforged {
 
         // ── 3. Register event listeners ──────────────────────
         context.getModEventBus().addListener(this::commonSetup);
+        context.getModEventBus().addListener(this::onForgeLoadComplete);
         context.getModEventBus().addListener(this::addPackFinders);
 
         LOGGER.info("[ReForged] Bootstrap complete");
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        net.neoforged.neoforge.network.registration.NetworkRegistry.setup();
         LOGGER.info("[ReForged] Common setup phase — NeoForge bridge active");
+    }
+
+    private void onForgeLoadComplete(final FMLLoadCompleteEvent event) {
+        NeoForgeModLoader.dispatchNeoForgeModEvent(new net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent(event));
+        LOGGER.info("[ReForged] Forwarded Forge FMLLoadCompleteEvent to NeoForge mod bus");
     }
 
     /**

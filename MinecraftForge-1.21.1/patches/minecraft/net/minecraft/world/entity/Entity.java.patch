@@ -1,0 +1,579 @@
+--- a/net/minecraft/world/entity/Entity.java
++++ b/net/minecraft/world/entity/Entity.java
+@@ -128,7 +_,7 @@
+ import net.minecraft.world.scores.Team;
+ import org.slf4j.Logger;
+ 
+-public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess, CommandSource, ScoreHolder {
++public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements SyncedDataHolder, Nameable, EntityAccess, CommandSource, ScoreHolder, net.minecraftforge.common.extensions.IForgeEntity {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final String ID_TAG = "id";
+     public static final String PASSENGERS_TAG = "Passengers";
+@@ -149,6 +_,7 @@
+     private static final double LAVA_SLOW_FLOW_SCALE = 0.0023333333333333335;
+     public static final String UUID_TAG = "UUID";
+     private static double viewScale = 1.0;
++    @Deprecated // Forge: Use the getter to allow overriding in mods
+     private final EntityType<?> type;
+     private int id = ENTITY_COUNTER.incrementAndGet();
+     public boolean blocksBuilding;
+@@ -194,8 +_,10 @@
+     public int tickCount;
+     private int remainingFireTicks = -this.getFireImmuneTicks();
+     protected boolean wasTouchingWater;
++    @Deprecated // Forge: Use forgeFluidTypeHeight instead
+     protected Object2DoubleMap<TagKey<Fluid>> fluidHeight = new Object2DoubleArrayMap<>(2);
+     protected boolean wasEyeInWater;
++    @Deprecated // Forge: Use forgeFluidTypeOnEyes instead
+     private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
+     public int invulnerableTime;
+     protected boolean firstTick = true;
+@@ -243,6 +_,7 @@
+     private BlockState inBlockState = null;
+ 
+     public Entity(EntityType<?> p_19870_, Level p_19871_) {
++        super(Entity.class);
+         this.type = p_19870_;
+         this.level = p_19871_;
+         this.dimensions = p_19870_.getDimensions();
+@@ -262,6 +_,8 @@
+         this.entityData = synchedentitydata$builder.build();
+         this.setPos(0.0, 0.0, 0.0);
+         this.eyeHeight = this.dimensions.eyeHeight();
++        net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this);
++        this.gatherCapabilities();
+     }
+ 
+     public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
+@@ -349,6 +_,7 @@
+ 
+     public void remove(Entity.RemovalReason p_146834_) {
+         this.setRemoved(p_146834_);
++        this.invalidateCaps();
+     }
+ 
+     public void onClientRemoval() {
+@@ -465,7 +_,7 @@
+ 
+         if (this.isInLava()) {
+             this.lavaHurt();
+-            this.fallDistance *= 0.5F;
++            this.fallDistance *= this.getFluidFallDistanceModifier(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+         }
+ 
+         this.checkBelowWorld();
+@@ -673,7 +_,7 @@
+                     double d1 = vec3.x;
+                     double d2 = vec3.y;
+                     double d3 = vec3.z;
+-                    this.flyDist = this.flyDist + (float)(vec3.length() * 0.6);
++                    this.flyDist = (float)((double)this.flyDist + vec3.length() * 0.6D);
+                     BlockPos blockpos1 = this.getOnPos();
+                     BlockState blockstate1 = this.level().getBlockState(blockpos1);
+                     boolean flag1 = this.isStateClimbable(blockstate1);
+@@ -717,12 +_,12 @@
+                         this.setRemainingFireTicks(-this.getFireImmuneTicks());
+                     }
+ 
+-                    if (this.wasOnFire && (this.isInPowderSnow || this.isInWaterRainOrBubble())) {
++                    if (this.wasOnFire && (this.isInPowderSnow || this.isInWaterRainOrBubble() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
+                         this.playEntityOnFireExtinguishedSound();
+                     }
+                 }
+ 
+-                if (this.isOnFire() && (this.isInPowderSnow || this.isInWaterRainOrBubble())) {
++                if (this.isOnFire() && (this.isInPowderSnow || this.isInWaterRainOrBubble() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
+                     this.setRemainingFireTicks(-this.getFireImmuneTicks());
+                 }
+ 
+@@ -812,9 +_,7 @@
+                 return blockpos;
+             } else {
+                 BlockState blockstate = this.level().getBlockState(blockpos);
+-                return (!((double)p_216987_ <= 0.5) || !blockstate.is(BlockTags.FENCES))
+-                        && !blockstate.is(BlockTags.WALLS)
+-                        && !(blockstate.getBlock() instanceof FenceGateBlock)
++                return (!((double)p_216987_ <= 0.5) || !blockstate.collisionExtendsVertically(this.level(), blockpos, this))
+                     ? blockpos.atY(Mth.floor(this.position.y - (double)p_216987_))
+                     : blockpos;
+             }
+@@ -1078,19 +_,19 @@
+         return !blockstate.is(BlockTags.INSIDE_STEP_SOUND_BLOCKS) && !blockstate.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS) ? p_278049_ : blockpos;
+     }
+ 
+-    protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_) {
+-        SoundType soundtype = p_277472_.getSoundType();
++    protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_, BlockPos primaryPos, BlockPos secondaryPos) {
++        SoundType soundtype = p_277472_.getSoundType(this.level(), primaryPos, this);
+         this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+-        this.playMuffledStepSound(p_277630_);
++        this.playMuffledStepSound(p_277630_, secondaryPos);
+     }
+ 
+-    protected void playMuffledStepSound(BlockState p_283110_) {
+-        SoundType soundtype = p_283110_.getSoundType();
++    protected void playMuffledStepSound(BlockState p_283110_, BlockPos pos) {
++        SoundType soundtype = p_283110_.getSoundType(this.level(), pos, this);
+         this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.05F, soundtype.getPitch() * 0.8F);
+     }
+ 
+     protected void playStepSound(BlockPos p_20135_, BlockState p_20136_) {
+-        SoundType soundtype = p_20136_.getSoundType();
++        SoundType soundtype = p_20136_.getSoundType(this.level(), p_20135_, this);
+         this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+     }
+ 
+@@ -1241,27 +_,33 @@
+ 
+     public void updateSwimming() {
+         if (this.isSwimming()) {
+-            this.setSwimming(this.isSprinting() && this.isInWater() && !this.isPassenger());
++            this.setSwimming(this.isSprinting() && (this.isInWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.isPassenger());
+         } else {
+-            this.setSwimming(this.isSprinting() && this.isUnderWater() && !this.isPassenger() && this.level().getFluidState(this.blockPosition).is(FluidTags.WATER));
++            this.setSwimming(this.isSprinting() && (this.isUnderWater() || this.canStartSwimming()) && !this.isPassenger());
+         }
+     }
+ 
+     protected boolean updateInWaterStateAndDoFluidPushing() {
+         this.fluidHeight.clear();
++        this.forgeFluidTypeHeight.clear();
+         this.updateInWaterStateAndDoWaterCurrentPushing();
+-        double d0 = this.level().dimensionType().ultraWarm() ? 0.007 : 0.0023333333333333335;
+-        boolean flag = this.updateFluidHeightAndDoFluidPushing(FluidTags.LAVA, d0);
+-        return this.isInWater() || flag;
++        if (!(this.getVehicle() instanceof Boat)) {
++           this.fallDistance *= this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().filter(e -> !e.getKey().isAir() && !e.getKey().isVanilla()).map(e -> this.getFluidFallDistanceModifier(e.getKey())).min(Float::compare).orElse(1F);
++           if (this.isInFluidType((fluidType, height) -> !fluidType.isAir() && !fluidType.isVanilla() && this.canFluidExtinguish(fluidType))) this.clearFire();
++        }
++        return this.isInFluidType();
+     }
+ 
+     void updateInWaterStateAndDoWaterCurrentPushing() {
++        java.util.function.BooleanSupplier updateFluidHeight = () -> this.updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0.014D);
+         if (this.getVehicle() instanceof Boat boat && !boat.isUnderWater()) {
+-            this.wasTouchingWater = false;
+-            return;
++            updateFluidHeight = () -> {
++                this.updateFluidHeightAndDoFluidPushing(state -> this.shouldUpdateFluidWhileBoating(state, boat));
++                return false;
++            };
+         }
+ 
+-        if (this.updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0.014)) {
++        if (updateFluidHeight.getAsBoolean()) {
+             if (!this.wasTouchingWater && !this.firstTick) {
+                 this.doWaterSplashEffect();
+             }
+@@ -1277,6 +_,7 @@
+     private void updateFluidOnEyes() {
+         this.wasEyeInWater = this.isEyeInFluid(FluidTags.WATER);
+         this.fluidOnEyes.clear();
++        this.forgeFluidTypeOnEyes = net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get();
+         double d0 = this.getEyeY();
+         if (this.getVehicle() instanceof Boat boat && !boat.isUnderWater() && boat.getBoundingBox().maxY >= d0 && boat.getBoundingBox().minY <= d0) {
+             return;
+@@ -1286,7 +_,7 @@
+         FluidState fluidstate = this.level().getFluidState(blockpos);
+         double d1 = (double)((float)blockpos.getY() + fluidstate.getHeight(this.level(), blockpos));
+         if (d1 > d0) {
+-            fluidstate.getTags().forEach(this.fluidOnEyes::add);
++            this.forgeFluidTypeOnEyes = fluidstate.getFluidType();
+         }
+     }
+ 
+@@ -1340,12 +_,13 @@
+     }
+ 
+     public boolean canSpawnSprintParticle() {
+-        return this.isSprinting() && !this.isInWater() && !this.isSpectator() && !this.isCrouching() && !this.isInLava() && this.isAlive();
++        return this.isSprinting() && !this.isInWater() && !this.isSpectator() && !this.isCrouching() && !this.isInLava() && this.isAlive() && !this.isInFluidType();
+     }
+ 
+     protected void spawnSprintParticle() {
+         BlockPos blockpos = this.getOnPosLegacy();
+         BlockState blockstate = this.level().getBlockState(blockpos);
++        if (!blockstate.addRunningEffects(level, blockpos, this))
+         if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+             Vec3 vec3 = this.getDeltaMovement();
+             BlockPos blockpos1 = this.blockPosition();
+@@ -1361,7 +_,7 @@
+ 
+             this.level()
+                 .addParticle(
+-                    new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
++                    new BlockParticleOption(ParticleTypes.BLOCK, blockstate).setPos(blockpos),
+                     d0,
+                     this.getY() + 0.1,
+                     d1,
+@@ -1372,12 +_,15 @@
+         }
+     }
+ 
++    @Deprecated // Forge: Use isEyeInFluidType instead
+     public boolean isEyeInFluid(TagKey<Fluid> p_204030_) {
++        if (p_204030_ == FluidTags.WATER) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++        else if (p_204030_ == FluidTags.LAVA) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+         return this.fluidOnEyes.contains(p_204030_);
+     }
+ 
+     public boolean isInLava() {
+-        return !this.firstTick && this.fluidHeight.getDouble(FluidTags.LAVA) > 0.0;
++        return !this.firstTick && this.forgeFluidTypeHeight.getDouble(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get()) > 0.0;
+     }
+ 
+     public void moveRelative(float p_19921_, Vec3 p_19922_) {
+@@ -1711,6 +_,11 @@
+                 p_20241_.putBoolean("HasVisualFire", this.hasVisualFire);
+             }
+ 
++            p_20241_.putBoolean("CanUpdate", canUpdate);
++            CompoundTag caps = serializeCaps(this.registryAccess());
++            if (caps != null) p_20241_.put("ForgeCaps", caps);
++            if (persistentData != null) p_20241_.put("ForgeData", persistentData.copy());
++
+             if (!this.tags.isEmpty()) {
+                 ListTag listtag = new ListTag();
+ 
+@@ -1801,6 +_,9 @@
+                 this.setGlowingTag(p_20259_.getBoolean("Glowing"));
+                 this.setTicksFrozen(p_20259_.getInt("TicksFrozen"));
+                 this.hasVisualFire = p_20259_.getBoolean("HasVisualFire");
++                if (p_20259_.contains("ForgeData", 10)) persistentData = p_20259_.getCompound("ForgeData");
++                if (p_20259_.contains("CanUpdate", 99)) this.canUpdate(p_20259_.getBoolean("CanUpdate"));
++                if (p_20259_.contains("ForgeCaps", 10)) deserializeCaps(this.registryAccess(), p_20259_.getCompound("ForgeCaps"));
+                 if (p_20259_.contains("Tags", 9)) {
+                     this.tags.clear();
+                     ListTag listtag3 = p_20259_.getList("Tags", 8);
+@@ -1885,6 +_,8 @@
+         } else {
+             ItemEntity itementity = new ItemEntity(this.level(), this.getX(), this.getY() + (double)p_19986_, this.getZ(), p_19985_);
+             itementity.setDefaultPickUpDelay();
++            if (captureDrops() != null) captureDrops().add(itementity);
++            else
+             this.level().addFreshEntity(itementity);
+             return itementity;
+         }
+@@ -1952,6 +_,7 @@
+ 
+     public void rideTick() {
+         this.setDeltaMovement(Vec3.ZERO);
++        if (canUpdate())
+         this.tick();
+         if (this.isPassenger()) {
+             this.getVehicle().positionRider(this);
+@@ -2010,6 +_,7 @@
+                 }
+             }
+ 
++            if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_19966_, true)) return false;
+             if (p_19967_ || this.canRide(p_19966_) && p_19966_.canAddPassenger(this)) {
+                 if (this.isPassenger()) {
+                     this.stopRiding();
+@@ -2041,6 +_,7 @@
+     public void removeVehicle() {
+         if (this.vehicle != null) {
+             Entity entity = this.vehicle;
++            if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
+             this.vehicle = null;
+             entity.removePassenger(this);
+         }
+@@ -2090,6 +_,8 @@
+         return this.passengers.isEmpty();
+     }
+ 
++    /** @deprecated Forge: Use {@link #canBeRiddenUnderFluidType(net.minecraftforge.fluids.FluidType, Entity) rider sensitive version} */
++    @Deprecated
+     protected boolean couldAcceptPassenger() {
+         return true;
+     }
+@@ -2274,7 +_,7 @@
+     }
+ 
+     public boolean isVisuallyCrawling() {
+-        return this.isVisuallySwimming() && !this.isInWater();
++        return this.isVisuallySwimming() && !this.isInWater() && !this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType));
+     }
+ 
+     public void setSwimming(boolean p_20283_) {
+@@ -2383,7 +_,7 @@
+             this.igniteForSeconds(8.0F);
+         }
+ 
+-        this.hurt(this.damageSources().lightningBolt(), 5.0F);
++        this.hurt(this.damageSources().lightningBolt(), p_19928_.getDamage());
+     }
+ 
+     public void onAboveBubbleCol(boolean p_20313_) {
+@@ -2478,7 +_,7 @@
+     }
+ 
+     protected Component getTypeName() {
+-        return this.type.getDescription();
++        return this.getType().getDescription(); // Forge: Use getter to allow overriding by mods;
+     }
+ 
+     public boolean is(Entity p_20356_) {
+@@ -2685,6 +_,7 @@
+         return this.stringUUID;
+     }
+ 
++    @Deprecated // Forge: Use FluidType sensitive version
+     public boolean isPushedByFluid() {
+         return true;
+     }
+@@ -3127,9 +_,26 @@
+         return Mth.lerp(p_344421_, this.yRotO, this.yRot);
+     }
+ 
++    @Deprecated // Forge: Use predicate version instead, only for vanilla Tags
+     public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> p_204032_, double p_204033_) {
++        this.updateFluidHeightAndDoFluidPushing(com.google.common.base.Predicates.alwaysTrue());
++        if(p_204032_ == FluidTags.WATER) return this.isInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++        else if (p_204032_ == FluidTags.LAVA) return this.isInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
++        else return false;
++    }
++
++    private static final class FluidCalcs {
++        double height = 0.0D;
++        Vec3 direction = Vec3.ZERO;
++        int count = 0;
++        double height(double height) {
++            return (this.height = this.height >= height ? this.height : height);
++        }
++    }
++
++    public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
+         if (this.touchingUnloadedChunk()) {
+-            return false;
++            return;
+         } else {
+             AABB aabb = this.getBoundingBox().deflate(0.001);
+             int i = Mth.floor(aabb.minX);
+@@ -3141,28 +_,32 @@
+             double d0 = 0.0;
+             boolean flag = this.isPushedByFluid();
+             boolean flag1 = false;
+-            Vec3 vec3 = Vec3.ZERO;
+-            int k1 = 0;
+             BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
++            it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs> fluidPushCalcs = null;
+ 
+             for (int l1 = i; l1 < j; l1++) {
+                 for (int i2 = k; i2 < l; i2++) {
+                     for (int j2 = i1; j2 < j1; j2++) {
+                         blockpos$mutableblockpos.set(l1, i2, j2);
+                         FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                        if (fluidstate.is(p_204032_)) {
+-                            double d1 = (double)((float)i2 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
++                        net.minecraftforge.fluids.FluidType fluidType = fluidstate.getFluidType();
++                        if (!fluidType.isAir() && shouldUpdate.test(fluidstate)) {
++                            double d1 = i2 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
+                             if (d1 >= aabb.minY) {
+                                 flag1 = true;
+-                                d0 = Math.max(d1 - aabb.minY, d0);
++                                if (fluidPushCalcs == null)
++                                    fluidPushCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs>(2);
++                                var interim = fluidPushCalcs.computeIfAbsent(fluidType, type -> new FluidCalcs());
++                                d0 = interim.height(d1 - aabb.minY);
++                                flag = this.isPushedByFluid(fluidType);
+                                 if (flag) {
+                                     Vec3 vec31 = fluidstate.getFlow(this.level(), blockpos$mutableblockpos);
+                                     if (d0 < 0.4) {
+                                         vec31 = vec31.scale(d0);
+                                     }
+ 
+-                                    vec3 = vec3.add(vec31);
+-                                    k1++;
++                                    interim.direction = interim.direction.add(vec31);
++                                    interim.count++;
+                                 }
+                             }
+                         }
+@@ -3170,27 +_,32 @@
+                 }
+             }
+ 
+-            if (vec3.length() > 0.0) {
+-                if (k1 > 0) {
+-                    vec3 = vec3.scale(1.0 / (double)k1);
+-                }
+-
+-                if (!(this instanceof Player)) {
+-                    vec3 = vec3.normalize();
+-                }
+-
+-                Vec3 vec32 = this.getDeltaMovement();
+-                vec3 = vec3.scale(p_204033_);
+-                double d2 = 0.003;
+-                if (Math.abs(vec32.x) < 0.003 && Math.abs(vec32.z) < 0.003 && vec3.length() < 0.0045000000000000005) {
+-                    vec3 = vec3.normalize().scale(0.0045000000000000005);
+-                }
+-
+-                this.setDeltaMovement(this.getDeltaMovement().add(vec3));
++            if (fluidPushCalcs == null) return;
++            for (var entry : fluidPushCalcs.entrySet()) {
++                var vec3 = entry.getValue().direction;
++                var k1 = entry.getValue().count;
++                if (vec3.length() > 0.0) {
++                    if (k1 > 0) {
++                        vec3 = vec3.scale(1.0 / k1);
++                    }
++
++                    if (!(this instanceof Player)) {
++                        vec3 = vec3.normalize();
++                    }
++
++                    Vec3 vec32 = this.getDeltaMovement();
++                    var p_204033_ = this.getFluidMotionScale(entry.getKey());
++                    vec3 = vec3.scale(p_204033_);
++                    double d2 = 0.003;
++                    if (Math.abs(vec32.x) < 0.003 && Math.abs(vec32.z) < 0.003 && vec3.length() < 0.0045000000000000005) {
++                        vec3 = vec3.normalize().scale(0.0045000000000000005);
++                    }
++
++                    this.setDeltaMovement(this.getDeltaMovement().add(vec3));
++                }
++
++                this.setFluidTypeHeight(entry.getKey(), entry.getValue().height);
+             }
+-
+-            this.fluidHeight.put(p_204032_, d0);
+-            return flag1;
+         }
+     }
+ 
+@@ -3203,7 +_,10 @@
+         return !this.level().hasChunksAt(i, k, j, l);
+     }
+ 
++    @Deprecated // Forge: Use getFluidTypeHeight instead
+     public double getFluidHeight(TagKey<Fluid> p_204037_) {
++        if (p_204037_ == FluidTags.WATER) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++        else if (p_204037_ == FluidTags.LAVA) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+         return this.fluidHeight.getDouble(p_204037_);
+     }
+ 
+@@ -3219,7 +_,9 @@
+         return this.dimensions.height();
+     }
+ 
++    private boolean hasExtraSpawnData = this instanceof net.minecraftforge.entity.IEntityAdditionalSpawnData;
+     public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity p_344981_) {
++        if (hasExtraSpawnData) return net.minecraftforge.common.ForgeHooks.getEntitySpawnPacket(this);
+         return new ClientboundAddEntityPacket(this, p_344981_);
+     }
+ 
+@@ -3340,6 +_,11 @@
+ 
+             this.levelCallback.onMove();
+         }
++
++        // Forge - ensure target chunk is loaded.
++        if (this.isAddedToWorld() && !this.level.isClientSide && !this.isRemoved()) {
++            this.level.getChunk((int) Math.floor(p_20344_) >> 4, (int) Math.floor(p_20346_) >> 4);
++        }
+     }
+ 
+     public void checkDespawn() {
+@@ -3493,6 +_,100 @@
+         float f1 = (float)Mth.lerp(d0, (double)this.getXRot(), p_298926_);
+         this.setPos(d1, d2, d3);
+         this.setRot(f, f1);
++    }
++
++    private boolean canUpdate = true;
++    @Override
++    public void canUpdate(boolean value) {
++       this.canUpdate = value;
++    }
++
++    @Override
++    public boolean canUpdate() {
++       return this.canUpdate;
++    }
++
++    private java.util.Collection<ItemEntity> captureDrops = null;
++    @Override
++    public java.util.Collection<ItemEntity> captureDrops() {
++       return captureDrops;
++    }
++
++    @Override
++    public java.util.Collection<ItemEntity> captureDrops(java.util.Collection<ItemEntity> value) {
++       java.util.Collection<ItemEntity> ret = captureDrops;
++       this.captureDrops = value;
++       return ret;
++    }
++
++    private CompoundTag persistentData;
++    @Override
++    public CompoundTag getPersistentData() {
++       if (persistentData == null)
++          persistentData = new CompoundTag();
++       return persistentData;
++    }
++
++    @Override
++    public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {
++       return level.random.nextFloat() < fallDistance - 0.5F
++           && this instanceof LivingEntity
++           && (this instanceof Player || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this))
++           && this.getBbWidth() * this.getBbWidth() * this.getBbHeight() > 0.512F;
++    }
++
++    /**
++     * Internal use for keeping track of entities that are tracked by a world, to
++     * allow guarantees that entity position changes will force a chunk load, avoiding
++     * potential issues with entity desyncing and bad chunk data.
++     */
++    private boolean isAddedToWorld;
++
++    @Override
++    public final boolean isAddedToWorld() { return this.isAddedToWorld; }
++
++    @Override
++    public void onAddedToWorld() { this.isAddedToWorld = true; }
++
++    @Override
++    public void onRemovedFromWorld() { this.isAddedToWorld = false; }
++
++    @Override
++    public void revive() {
++        this.unsetRemoved();
++        this.reviveCaps();
++    }
++
++    protected Object2DoubleMap<net.minecraftforge.fluids.FluidType> forgeFluidTypeHeight = new Object2DoubleArrayMap<>(net.minecraftforge.fluids.FluidType.SIZE.get());
++    private net.minecraftforge.fluids.FluidType forgeFluidTypeOnEyes = net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get();
++    protected final void setFluidTypeHeight(net.minecraftforge.fluids.FluidType type, double height) {
++        this.forgeFluidTypeHeight.put(type, height);
++    }
++
++    @Override
++    public final double getFluidTypeHeight(net.minecraftforge.fluids.FluidType type) {
++        return this.forgeFluidTypeHeight.getDouble(type);
++    }
++
++    @Override
++    public final boolean isInFluidType(java.util.function.BiPredicate<net.minecraftforge.fluids.FluidType, Double> predicate, boolean forAllTypes) {
++       return forAllTypes ? this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().allMatch(e -> predicate.test(e.getKey(), e.getDoubleValue()))
++                          : this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().anyMatch(e -> predicate.test(e.getKey(), e.getDoubleValue()));
++    }
++
++    @Override
++    public final boolean isInFluidType() {
++       return this.forgeFluidTypeHeight.size() > 0;
++    }
++
++    @Override
++    public final net.minecraftforge.fluids.FluidType getEyeInFluidType() {
++        return forgeFluidTypeOnEyes;
++    }
++
++    @Override
++    public net.minecraftforge.fluids.FluidType getMaxHeightFluidType() {
++        return this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().max(java.util.Comparator.comparingDouble(Object2DoubleMap.Entry::getDoubleValue)).map(Object2DoubleMap.Entry::getKey).orElseGet(net.minecraftforge.common.ForgeMod.EMPTY_TYPE);
+     }
+ 
+     public RandomSource getRandom() {

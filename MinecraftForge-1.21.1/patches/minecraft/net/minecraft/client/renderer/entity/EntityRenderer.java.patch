@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/renderer/entity/EntityRenderer.java
++++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
+@@ -94,8 +_,9 @@
+             }
+         }
+ 
+-        if (this.shouldShowName(p_114485_)) {
+-            this.renderNameTag(p_114485_, p_114485_.getDisplayName(), p_114488_, p_114489_, p_114490_, p_114487_);
++        var event = net.minecraftforge.client.event.ForgeEventFactoryClient.fireRenderNameTagEvent(p_114485_, p_114485_.getDisplayName(), this, p_114488_, p_114489_, p_114490_, p_114487_);
++        if (!event.getResult().isDenied() && (event.getResult().isAllowed() || this.shouldShowName(p_114485_))) {
++           this.renderNameTag(p_114485_, event.getContent(), p_114488_, p_114489_, p_114490_, p_114487_);
+         }
+     }
+ 
+@@ -181,7 +_,7 @@
+ 
+     protected void renderNameTag(T p_114498_, Component p_114499_, PoseStack p_114500_, MultiBufferSource p_114501_, int p_114502_, float p_334448_) {
+         double d0 = this.entityRenderDispatcher.distanceToSqr(p_114498_);
+-        if (!(d0 > 4096.0)) {
++        if (net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_114498_, d0)) {
+             Vec3 vec3 = p_114498_.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, p_114498_.getViewYRot(p_334448_));
+             if (vec3 != null) {
+                 boolean flag = !p_114498_.isDiscrete();

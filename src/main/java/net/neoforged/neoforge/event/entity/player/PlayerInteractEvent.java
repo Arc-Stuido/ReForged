@@ -6,7 +6,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.fml.LogicalSide;
 
 /** Wrapper around Forge's {@link net.minecraftforge.event.entity.player.PlayerInteractEvent}. */
 public class PlayerInteractEvent {
@@ -23,6 +25,8 @@ public class PlayerInteractEvent {
     public ItemStack getItemStack() { return delegate.getItemStack(); }
     public BlockPos getPos() { return delegate.getPos(); }
     public Direction getFace() { return delegate.getFace(); }
+    public Level getLevel() { return getEntity().level(); }
+    public LogicalSide getSide() { return getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER; }
 
     public static class EntityInteract extends PlayerInteractEvent {
         private final net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract forgeInteract;

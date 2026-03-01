@@ -1,8 +1,28 @@
 package net.neoforged.fml.event.lifecycle;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.fml.event.IModBusEvent;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 /**
- * Proxy: NeoForge's InterModEnqueueEvent.
+ * NeoForge wrapper for Forge's {@link net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent}.
+ * Send InterModComms messages during this event.
  */
-public class InterModEnqueueEvent extends Event {}
+public class InterModEnqueueEvent extends net.neoforged.bus.api.Event implements IModBusEvent {
+
+    private final net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent delegate;
+
+    /** Wrapper constructor — used by NeoForgeEventBusAdapter to bridge Forge events. */
+    public InterModEnqueueEvent(net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent delegate) {
+        this.delegate = delegate;
+    }
+
+    public CompletableFuture<Void> enqueueWork(Runnable work) {
+        return delegate.enqueueWork(work);
+    }
+
+    public <T> CompletableFuture<T> enqueueWork(Supplier<T> work) {
+        return delegate.enqueueWork(work);
+    }
+}

@@ -6,11 +6,12 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.eventbus.api.Event;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.fml.event.IModBusEvent;
 
 /**
  * Stub: NeoForge GatherDataEvent — fired during data generation.
  */
-public class GatherDataEvent extends Event {
+public class GatherDataEvent extends Event implements IModBusEvent {
     private final DataGenerator generator;
     private final ExistingFileHelper existingFileHelper;
     private final CompletableFuture<HolderLookup.Provider> lookupProvider;

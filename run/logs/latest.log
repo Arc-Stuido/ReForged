@@ -1,0 +1,915 @@
+[013月2026 08:51:37.760] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_client, --version, MOD_DEV, --assetIndex, 17, --assetsDir, /home/xiyu/.gradle/caches/forge_gradle/assets, --gameDir, ., -mixin.config=reforged.mixins.json]
+[013月2026 08:51:37.762] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Ubuntu OpenJDK 64-Bit Server VM 21.0.10+7-Ubuntu-125.10
+[013月2026 08:51:37.762] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.10 by Ubuntu; OS Linux arch amd64 version 6.17.0-14-generic
+[013月2026 08:51:37.835] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[013月2026 08:51:37.918] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
+[013月2026 08:51:38.095] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
+[013月2026 08:51:38.160] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///home/xiyu/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=CLIENT
+[013月2026 08:51:38.251] [EarlyDisplay/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2 GL version 4.6.0 NVIDIA 590.48.01, NVIDIA Corporation
+[013月2026 08:51:38.807] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[013月2026 08:51:39.337] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[013月2026 08:51:39.341] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_client' with arguments [--version, MOD_DEV, --gameDir, ., --assetsDir, /home/xiyu/.gradle/caches/forge_gradle/assets, --assetIndex, 17]
+[013月2026 08:51:39.360] [main/WARN] [mixin/]: Reference map 'reforged.refmap.json' for reforged.mixins.json could not be read. If this is a development environment you can ignore this message
+[013月2026 08:51:40.171] [main/WARN] [oshi.util.FileUtil/]: Configuration conflict: there is more than one oshi.properties file on the classpath: [jar:file:///home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:/home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:///home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:/home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties]
+[013月2026 08:51:40.311] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 226 Datafixer optimizations took 151 milliseconds
+[013月2026 08:51:40.526] [main/WARN] [oshi.util.FileUtil/]: Configuration conflict: there is more than one oshi.architecture.properties file on the classpath: [jar:file:///home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:/home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:///home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:/home/xiyu/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties]
+[013月2026 08:51:40.720] [pool-5-thread-1/WARN] [mixin/]: Method overwrite conflict for getData in reforged.mixins.json:EntityAttachmentHolderMixin, previously written by org.xiyu.reforged.mixin.EntityAttachmentMixin. Skipping method.
+[013月2026 08:51:40.721] [pool-5-thread-1/WARN] [mixin/]: Method overwrite conflict for hasData in reforged.mixins.json:EntityAttachmentHolderMixin, previously written by org.xiyu.reforged.mixin.EntityAttachmentMixin. Skipping method.
+[013月2026 08:51:40.722] [pool-5-thread-1/WARN] [mixin/]: Method overwrite conflict for setData in reforged.mixins.json:EntityAttachmentHolderMixin, previously written by org.xiyu.reforged.mixin.EntityAttachmentMixin. Skipping method.
+[013月2026 08:51:40.723] [pool-5-thread-1/WARN] [mixin/]: Method overwrite conflict for removeData in reforged.mixins.json:EntityAttachmentHolderMixin, previously written by org.xiyu.reforged.mixin.EntityAttachmentMixin. Skipping method.
+[013月2026 08:51:40.726] [pool-5-thread-1/WARN] [mixin/]: Method overwrite conflict for getExistingData in reforged.mixins.json:EntityAttachmentHolderMixin, previously written by org.xiyu.reforged.mixin.EntityAttachmentMixin. Skipping method.
+[013月2026 08:51:42.850] [pool-5-thread-1/INFO] [net.minecraftforge.coremod.CoreMod.reforged/COREMODLOG]: [ReForged] Added setCraftingSize/getMaxWidth/getMaxHeight to ShapedRecipePattern
+[013月2026 08:51:43.552] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/xiyu/下载/ReForged/build/fg_cache/net/minecraftforge/forge/1.21.1-52.1.10_mapped_official_1.21.1/forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[013月2026 08:51:43.553] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/xiyu/下载/ReForged/build/fg_cache/net/minecraftforge/forge/1.21.1-52.1.10_mapped_official_1.21.1/forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar%230!/data/.mcassetsroot' uses unexpected schema
+[013月2026 08:51:43.570] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[013月2026 08:51:43.576] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: Dev
+[013月2026 08:51:43.588] [Render thread/INFO] [net.minecraftforge.coremod.CoreMod.reforged/COREMODLOG]: [ReForged] Added NeoForge-typed constructor bridge to KeyMapping
+[013月2026 08:51:43.655] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.3+5
+[013月2026 08:51:44.067] [modloading-worker-0/INFO] [org.xiyu.reforged.Reforged/]: ========================================
+[013月2026 08:51:44.067] [modloading-worker-0/INFO] [org.xiyu.reforged.Reforged/]:  ReForged v1.0.0 — NeoForge Compatibility Bridge
+[013月2026 08:51:44.068] [modloading-worker-0/INFO] [org.xiyu.reforged.Reforged/]: ========================================
+[013月2026 08:51:44.068] [modloading-worker-0/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] Mods directory: /home/xiyu/下载/ReForged/run/mods
+[013月2026 08:51:44.088] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Found NeoForge mod on classpath: jade-15.10.5+neoforge.jar
+[013月2026 08:51:44.088] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Found NeoForge mod on classpath: waystones-21.1.19+neoforge-1.21.1.jar
+[013月2026 08:51:44.089] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Found NeoForge mod on classpath: balm-21.0.41+neoforge-1.21.1.jar
+[013月2026 08:51:44.089] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Found 3 NeoForge mod JAR(s): [jade-15.10.5+neoforge.jar, waystones-21.1.19+neoforge-1.21.1.jar, balm-21.0.41+neoforge-1.21.1.jar]
+[013月2026 08:51:44.092] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ╔══════════════════════════════════════════════════╗
+[013月2026 08:51:44.092] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ║    NeoForge Mod Compatibility Analysis Report    ║
+[013月2026 08:51:44.092] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ╚══════════════════════════════════════════════════╝
+[013月2026 08:51:44.093] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 52.1.10, for MC 1.21.1 with MCP 20240808.132146
+[013月2026 08:51:44.093] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v52.1.10 Initialized
+[013月2026 08:51:44.150] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[013月2026 08:51:44.219] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ┌──────────────────────────────────────────────────
+[013月2026 08:51:44.220] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Mod: jade (jade-15.10.5+neoforge.jar)
+[013月2026 08:51:44.220] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Classes: 301 | NeoForge API refs: 56 | Compatibility: HIGH (96%)
+[013月2026 08:51:44.220] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ├──────────────────────────────────────────────────
+[013月2026 08:51:44.220] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ API Usage Breakdown:
+[013月2026 08:51:44.221] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Dist / API Marker — 1 refs [✓ SHIMMED]
+[013月2026 08:51:44.222] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Events (Bus API) — 21 refs [✓ SHIMMED]
+[013月2026 08:51:44.222] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   FML (Mod Loading) — 7 refs [✓ SHIMMED]
+[013月2026 08:51:44.222] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Capabilities — 5 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Client Extensions — 17 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Common Extensions — 5 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Fluids — 2 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Items / Crafting — 1 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Network — 4 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   NeoForge SPI — 2 refs [✓ SHIMMED]
+[013月2026 08:51:44.223] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Constructor Patterns: (net.neoforged.bus.api.IEventBus)
+[013月2026 08:51:44.224] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ NeoForge Annotations: 1
+[013月2026 08:51:44.224] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   @net.neoforged.fml.common.Mod
+[013月2026 08:51:44.224] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Unshimmed NeoForge refs (2):
+[013月2026 08:51:44.224] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.energy.IEnergyStorage
+[013月2026 08:51:44.224] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.entity.PartEntity
+[013月2026 08:51:44.224] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.energy (1 class refs)
+[013月2026 08:51:44.224] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.entity (1 class refs)
+[013月2026 08:51:44.225] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Uses reflection (Class.forName/getDeclaredMethod) — dynamic access may fail
+[013月2026 08:51:44.225] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Contains Mixin classes — mixin targets may differ between NeoForge and Forge
+[013月2026 08:51:44.225] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] └──────────────────────────────────────────────────
+[013月2026 08:51:44.233] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager...
+[013月2026 08:51:44.239] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager took 4.117 milliseconds
+[013月2026 08:51:44.309] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ┌──────────────────────────────────────────────────
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Mod: waystones (waystones-21.1.19+neoforge-1.21.1.jar)
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Classes: 289 | NeoForge API refs: 7 | Compatibility: HIGH (100%)
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ├──────────────────────────────────────────────────
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ API Usage Breakdown:
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Events (Bus API) — 1 refs [✓ SHIMMED]
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   FML (Mod Loading) — 4 refs [✓ SHIMMED]
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Registries — 2 refs [✓ SHIMMED]
+[013月2026 08:51:44.310] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Constructor Patterns: (net.neoforged.bus.api.IEventBus)
+[013月2026 08:51:44.311] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ NeoForge Annotations: 1
+[013月2026 08:51:44.311] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   @net.neoforged.fml.common.Mod
+[013月2026 08:51:44.311] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Uses reflection (Class.forName/getDeclaredMethod) — dynamic access may fail
+[013月2026 08:51:44.311] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Contains Mixin classes — mixin targets may differ between NeoForge and Forge
+[013月2026 08:51:44.311] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] └──────────────────────────────────────────────────
+[013月2026 08:51:44.391] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ┌──────────────────────────────────────────────────
+[013月2026 08:51:44.391] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Mod: balm (balm-21.0.41+neoforge-1.21.1.jar)
+[013月2026 08:51:44.391] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Classes: 393 | NeoForge API refs: 170 | Compatibility: HIGH (94%)
+[013月2026 08:51:44.391] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ├──────────────────────────────────────────────────
+[013月2026 08:51:44.391] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ API Usage Breakdown:
+[013月2026 08:51:44.391] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Dist / API Marker — 1 refs [✓ SHIMMED]
+[013月2026 08:51:44.392] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Events (Bus API) — 88 refs [✓ SHIMMED]
+[013月2026 08:51:44.392] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   FML (Mod Loading) — 17 refs [✓ SHIMMED]
+[013月2026 08:51:44.392] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Capabilities — 9 refs [✓ SHIMMED]
+[013月2026 08:51:44.392] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Client Extensions — 51 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Common Extensions — 19 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Fluids — 5 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Items / Crafting — 2 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Network — 6 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   Registries — 4 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   NeoForge SPI — 1 refs [✓ SHIMMED]
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Constructor Patterns: no-arg, (net.neoforged.bus.api.IEventBus)
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ NeoForge Annotations: 2
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   @net.neoforged.bus.api.SubscribeEvent
+[013月2026 08:51:44.393] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   @net.neoforged.fml.common.Mod
+[013月2026 08:51:44.393] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ Unshimmed NeoForge refs (10):
+[013月2026 08:51:44.393] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.energy.IEnergyStorage
+[013月2026 08:51:44.393] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.ServerLifecycleHooks
+[013月2026 08:51:44.393] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.PermissionAPI
+[013月2026 08:51:44.393] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.events.PermissionGatherEvent$Nodes
+[013月2026 08:51:44.394] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContextKey
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.nodes.PermissionNode
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.nodes.PermissionNode$PermissionResolver
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.nodes.PermissionType
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │   ✗ net.neoforged.neoforge.server.permission.nodes.PermissionTypes
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.server.permission.events (1 class refs)
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.server.permission (1 class refs)
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.server (1 class refs)
+[013月2026 08:51:44.413] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.energy (1 class refs)
+[013月2026 08:51:44.414] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Unshimmed package: net.neoforged.neoforge.server.permission.nodes (6 class refs)
+[013月2026 08:51:44.414] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Uses java.util.ServiceLoader — may need service file remapping
+[013月2026 08:51:44.414] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Uses reflection (Class.forName/getDeclaredMethod) — dynamic access may fail
+[013月2026 08:51:44.414] [modloading-worker-0/WARN] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] │ ⚠ Contains Mixin classes — mixin targets may differ between NeoForge and Forge
+[013月2026 08:51:44.414] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] └──────────────────────────────────────────────────
+[013月2026 08:51:44.417] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ═══════════════════════════════════════════════════
+[013月2026 08:51:44.417] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged]  Analysis Summary: 3 mod(s) scanned
+[013月2026 08:51:44.417] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged]    HIGH compatibility:   3
+[013月2026 08:51:44.417] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged]    MEDIUM compatibility: 0
+[013月2026 08:51:44.417] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged]    LOW compatibility:    0
+[013月2026 08:51:44.417] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModAnalyzer/]: [ReForged] ═══════════════════════════════════════════════════
+[013月2026 08:51:44.420] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Extracted JiJ dependency: kuma-api-neoforge-21.0.5+1.21.jar from balm-21.0.41+neoforge-1.21.1.jar
+[013月2026 08:51:44.423] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Opened 677 packages across 9 modules to NeoForge classloader's unnamed module
+[013月2026 08:51:44.435] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Temporarily unfroze root registry for NeoForge mod loading
+[013月2026 08:51:44.486] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Scanned 200 annotations and 301 classes from jade-15.10.5+neoforge.jar
+[013月2026 08:51:44.486] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Loading NeoForge mod: 'jade' (class: snownee.jade.util.CommonProxy)
+[013月2026 08:51:44.498] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'jade', map now has 1 entries: [jade]
+[013月2026 08:51:44.498] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'jade', map now has 1 entries: [jade]
+[013月2026 08:51:44.499] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] Registered 'jade' in Forge mod list
+[013月2026 08:51:44.499] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] ModList injection complete: +1 mods, modFilesMutated=true, fileByIdMutated=true
+[013月2026 08:51:44.505] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: FMLLoadCompleteEvent → FMLLoadCompleteEvent
+[013月2026 08:51:44.506] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for RegisterPayloadHandlersEvent
+[013月2026 08:51:44.507] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: PlayerLoggedInEvent → PlayerLoggedInEvent
+[013月2026 08:51:44.508] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for RegisterCommandsEvent
+[013月2026 08:51:44.512] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: EntityJoinLevelEvent → EntityJoinLevelEvent
+[013月2026 08:51:44.513] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for EntityLeaveLevelEvent
+[013月2026 08:51:44.513] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for ItemTooltipEvent
+[013月2026 08:51:44.515] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Post → Post
+[013月2026 08:51:44.516] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for LoggingOut
+[013月2026 08:51:44.516] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for RegisterClientCommandsEvent
+[013月2026 08:51:44.517] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Key
+[013月2026 08:51:44.519] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Pre
+[013月2026 08:51:44.521] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: BossEventProgress → BossEventProgress
+[013月2026 08:51:44.522] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: BossEventProgress → BossEventProgress
+[013月2026 08:51:44.522] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Post
+[013月2026 08:51:44.523] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Pre
+[013月2026 08:51:44.524] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Post
+[013月2026 08:51:44.524] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: RegisterClientReloadListenersEvent → RegisterClientReloadListenersEvent
+[013月2026 08:51:44.525] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: RegisterKeyMappingsEvent → RegisterKeyMappingsEvent
+[013月2026 08:51:44.531] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] ✓ Successfully loaded NeoForge mod 'jade'
+[013月2026 08:51:44.558] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Scanned 132 annotations and 289 classes from waystones-21.1.19+neoforge-1.21.1.jar
+[013月2026 08:51:44.559] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Loading NeoForge mod: 'waystones' (class: net.blay09.mods.waystones.client.NeoForgeWaystonesClient)
+[013月2026 08:51:44.559] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'waystones', map now has 2 entries: [jade, waystones]
+[013月2026 08:51:44.560] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'waystones', map now has 2 entries: [jade, waystones]
+[013月2026 08:51:44.560] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] Registered 'waystones' in Forge mod list
+[013月2026 08:51:44.560] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] ModList injection complete: +1 mods, modFilesMutated=true, fileByIdMutated=true
+[013月2026 08:51:44.586] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for FurnaceFuelBurnTimeEvent
+[013月2026 08:51:44.588] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for RegisterCommandsEvent
+[013月2026 08:51:44.593] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Nodes
+[013月2026 08:51:44.612] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.initRenderers(RegisterRenderers) → Forge: RegisterRenderers
+[013月2026 08:51:44.612] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.initLayerDefinitions(RegisterLayerDefinitions) → Forge: RegisterLayerDefinitions
+[013月2026 08:51:44.612] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.setupClient(FMLClientSetupEvent) → Forge: FMLClientSetupEvent
+[013月2026 08:51:44.613] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.initBlockColors(Block) → Forge: Block
+[013月2026 08:51:44.613] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.initItemColors(Item) → Forge: Item
+[013月2026 08:51:44.617] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.initParticleProviders(RegisterParticleProvidersEvent) → Forge: RegisterParticleProvidersEvent
+[013月2026 08:51:44.625] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.registerKeyMappings(RegisterKeyMappingsEvent) → Forge: RegisterKeyMappingsEvent
+[013月2026 08:51:44.630] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for ComputeFovModifierEvent
+[013月2026 08:51:44.640] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.640] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.642] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.642] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@fbb61729 (id=waystones:sharestone)
+[013月2026 08:51:44.643] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_plate'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.643] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@30b925e2 (id=waystones:warp_plate)
+[013月2026 08:51:44.644] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.644] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@a8c4e3c7 (id=waystones:portstone)
+[013月2026 08:51:44.698] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: FMLClientSetupEvent → FMLClientSetupEvent
+[013月2026 08:51:44.699] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.699] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@61b65ea6 (id=waystones:waystone_selection)
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_scroll_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@edb182b4 (id=waystones:warp_scroll_selection)
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_stone_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@f5ca1dbe (id=waystones:warp_stone_selection)
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'portstone_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2b207ad4 (id=waystones:portstone_selection)
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'inventory_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d15cddac (id=waystones:inventory_selection)
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'admin_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.700] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@9cd933df (id=waystones:admin_selection)
+[013月2026 08:51:44.701] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'sharestone_selection'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.701] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d3fa5bb6 (id=waystones:sharestone_selection)
+[013月2026 08:51:44.701] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone_modifiers'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.701] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@56ae4596 (id=waystones:waystone_modifiers)
+[013月2026 08:51:44.701] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.701] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.708] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Post
+[013月2026 08:51:44.709] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for Post
+[013月2026 08:51:44.709] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] ✓ Successfully loaded NeoForge mod 'waystones'
+[013月2026 08:51:44.709] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Loading NeoForge mod: 'waystones' (class: net.blay09.mods.waystones.NeoForgeWaystones)
+[013月2026 08:51:44.709] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'waystones', map now has 2 entries: [jade, waystones]
+[013月2026 08:51:44.710] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] ModList injection complete: +1 mods, modFilesMutated=false, fileByIdMutated=false
+[013月2026 08:51:44.713] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped @SubscribeEvent: Registrations.commonSetup(FMLCommonSetupEvent) → Forge: FMLCommonSetupEvent
+[013月2026 08:51:44.738] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Loading → ModConfigEvent
+[013月2026 08:51:44.738] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Reloading → ModConfigEvent
+[013月2026 08:51:44.751] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'force_spawn_in_villages'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.751] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@3df60b4c (id=waystones:force_spawn_in_villages)
+[013月2026 08:51:44.752] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone_activated'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.752] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d42cb6eb (id=waystones:waystone_activated)
+[013月2026 08:51:44.754] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: PlayerLoggedInEvent → PlayerLoggedInEvent
+[013月2026 08:51:44.757] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Pre → LivingDamageEvent
+[013月2026 08:51:44.758] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: RightClickBlock → RightClickBlock
+[013月2026 08:51:44.768] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.768] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.768] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.768] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'mossy_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@f8fff021 (id=waystones:mossy_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'mossy_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@f8fff021 (id=waystones:mossy_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'sandy_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@59299aa3 (id=waystones:sandy_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'sandy_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@59299aa3 (id=waystones:sandy_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'deepslate_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@57dfc1eb (id=waystones:deepslate_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'deepslate_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@57dfc1eb (id=waystones:deepslate_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blackstone_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d3070672 (id=waystones:blackstone_waystone)
+[013月2026 08:51:44.769] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blackstone_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d3070672 (id=waystones:blackstone_waystone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'end_stone_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@7bb99497 (id=waystones:end_stone_waystone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'end_stone_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@7bb99497 (id=waystones:end_stone_waystone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_plate'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@30b925e2 (id=waystones:warp_plate)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_plate'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@30b925e2 (id=waystones:warp_plate)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'white_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@e5954b31 (id=waystones:white_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'white_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@e5954b31 (id=waystones:white_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'orange_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@a04a2f6 (id=waystones:orange_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'orange_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@a04a2f6 (id=waystones:orange_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'magenta_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@c7da37b1 (id=waystones:magenta_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'magenta_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@c7da37b1 (id=waystones:magenta_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_blue_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2600906b (id=waystones:light_blue_portstone)
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_blue_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.770] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2600906b (id=waystones:light_blue_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'yellow_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d6b641bc (id=waystones:yellow_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'yellow_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d6b641bc (id=waystones:yellow_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'lime_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@723287dd (id=waystones:lime_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'lime_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@723287dd (id=waystones:lime_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'pink_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@7eb7843e (id=waystones:pink_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'pink_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@7eb7843e (id=waystones:pink_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'gray_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@b10308eb (id=waystones:gray_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'gray_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@b10308eb (id=waystones:gray_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_gray_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2e64b334 (id=waystones:light_gray_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_gray_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2e64b334 (id=waystones:light_gray_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'cyan_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@494d61ab (id=waystones:cyan_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'cyan_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@494d61ab (id=waystones:cyan_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'purple_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@fc616b04 (id=waystones:purple_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'purple_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@fc616b04 (id=waystones:purple_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blue_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@a89ee622 (id=waystones:blue_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blue_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@a89ee622 (id=waystones:blue_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'brown_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@4370d3fe (id=waystones:brown_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'brown_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@4370d3fe (id=waystones:brown_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'green_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@291e058b (id=waystones:green_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'green_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@291e058b (id=waystones:green_portstone)
+[013月2026 08:51:44.771] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'red_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@b8cad599 (id=waystones:red_portstone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'red_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@b8cad599 (id=waystones:red_portstone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'black_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@9484bb87 (id=waystones:black_portstone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'black_portstone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@9484bb87 (id=waystones:black_portstone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'orange_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@c26e3dda (id=waystones:orange_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'orange_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@c26e3dda (id=waystones:orange_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'magenta_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@bf4b407f (id=waystones:magenta_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'magenta_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@bf4b407f (id=waystones:magenta_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_blue_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@25efff05 (id=waystones:light_blue_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_blue_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@25efff05 (id=waystones:light_blue_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'yellow_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8bf077d4 (id=waystones:yellow_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'yellow_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8bf077d4 (id=waystones:yellow_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'lime_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@5ffcf5d3 (id=waystones:lime_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'lime_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@5ffcf5d3 (id=waystones:lime_sharestone)
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'pink_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.772] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@e4178592 (id=waystones:pink_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'pink_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@e4178592 (id=waystones:pink_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'gray_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@fb3c9685 (id=waystones:gray_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'gray_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@fb3c9685 (id=waystones:gray_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_gray_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2a10355c (id=waystones:light_gray_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'light_gray_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@2a10355c (id=waystones:light_gray_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'cyan_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@6c3d55c5 (id=waystones:cyan_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'cyan_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@6c3d55c5 (id=waystones:cyan_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'purple_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@1baa778c (id=waystones:purple_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'purple_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@1baa778c (id=waystones:purple_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blue_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@f71c602e (id=waystones:blue_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blue_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@f71c602e (id=waystones:blue_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'brown_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@b6882dd2 (id=waystones:brown_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'brown_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@b6882dd2 (id=waystones:brown_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'green_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@86812de5 (id=waystones:green_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'green_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@86812de5 (id=waystones:green_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'red_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@ec6e5f97 (id=waystones:red_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'red_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@ec6e5f97 (id=waystones:red_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'black_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@87f13769 (id=waystones:black_sharestone)
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'black_sharestone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.773] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@87f13769 (id=waystones:black_sharestone)
+[013月2026 08:51:44.776] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'return_scroll'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.776] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d65fcbff (id=waystones:return_scroll)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blank_scroll'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@435a475b (id=waystones:blank_scroll)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'bound_scroll'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@409cfbf1 (id=waystones:bound_scroll)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_scroll'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@fa443a7 (id=waystones:warp_scroll)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_stone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@30e74331 (id=waystones:warp_stone)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'warp_dust'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@5f114c (id=waystones:warp_dust)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'dormant_shard'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@a9244183 (id=waystones:dormant_shard)
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'attuned_shard'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.777] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@6253b27b (id=waystones:attuned_shard)
+[013月2026 08:51:44.778] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'deepslate_shard'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.778] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@cbf3d08f (id=waystones:deepslate_shard)
+[013月2026 08:51:44.778] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'crumbling_attuned_shard'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.778] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@93532d (id=waystones:crumbling_attuned_shard)
+[013月2026 08:51:44.778] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystones'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.778] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@78f60ba0 (id=waystones:waystones)
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'mossy_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@f8fff021 (id=waystones:mossy_waystone)
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'sandy_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@59299aa3 (id=waystones:sandy_waystone)
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'blackstone_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.780] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@d3070672 (id=waystones:blackstone_waystone)
+[013月2026 08:51:44.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'deepslate_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@57dfc1eb (id=waystones:deepslate_waystone)
+[013月2026 08:51:44.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'end_stone_waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@7bb99497 (id=waystones:end_stone_waystone)
+[013月2026 08:51:44.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.782] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: ServerAboutToStartEvent → ServerAboutToStartEvent
+[013月2026 08:51:44.784] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'waystone'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.784] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@8f1c0619 (id=waystones:waystone)
+[013月2026 08:51:44.784] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'attunement'  for mod 'waystones' via Forge DeferredRegister
+[013月2026 08:51:44.784] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@24bd5dcc (id=waystones:attunement)
+[013月2026 08:51:44.785] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: FMLLoadCompleteEvent → FMLLoadCompleteEvent
+[013月2026 08:51:44.790] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 4, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.790] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.790] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 9, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 1, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 1, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 38, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 48, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 1, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 6, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 1, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.791] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'waystones', delegate entries: 2, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.792] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'waystones'
+[013月2026 08:51:44.792] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] ✓ Successfully loaded NeoForge mod 'waystones'
+[013月2026 08:51:44.816] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Scanned 250 annotations and 393 classes from balm-21.0.41+neoforge-1.21.1.jar
+[013月2026 08:51:44.816] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Loading NeoForge mod: 'balm' (class: net.blay09.mods.balm.neoforge.client.NeoForgeBalmClient)
+[013月2026 08:51:44.816] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'balm', map now has 3 entries: [jade, waystones, balm]
+[013月2026 08:51:44.817] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'balm', map now has 3 entries: [jade, waystones, balm]
+[013月2026 08:51:44.817] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] Registered 'balm' in Forge mod list
+[013月2026 08:51:44.817] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] ModList injection complete: +1 mods, modFilesMutated=true, fileByIdMutated=true
+[013月2026 08:51:44.818] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for LoggingOut
+[013月2026 08:51:44.818] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] ✓ Successfully loaded NeoForge mod 'balm'
+[013月2026 08:51:44.818] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Loading NeoForge mod: 'balm' (class: net.blay09.mods.balm.neoforge.NeoForgeBalm)
+[013月2026 08:51:44.818] [modloading-worker-0/INFO] [net.neoforged.fml.ModList/]: [ReForged] Registered NeoModFileInfo for 'balm', map now has 3 entries: [jade, waystones, balm]
+[013月2026 08:51:44.818] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] ModList injection complete: +1 mods, modFilesMutated=false, fileByIdMutated=false
+[013月2026 08:51:44.826] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Loading → ModConfigEvent
+[013月2026 08:51:44.826] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Reloading → ModConfigEvent
+[013月2026 08:51:44.831] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Loading → ModConfigEvent
+[013月2026 08:51:44.831] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: Reloading → ModConfigEvent
+[013月2026 08:51:44.832] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] Registering entry 'balm'  for mod 'balm' via Forge DeferredRegister
+[013月2026 08:51:44.832] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] RegistryObject created: net.minecraftforge.registries.RegistryObject@5c0c000 (id=balm:balm)
+[013月2026 08:51:44.832] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() for mod 'balm', delegate entries: 1, delegate class: net.minecraftforge.registries.DeferredRegister
+[013月2026 08:51:44.832] [modloading-worker-0/INFO] [net.neoforged.neoforge.registries.DeferredRegister/]: [ReForged] DeferredRegister.register() completed for mod 'balm'
+[013月2026 08:51:44.833] [modloading-worker-0/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered wrapped addListener: InterModEnqueueEvent → InterModEnqueueEvent
+[013月2026 08:51:44.836] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] ✓ Successfully loaded NeoForge mod 'balm'
+[013月2026 08:51:44.836] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Re-froze root registry after NeoForge mod loading
+[013月2026 08:51:44.836] [modloading-worker-0/INFO] [org.xiyu.reforged.core.NeoForgeModLoader/]: [ReForged] Loaded 5 NeoForge mod instance(s)
+[013月2026 08:51:44.836] [modloading-worker-0/INFO] [org.xiyu.reforged.core.ModListInjector/]: [ReForged] ModList injection complete: +5 mods, modFilesMutated=false, fileByIdMutated=false
+[013月2026 08:51:44.870] [modloading-worker-0/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] Bootstrap complete
+[013月2026 08:51:45.000] [Render thread/INFO] [ReForged/]: [ReForged] Bridging entity attribute events to NeoForge mods...
+[013月2026 08:51:45.000] [Render thread/INFO] [ReForged/]: [ReForged] EntityAttributeCreationEvent dispatched. Attributes map now has 0 entries.
+[013月2026 08:51:45.016] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] Registering 3 NeoForge JAR(s) as CLIENT_RESOURCES packs
+[013月2026 08:51:45.036] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] ✓ Registered resource pack 'neomod:jade-15.10.5+neoforge' for CLIENT_RESOURCES
+[013月2026 08:51:45.037] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] ✓ Registered resource pack 'neomod:waystones-21.1.19+neoforge-1.21.1' for CLIENT_RESOURCES
+[013月2026 08:51:45.038] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] ✓ Registered resource pack 'neomod:balm-21.0.41+neoforge-1.21.1' for CLIENT_RESOURCES
+[013月2026 08:51:45.312] [Render thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [reforged]
+[013月2026 08:51:45.425] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, neomod:waystones-21.1.19+neoforge-1.21.1, neomod:jade-15.10.5+neoforge, neomod:balm-21.0.41+neoforge-1.21.1, mod_resources
+[013月2026 08:51:45.470] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=jade:receive_data, version=5
+[013月2026 08:51:45.472] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Creating Forge SimpleChannel: jade:reforged_net
+[013月2026 08:51:45.473] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: jade:receive_data (channel=jade, disc=0, flow=CLIENTBOUND)
+[013月2026 08:51:45.476] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Successfully registered payload bridge channel: jade
+[013月2026 08:51:45.477] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=jade:server_ping_v1, version=5
+[013月2026 08:51:45.477] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: jade:server_ping_v1 (channel=jade, disc=1, flow=CLIENTBOUND)
+[013月2026 08:51:45.481] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=jade:request_entity, version=5
+[013月2026 08:51:45.482] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: jade:request_entity (channel=jade, disc=2, flow=SERVERBOUND)
+[013月2026 08:51:45.510] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=jade:request_block, version=5
+[013月2026 08:51:45.512] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: jade:request_block (channel=jade, disc=3, flow=SERVERBOUND)
+[013月2026 08:51:45.514] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=jade:show_overlay, version=5
+[013月2026 08:51:45.514] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: jade:show_overlay (channel=jade, disc=4, flow=CLIENTBOUND)
+[013月2026 08:51:45.518] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:request_manage_waystone_modifiers, version=waystones
+[013月2026 08:51:45.519] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Creating Forge SimpleChannel: waystones:reforged_net
+[013月2026 08:51:45.519] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:request_manage_waystone_modifiers (channel=waystones, disc=0, flow=SERVERBOUND)
+[013月2026 08:51:45.520] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Successfully registered payload bridge channel: waystones
+[013月2026 08:51:45.520] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:edit_waystone, version=waystones
+[013月2026 08:51:45.520] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:edit_waystone (channel=waystones, disc=1, flow=SERVERBOUND)
+[013月2026 08:51:45.520] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:known_waystones, version=waystones
+[013月2026 08:51:45.520] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:known_waystones (channel=waystones, disc=2, flow=CLIENTBOUND)
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:sync_config, version=waystones
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:sync_config (channel=waystones, disc=3, flow=CLIENTBOUND)
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:inventory_button, version=waystones
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:inventory_button (channel=waystones, disc=4, flow=SERVERBOUND)
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:update_waystone, version=waystones
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:update_waystone (channel=waystones, disc=5, flow=CLIENTBOUND)
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:sorting_index, version=waystones
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:sorting_index (channel=waystones, disc=6, flow=CLIENTBOUND)
+[013月2026 08:51:45.521] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:waystone_removed, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:waystone_removed (channel=waystones, disc=7, flow=CLIENTBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:warp_plate_eject_effect, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:warp_plate_eject_effect (channel=waystones, disc=8, flow=CLIENTBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:request_edit_waystone, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:request_edit_waystone (channel=waystones, disc=9, flow=SERVERBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:sort_waystone, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:sort_waystone (channel=waystones, disc=10, flow=SERVERBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:player_waystone_cooldowns, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:player_waystone_cooldowns (channel=waystones, disc=11, flow=CLIENTBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:select_waystone, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:select_waystone (channel=waystones, disc=12, flow=SERVERBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=waystones:teleport_effect, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:teleport_effect (channel=waystones, disc=13, flow=CLIENTBOUND)
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToServer: type=waystones:remove_waystone, version=waystones
+[013月2026 08:51:45.522] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: waystones:remove_waystone (channel=waystones, disc=14, flow=SERVERBOUND)
+[013月2026 08:51:45.523] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadRegistrar/]: [ReForged] PayloadRegistrar.playToClient: type=balm:config, version=2
+[013月2026 08:51:45.523] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Creating Forge SimpleChannel: balm:reforged_net
+[013月2026 08:51:45.523] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[013月2026 08:51:45.523] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Registering payload: balm:config (channel=balm, disc=0, flow=CLIENTBOUND)
+[013月2026 08:51:45.523] [Worker-Main-1/INFO] [org.xiyu.reforged.shim.network.PayloadChannelRegistry/]: [ReForged] Successfully registered payload bridge channel: balm
+[013月2026 08:51:45.523] [Worker-Main-1/INFO] [net.neoforged.neoforge.network.registration.NetworkRegistry/]: [ReForged] NetworkRegistry setup complete
+[013月2026 08:51:45.523] [Worker-Main-1/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] Common setup phase — NeoForge bridge active
+[013月2026 08:51:45.534] [Render thread/INFO] [ReForged/]: [ReForged] Bridging model loader registration to NeoForge mods...
+[013月2026 08:51:45.534] [Render thread/INFO] [ReForged/]: [ReForged] RegisterGeometryLoaders dispatched. No new loaders registered.
+[013月2026 08:51:45.602] [Worker-Main-14/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.1.05.hex, loading
+[013月2026 08:51:45.616] [Worker-Main-7/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_jp_patch-15.1.05.hex, loading
+[013月2026 08:51:46.720] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=6461 forgeClasses=8279
+[013月2026 08:51:46.732] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=1204 forgeClasses=1201
+[013月2026 08:51:46.734] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=179 forgeClasses=981
+[013月2026 08:51:46.735] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=643 forgeClasses=923
+[013月2026 08:51:46.736] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=200 forgeClasses=301
+[013月2026 08:51:46.736] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=132 forgeClasses=289
+[013月2026 08:51:46.736] [Worker-Main-17/INFO] [net.neoforged.neoforgespi.language.ModFileScanData/]: [ReForged DEBUG] wrap() called: forgeAnnotations=250 forgeClasses=393
+[013月2026 08:51:46.762] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.access.AccessibilityPlugin
+[013月2026 08:51:46.774] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from snownee.jade.addon.access.AccessibilityPlugin in 11.01 ms
+[013月2026 08:51:46.778] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.access.AccessibilityPlugin in 15.58 ms
+[013月2026 08:51:46.778] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.core.CorePlugin
+[013月2026 08:51:46.781] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from snownee.jade.addon.core.CorePlugin in 1.846 ms
+[013月2026 08:51:46.781] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.core.CorePlugin in 2.072 ms
+[013月2026 08:51:46.781] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.debug.DebugPlugin
+[013月2026 08:51:46.782] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from snownee.jade.addon.debug.DebugPlugin in 1.178 ms
+[013月2026 08:51:46.783] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.debug.DebugPlugin in 1.421 ms
+[013月2026 08:51:46.783] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.universal.UniversalPlugin
+[013月2026 08:51:46.788] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from snownee.jade.addon.universal.UniversalPlugin in 4.520 ms
+[013月2026 08:51:46.788] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.universal.UniversalPlugin in 4.856 ms
+[013月2026 08:51:46.788] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.vanilla.VanillaPlugin
+[013月2026 08:51:46.797] [Worker-Main-17/INFO] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Registered direct addListener for TagsUpdatedEvent
+[013月2026 08:51:46.803] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from snownee.jade.addon.vanilla.VanillaPlugin in 13.82 ms
+[013月2026 08:51:46.804] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.vanilla.VanillaPlugin in 14.60 ms
+[013月2026 08:51:46.804] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from net.blay09.mods.waystones.compat.JadeIntegration
+[013月2026 08:51:46.804] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from net.blay09.mods.waystones.compat.JadeIntegration in 353.1 μs
+[013月2026 08:51:46.805] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from net.blay09.mods.waystones.compat.JadeIntegration in 602.1 μs
+[013月2026 08:51:46.805] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Start loading plugin from net.blay09.mods.balm.neoforge.compat.hudinfo.NeoForgeJadeModCompat
+[013月2026 08:51:46.805] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Bootstrapped plugin from net.blay09.mods.balm.neoforge.compat.hudinfo.NeoForgeJadeModCompat in 339.2 μs
+[013月2026 08:51:46.805] [Worker-Main-17/INFO] [snownee.jade.Jade/]: Loaded plugin from net.blay09.mods.balm.neoforge.compat.hudinfo.NeoForgeJadeModCompat in 495.2 μs
+[013月2026 08:51:46.820] [Worker-Main-17/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] Forwarded Forge FMLLoadCompleteEvent to NeoForge mod bus
+[013月2026 08:51:47.190] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: AHEAD Current: 52.1.10 Target: null
+[013月2026 08:51:47.613] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
+[013月2026 08:51:47.613] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[013月2026 08:51:47.675] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device HDA Intel PCH 模拟立体声
+[013月2026 08:51:47.676] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
+[013月2026 08:51:47.786] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[013月2026 08:51:47.792] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[013月2026 08:51:47.792] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[013月2026 08:51:47.792] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[013月2026 08:51:47.792] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[013月2026 08:51:47.795] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[013月2026 08:51:47.795] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[013月2026 08:51:47.795] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[013月2026 08:51:47.796] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[013月2026 08:51:47.907] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[013月2026 08:51:47.908] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[013月2026 08:51:47.908] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[013月2026 08:51:47.909] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[013月2026 08:51:47.909] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[013月2026 08:51:47.924] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[013月2026 08:51:47.962] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 jei:textures/atlas/gui.png-atlas
+[013月2026 08:51:51.551] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] Registering 3 NeoForge JAR(s) as SERVER_DATA packs
+[013月2026 08:51:51.551] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] ✓ Registered resource pack 'neomod:jade-15.10.5+neoforge' for SERVER_DATA
+[013月2026 08:51:51.552] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] ✓ Registered resource pack 'neomod:waystones-21.1.19+neoforge-1.21.1' for SERVER_DATA
+[013月2026 08:51:51.552] [Render thread/INFO] [org.xiyu.reforged.Reforged/]: [ReForged] ✓ Registered resource pack 'neomod:balm-21.0.41+neoforge-1.21.1' for SERVER_DATA
+[013月2026 08:51:51.561] [Render thread/INFO] [net.minecraftforge.registries.GameData/REGISTRIES]: Injecting existing registry data into this CLIENT instance
+[013月2026 08:51:52.658] [Render thread/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1337 recipes
+[013月2026 08:51:52.771] [Render thread/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 1446 advancements
+[013月2026 08:51:54.141] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Starting integrated minecraft server version 1.21.1
+[013月2026 08:51:54.141] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[013月2026 08:51:54.217] [Server thread/WARN] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Suppressed Balm ServerAboutToStart config-null handler error; config not ready yet
+[013月2026 08:51:54.373] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[013月2026 08:51:54.587] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: 准备生成区域中：0%
+[013月2026 08:51:54.674] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 291 ms
+[013月2026 08:51:54.677] [Server thread/INFO] [net.minecraftforge.server.permission.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[013月2026 08:51:54.848] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing view distance to 32, from 10
+[013月2026 08:51:54.848] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing simulation distance to 12, from 0
+[013月2026 08:51:55.253] [Render thread/INFO] [net.minecraftforge.common.ForgeHooks/]: Connected to a modded server.
+[013月2026 08:51:55.298] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: Dev[local:E:bf9d11ba] logged in with entity id 9 at (282.0034581069271, -59.310539149209184, 118.4426874252506)
+[013月2026 08:51:55.332] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev加入了游戏
+[013月2026 08:51:56.083] [Render thread/INFO] [mezz.jei.forge.startup.StartEventObserver/]: JEI StartEventObserver received class net.minecraftforge.client.event.ClientPlayerNetworkEvent$LoggingIn
+[013月2026 08:51:56.083] [Render thread/INFO] [mezz.jei.forge.startup.StartEventObserver/]: JEI StartEventObserver transitioning state from DISABLED to ENABLED
+[013月2026 08:51:56.102] [Render thread/INFO] [mezz.jei.forge.startup.StartEventObserver/]: JEI StartEventObserver received class net.minecraftforge.client.event.RecipesUpdatedEvent
+[013月2026 08:51:56.102] [Render thread/INFO] [mezz.jei.forge.startup.StartEventObserver/]: JEI StartEventObserver transitioning state from ENABLED to JEI_STARTED
+[013月2026 08:51:56.102] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Starting JEI...
+[013月2026 08:51:56.109] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering item subtypes...
+[013月2026 08:51:56.114] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering item subtypes took 5.192 milliseconds
+[013月2026 08:51:56.114] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering fluid subtypes...
+[013月2026 08:51:56.116] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering fluid subtypes took 1.852 milliseconds
+[013月2026 08:51:56.119] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering ingredients...
+[013月2026 08:51:56.254] [Render thread/WARN] [mezz.jei.library.plugins.vanilla.ingredients.ItemStackListFactory/]: Item Group has no display items and no search tab display items. Items from this group will be missing from the JEI ingredient list. 传送石碑
+[013月2026 08:51:56.290] [Render thread/INFO] [mezz.jei.library.load.PluginCallerTimerRunnable/]: Registering ingredients: jei:minecraft took 170.0 milliseconds
+[013月2026 08:51:56.291] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering ingredients took 171.2 milliseconds
+[013月2026 08:51:56.292] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering extra ingredients...
+[013月2026 08:51:56.293] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering extra ingredients took 868.2 microseconds
+[013月2026 08:51:56.294] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering search ingredient aliases...
+[013月2026 08:51:56.295] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering search ingredient aliases took 1.093 milliseconds
+[013月2026 08:51:56.314] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering Mod Info...
+[013月2026 08:51:56.315] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering Mod Info took 664.9 microseconds
+[013月2026 08:51:56.336] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering categories...
+[013月2026 08:51:56.348] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering categories took 11.53 milliseconds
+[013月2026 08:51:56.348] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering vanilla category extensions...
+[013月2026 08:51:56.350] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering vanilla category extensions took 1.990 milliseconds
+[013月2026 08:51:56.351] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering recipe catalysts...
+[013月2026 08:51:56.352] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering recipe catalysts took 647.2 microseconds
+[013月2026 08:51:56.352] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building recipe registry...
+[013月2026 08:51:56.359] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building recipe registry took 6.284 milliseconds
+[013月2026 08:51:56.360] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering advanced plugins...
+[013月2026 08:51:56.360] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering advanced plugins took 456.6 microseconds
+[013月2026 08:51:56.361] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering recipes...
+[013月2026 08:51:56.605] [Render thread/INFO] [mezz.jei.library.load.PluginCallerTimerRunnable/]: Registering recipes: jei:minecraft took 243.3 milliseconds
+[013月2026 08:51:56.605] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering recipes took 243.8 milliseconds
+[013月2026 08:51:56.609] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering recipes transfer handlers...
+[013月2026 08:51:56.612] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering recipes transfer handlers took 2.451 milliseconds
+[013月2026 08:51:56.619] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building runtime...
+[013月2026 08:51:56.626] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering gui handlers...
+[013月2026 08:51:56.644] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering gui handlers took 17.64 milliseconds
+[013月2026 08:51:56.648] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering Runtime...
+[013月2026 08:51:56.651] [Render thread/INFO] [mezz.jei.gui.startup.JeiGuiStarter/]: Starting JEI GUI
+[013月2026 08:51:56.651] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building ingredient list...
+[013月2026 08:51:56.685] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building ingredient list took 33.12 milliseconds
+[013月2026 08:51:56.685] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building ingredient filter...
+[013月2026 08:51:56.706] [Render thread/INFO] [mezz.jei.gui.ingredients.IngredientFilter/]: Adding 1688 ingredients
+[013月2026 08:51:56.857] [Render thread/INFO] [mezz.jei.gui.ingredients.IngredientFilter/]: Added 1688 ingredients
+[013月2026 08:51:56.859] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building ingredient filter took 174.1 milliseconds
+[013月2026 08:51:56.998] [Render thread/INFO] [mezz.jei.library.load.PluginCallerTimerRunnable/]: Registering Runtime: jei:forge_gui took 349.4 milliseconds
+[013月2026 08:51:56.999] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Registering Runtime took 350.8 milliseconds
+[013月2026 08:51:57.000] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Building runtime took 381.0 milliseconds
+[013月2026 08:51:57.000] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Sending Runtime...
+[013月2026 08:51:57.001] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Sending Runtime took 995.9 microseconds
+[013月2026 08:51:57.002] [Render thread/INFO] [mezz.jei.core.util.LoggedTimer/]: Starting JEI took 898.9 milliseconds
+[013月2026 08:51:57.026] [Render thread/INFO] [snownee.jade.Jade/]: Received config from the server: 
+[013月2026 08:51:57.031] [Render thread/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 91 advancements
+[013月2026 08:51:57.234] [Render thread/WARN] [net.minecraft.client.multiplayer.ClientPacketListener/]: Received passengers for unknown entity
+[013月2026 08:51:57.235] [Render thread/WARN] [net.minecraft.client.multiplayer.ClientPacketListener/]: Received passengers for unknown entity
+[013月2026 08:51:57.239] [Render thread/WARN] [net.minecraft.client.multiplayer.ClientPacketListener/]: Received passengers for unknown entity
+[013月2026 08:51:57.791] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[013月2026 08:51:57.832] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[013月2026 08:51:57.904] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[013月2026 08:51:57.918] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[013月2026 08:52:02.432] [Render thread/ERROR] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Wrapped addListener handler error for Post: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+java.lang.NoSuchMethodError: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+	at snownee.jade.util.CommonProxy.getDefaultStorage(CommonProxy.java:131) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultStorage(CommonProxy.java:141) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultItemStorage(CommonProxy.java:151) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider$Extension.shouldRequestData(ItemStorageProvider.java:327) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.lookup.WrappedHierarchyLookup.hitsAny(WrappedHierarchyLookup.java:59) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider.shouldRequestData(ItemStorageProvider.java:260) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.lambda$shouldRequestData$0(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:178) ~[?:?]
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:26) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.WailaTickHandler.tickClient(WailaTickHandler.java:169) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onClientTick(ClientProxy.java:197) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at TRANSFORMER/reforged@1.0.0/org.xiyu.reforged.bridge.NeoForgeEventBusAdapter.lambda$handleAddListener$3(NeoForgeEventBusAdapter.java:261) ~[main/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.post(ForgeEventFactory.java:229) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.onPostClientTick(ForgeEventFactory.java:829) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.tick(Minecraft.java:1897) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1147) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:795) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+[013月2026 08:52:02.524] [Render thread/ERROR] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Wrapped addListener handler error for Post: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+java.lang.NoSuchMethodError: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+	at snownee.jade.util.CommonProxy.getDefaultStorage(CommonProxy.java:131) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultStorage(CommonProxy.java:141) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultItemStorage(CommonProxy.java:151) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider$Extension.shouldRequestData(ItemStorageProvider.java:327) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.lookup.WrappedHierarchyLookup.hitsAny(WrappedHierarchyLookup.java:59) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider.shouldRequestData(ItemStorageProvider.java:260) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.lambda$shouldRequestData$0(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:178) ~[?:?]
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:26) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.WailaTickHandler.tickClient(WailaTickHandler.java:169) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onClientTick(ClientProxy.java:197) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at TRANSFORMER/reforged@1.0.0/org.xiyu.reforged.bridge.NeoForgeEventBusAdapter.lambda$handleAddListener$3(NeoForgeEventBusAdapter.java:261) ~[main/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.post(ForgeEventFactory.java:229) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.onPostClientTick(ForgeEventFactory.java:829) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.tick(Minecraft.java:1897) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1147) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:795) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+[013月2026 08:52:02.534] [Render thread/ERROR] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Wrapped addListener handler error for Post: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+java.lang.NoSuchMethodError: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+	at snownee.jade.util.CommonProxy.getDefaultStorage(CommonProxy.java:131) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultStorage(CommonProxy.java:141) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultItemStorage(CommonProxy.java:151) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider$Extension.shouldRequestData(ItemStorageProvider.java:327) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.lookup.WrappedHierarchyLookup.hitsAny(WrappedHierarchyLookup.java:59) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider.shouldRequestData(ItemStorageProvider.java:260) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.lambda$shouldRequestData$0(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:178) ~[?:?]
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:26) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.WailaTickHandler.tickClient(WailaTickHandler.java:169) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onClientTick(ClientProxy.java:197) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at TRANSFORMER/reforged@1.0.0/org.xiyu.reforged.bridge.NeoForgeEventBusAdapter.lambda$handleAddListener$3(NeoForgeEventBusAdapter.java:261) ~[main/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.post(ForgeEventFactory.java:229) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.onPostClientTick(ForgeEventFactory.java:829) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.tick(Minecraft.java:1897) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1147) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:795) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+[013月2026 08:52:02.544] [Render thread/ERROR] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Wrapped addListener handler error for Post: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+java.lang.NoSuchMethodError: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+	at snownee.jade.util.CommonProxy.getDefaultStorage(CommonProxy.java:131) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultStorage(CommonProxy.java:141) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultItemStorage(CommonProxy.java:151) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider$Extension.shouldRequestData(ItemStorageProvider.java:327) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.lookup.WrappedHierarchyLookup.hitsAny(WrappedHierarchyLookup.java:59) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider.shouldRequestData(ItemStorageProvider.java:260) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.lambda$shouldRequestData$0(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:178) ~[?:?]
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:26) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.WailaTickHandler.tickClient(WailaTickHandler.java:169) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onClientTick(ClientProxy.java:197) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at TRANSFORMER/reforged@1.0.0/org.xiyu.reforged.bridge.NeoForgeEventBusAdapter.lambda$handleAddListener$3(NeoForgeEventBusAdapter.java:261) ~[main/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.post(ForgeEventFactory.java:229) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.onPostClientTick(ForgeEventFactory.java:829) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.tick(Minecraft.java:1897) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1147) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:795) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+[013月2026 08:52:02.607] [Render thread/ERROR] [org.xiyu.reforged.bridge.NeoForgeEventBusAdapter/]: [ReForged] Wrapped addListener handler error for Post: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+java.lang.NoSuchMethodError: 'java.lang.Object net.minecraft.world.entity.Entity.getCapability(net.neoforged.neoforge.capabilities.EntityCapability, java.lang.Object)'
+	at snownee.jade.util.CommonProxy.getDefaultStorage(CommonProxy.java:131) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultStorage(CommonProxy.java:141) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.CommonProxy.hasDefaultItemStorage(CommonProxy.java:151) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider$Extension.shouldRequestData(ItemStorageProvider.java:327) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.lookup.WrappedHierarchyLookup.hitsAny(WrappedHierarchyLookup.java:59) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.addon.universal.ItemStorageProvider.shouldRequestData(ItemStorageProvider.java:260) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.lambda$shouldRequestData$0(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:178) ~[?:?]
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?]
+	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?]
+	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:47) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.impl.EntityAccessorClientHandler.shouldRequestData(EntityAccessorClientHandler.java:26) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.overlay.WailaTickHandler.tickClient(WailaTickHandler.java:169) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at snownee.jade.util.ClientProxy.onClientTick(ClientProxy.java:197) ~[jade-15.10.5+neoforge.jar:15.10.5+neoforge]
+	at TRANSFORMER/reforged@1.0.0/org.xiyu.reforged.bridge.NeoForgeEventBusAdapter.lambda$handleAddListener$3(NeoForgeEventBusAdapter.java:261) ~[main/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.doCastFilter(EventBus.java:256) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.lambda$addListener$3(EventBus.java:249) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:302) ~[eventbus-6.2.27.jar:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:288) ~[eventbus-6.2.27.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.post(ForgeEventFactory.java:229) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/net.minecraftforge.forge@52.1.10/net.minecraftforge.event.ForgeEventFactory.onPostClientTick(ForgeEventFactory.java:829) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.tick(Minecraft.java:1897) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1147) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.Minecraft.run(Minecraft.java:795) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.client.main.Main.main(Main.java:228) ~[forge-1.21.1-52.1.10_mapped_official_1.21.1-recomp.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:85) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/net.minecraftforge.fmlloader@1.21.1-52.1.10/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.lambda$makeService$0(CommonLaunchHandler.java:69) ~[fmlloader-1.21.1-52.1.10.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:77) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:97) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:116) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:75) [modlauncher-10.2.4.jar!/:?]
+	at SECURE-BOOTSTRAP/cpw.mods.modlauncher@10.2.4/cpw.mods.modlauncher.BootstrapEntry.main(BootstrapEntry.java:17) [modlauncher-10.2.4.jar!/:?]
+	at net.minecraftforge.bootstrap@2.1.7/net.minecraftforge.bootstrap.Bootstrap.moduleMain(Bootstrap.java:188) [bootstrap-2.1.8.jar!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.minecraftforge.bootstrap.Bootstrap.bootstrapMain(Bootstrap.java:133) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.Bootstrap.start(Bootstrap.java:53) [bootstrap-2.1.8.jar:2.1.8]
+	at net.minecraftforge.bootstrap.ForgeBootstrap.main(ForgeBootstrap.java:19) [bootstrap-2.1.8.jar:2.1.8]
+[013月2026 08:52:04.877] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[013月2026 08:52:04.893] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[013月2026 08:52:05.646] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[013月2026 08:52:05.658] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[013月2026 08:52:05.674] [Render thread/INFO] [mezz.jei.forge.startup.StartEventObserver/]: JEI StartEventObserver received class net.minecraftforge.client.event.ClientPlayerNetworkEvent$LoggingOut
+[013月2026 08:52:05.674] [Render thread/INFO] [mezz.jei.forge.startup.StartEventObserver/]: JEI StartEventObserver transitioning state from JEI_STARTED to DISABLED
+[013月2026 08:52:05.674] [Render thread/INFO] [mezz.jei.library.startup.JeiStarter/]: Stopping JEI
+[013月2026 08:52:05.675] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Sending Runtime Unavailable...
+[013月2026 08:52:05.675] [Render thread/INFO] [mezz.jei.forge.plugins.forge.ForgeGuiPlugin/]: Stopping JEI GUI
+[013月2026 08:52:05.677] [Render thread/INFO] [mezz.jei.library.load.PluginCaller/]: Sending Runtime Unavailable took 1.876 milliseconds
+[013月2026 08:52:05.709] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Dev lost connection: 连接中断
+[013月2026 08:52:05.710] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev退出了游戏
+[013月2026 08:52:05.721] [Server thread/INFO] [net.minecraft.server.network.ServerCommonPacketListenerImpl/]: Stopping singleplayer server as player logged out
+[013月2026 08:52:05.746] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[013月2026 08:52:05.747] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[013月2026 08:52:05.747] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[013月2026 08:52:05.925] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[013月2026 08:52:05.975] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[013月2026 08:52:05.981] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[013月2026 08:52:06.016] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (New World): All chunks are saved
+[013月2026 08:52:06.016] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[013月2026 08:52:06.016] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[013月2026 08:52:06.016] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[013月2026 08:52:09.550] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Stopping!

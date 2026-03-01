@@ -1,0 +1,65 @@
+import net.minecraftforge.gradleutils.PomUtils
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.minecraftforge.licenser'
+    id 'net.minecraftforge.gradleutils'
+}
+
+apply from: rootProject.file('build_shared.gradle')
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
+
+dependencies {
+    compileOnly(libs.nulls)
+
+    implementation(project(':fmlloader'))
+    implementation(project(':fmlcore'))
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': 'net.minecraftforge.lowcodemod',
+            'FMLModType': 'LANGPROVIDER'
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':   'LowCodeMod',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version': '1.0',
+            'Implementation-Title':   project.name,
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': FORGE_VERSION.split('\\.')[0]
+        ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+}
+
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'lowcodelanguage'
+        pom {
+            name = project.name
+            description = 'Language provider for Minecraft Forge that loads resource packs as mods'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+    
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
+}

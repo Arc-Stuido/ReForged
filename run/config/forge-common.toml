@@ -1,0 +1,8 @@
+#General configuration settings
+[general]
+	#A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.
+	#Allowed Values: OFF, ONLY_IN_DEV_ENV, ALWAYS
+	logLegacyTagWarnings = "OFF"
+	#Set this to true to fix BlockPos assertions in game tests to account for rotations and generally behave as they would in 1.21.3.
+	#This is kept in the common config so that development environments that rely on old behavior do not need to continuously set this in a server config.
+	fixGameTestBlockPosAsserts = true

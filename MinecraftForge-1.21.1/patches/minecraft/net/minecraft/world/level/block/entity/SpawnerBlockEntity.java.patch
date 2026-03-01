@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
+@@ -30,6 +_,13 @@
+                 p_155771_.sendBlockUpdated(p_155772_, blockstate, blockstate, 4);
+             }
+         }
++
++
++        @Override
++        @Nullable
++        public BlockEntity getSpawnerBlockEntity(){
++            return SpawnerBlockEntity.this;
++        }
+     };
+ 
+     public SpawnerBlockEntity(BlockPos p_155752_, BlockState p_155753_) {

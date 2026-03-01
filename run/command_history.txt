@@ -1,0 +1,30 @@
+/forge mods
+/tp @e @s
+/fill ~-50 300 ~-50 ~50 300 ~50 lava
+/tick rate 200
+/tp @e @s
+/time set night
+/tp @e @s
+/tick rate 20
+/tp @e @s
+/fill ~-50 300 ~-50 ~50 300 ~50 air
+/fill ~-50 300 ~-50 ~50 300 ~50 minecraft:water
+/tick rate 200
+/tick rate 2000
+/tick rate 20
+/fill ~-50 300 ~-50 ~50 300 ~50 minecraft:air
+/tick rate 2000
+/tick rate 20
+/tp @e @s
+/fill ~-50 290 ~-50 ~50 300 ~50 minecraft:air
+/fill ~-50 295 ~-50 ~50 300 ~50 minecraft:air
+/fill ~-50 297 ~-50 ~50 300 ~50 minecraft:air
+/fill ~-50 298 ~-50 ~50 300 ~50 minecraft:air
+/fill ~-50 296 ~-50 ~50 298 ~50 minecraft:air
+/fill ~-50 293 ~-50 ~50 295 ~50 minecraft:air
+/fill ~-50 290 ~-50 ~50 293 ~50 minecraft:air
+/fill ~-50 291 ~-50 ~50 293 ~50 minecraft:air
+/tp @e @s
+/forge mods
+/fill ~-50 300 ~-50 ~50 300 ~50 minecraft:water
+/forge mods

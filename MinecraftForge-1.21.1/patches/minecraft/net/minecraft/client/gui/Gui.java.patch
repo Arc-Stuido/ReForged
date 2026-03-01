@@ -1,0 +1,116 @@
+--- a/net/minecraft/client/gui/Gui.java
++++ b/net/minecraft/client/gui/Gui.java
+@@ -131,7 +_,7 @@
+     public float vignetteBrightness = 1.0F;
+     private int toolHighlightTimer;
+     private ItemStack lastToolHighlight = ItemStack.EMPTY;
+-    private final DebugScreenOverlay debugOverlay;
++    protected DebugScreenOverlay debugOverlay;
+     private final SubtitleOverlay subtitleOverlay;
+     private final SpectatorGui spectatorGui;
+     private final PlayerTabOverlay tabList;
+@@ -150,7 +_,7 @@
+     private long healthBlinkTime;
+     private float autosaveIndicatorValue;
+     private float lastAutosaveIndicatorValue;
+-    private final LayeredDraw layers = new LayeredDraw();
++    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.VANILLA_ROOT, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_LIST);
+     private float scopeScale;
+ 
+     public Gui(Minecraft p_330021_) {
+@@ -162,14 +_,14 @@
+         this.bossOverlay = new BossHealthOverlay(p_330021_);
+         this.subtitleOverlay = new SubtitleOverlay(p_330021_);
+         this.resetTitleTimes();
+-        LayeredDraw layereddraw = new LayeredDraw()
++        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_STACK, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_LIST)
+             .add(this::renderCameraOverlays)
+             .add(this::renderCrosshair)
+             .add(this::renderHotbarAndDecorations)
+             .add(this::renderExperienceLevel)
+             .add(this::renderEffects)
+             .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
+-        LayeredDraw layereddraw1 = new LayeredDraw()
++        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_SLEEP_STACK,net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_LIST)
+             .add(this::renderDemoOverlay)
+             .add((p_325315_, p_344521_) -> {
+                 if (this.debugOverlay.showDebugScreen()) {
+@@ -186,6 +_,7 @@
+             .add(layereddraw, () -> !p_330021_.options.hideGui)
+             .add(this::renderSleepOverlay)
+             .add(layereddraw1, () -> !p_330021_.options.hideGui);
++        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layers).resolveLayers();
+     }
+ 
+     public void resetTitleTimes() {
+@@ -318,7 +_,7 @@
+             Window window = this.minecraft.getWindow();
+             int i = Mth.floor(this.minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
+             int j = Mth.floor(this.minecraft.mouseHandler.ypos() * (double)window.getGuiScaledHeight() / (double)window.getScreenHeight());
+-            this.chat.render(p_329202_, this.tickCount, i, j, false);
++            net.minecraftforge.client.ForgeHooksClient.onCustomizeChatEvent(p_329202_, this.chat, window, i, j, this.tickCount);
+         }
+     }
+ 
+@@ -434,6 +_,8 @@
+ 
+             for (MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
+                 Holder<MobEffect> holder = mobeffectinstance.getEffect();
++                var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
++                if (!renderer.isVisibleInGui(mobeffectinstance)) continue;
+                 if (mobeffectinstance.showIcon()) {
+                     int i = p_282812_.guiWidth();
+                     int j = 1;
+@@ -463,6 +_,7 @@
+                         }
+                     }
+ 
++                    if (renderer.renderGuiIcon(mobeffectinstance, this, p_282812_, i, j, 0, f)) continue;
+                     TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(holder);
+                     int l1 = i;
+                     int i1 = j;
+@@ -625,6 +_,10 @@
+     }
+ 
+     private void renderSelectedItemName(GuiGraphics p_283501_) {
++        renderSelectedItemName(p_283501_, 0);
++    }
++
++    public void renderSelectedItemName(GuiGraphics p_283501_, int yShift) {
+         this.minecraft.getProfiler().push("selectedItemName");
+         if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
+             MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
+@@ -632,9 +_,13 @@
+                 mutablecomponent.withStyle(ChatFormatting.ITALIC);
+             }
+ 
+-            int i = this.getFont().width(mutablecomponent);
++            Component highlightTip = this.lastToolHighlight.getHighlightTip(mutablecomponent);
++            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
++            if (font == null)
++                font = this.getFont();
++            int i = font.width(highlightTip);
+             int j = (p_283501_.guiWidth() - i) / 2;
+-            int k = p_283501_.guiHeight() - 59;
++            int k = p_283501_.guiHeight() - Math.max(yShift, 59);
+             if (!this.minecraft.gameMode.canHurtPlayer()) {
+                 k += 14;
+             }
+@@ -645,7 +_,7 @@
+             }
+ 
+             if (l > 0) {
+-                p_283501_.drawStringWithBackdrop(this.getFont(), mutablecomponent, j, k, i, FastColor.ARGB32.color(l, -1));
++                p_283501_.drawStringWithBackdrop(font, highlightTip, j, k, i, FastColor.ARGB32.color(l, -1));
+             }
+         }
+ 
+@@ -1146,7 +_,7 @@
+             ItemStack itemstack = this.minecraft.player.getInventory().getSelected();
+             if (itemstack.isEmpty()) {
+                 this.toolHighlightTimer = 0;
+-            } else if (this.lastToolHighlight.isEmpty() || !itemstack.is(this.lastToolHighlight.getItem()) || !itemstack.getHoverName().equals(this.lastToolHighlight.getHoverName())) {
++            } else if (this.lastToolHighlight.isEmpty() || !itemstack.is(this.lastToolHighlight.getItem()) || !itemstack.getHoverName().equals(this.lastToolHighlight.getHoverName()) || !itemstack.getHighlightTip(itemstack.getHoverName()).equals(lastToolHighlight.getHighlightTip(lastToolHighlight.getHoverName()))) {
+                 this.toolHighlightTimer = (int)(40.0 * this.minecraft.options.notificationDisplayTime().get());
+             } else if (this.toolHighlightTimer > 0) {
+                 this.toolHighlightTimer--;

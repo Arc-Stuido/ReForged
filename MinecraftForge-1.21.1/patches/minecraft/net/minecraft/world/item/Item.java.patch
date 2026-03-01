@@ -1,0 +1,137 @@
+--- a/net/minecraft/world/item/Item.java
++++ b/net/minecraft/world/item/Item.java
+@@ -56,9 +_,12 @@
+ import net.minecraft.world.phys.Vec3;
+ import org.slf4j.Logger;
+ 
+-public class Item implements FeatureElement, ItemLike {
++public class Item implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
+     private static final Logger LOGGER = LogUtils.getLogger();
+-    public static final Map<Block, Item> BY_BLOCK = Maps.newHashMap();
++
++    public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, Holder<Item>> STREAM_CODEC =
++        net.minecraft.network.codec.ByteBufCodecs.holderRegistry(net.minecraft.core.registries.Registries.ITEM);
++    public static final Map<Block, Item> BY_BLOCK = net.minecraftforge.registries.GameData.ItemCallbacks.getBlockItemMap();
+     public static final ResourceLocation BASE_ATTACK_DAMAGE_ID = ResourceLocation.withDefaultNamespace("base_attack_damage");
+     public static final ResourceLocation BASE_ATTACK_SPEED_ID = ResourceLocation.withDefaultNamespace("base_attack_speed");
+     public static final int DEFAULT_MAX_STACK_SIZE = 64;
+@@ -95,6 +_,7 @@
+                 LOGGER.error("Item classes should end with Item and {} doesn't.", s);
+             }
+         }
++        initClient();
+     }
+ 
+     @Deprecated
+@@ -102,17 +_,25 @@
+         return this.builtInRegistryHolder;
+     }
+ 
++    @Nullable
++    private DataComponentMap builtComponents = null;
++
+     public DataComponentMap components() {
+-        return this.components;
++        if (builtComponents == null) {
++            builtComponents = net.minecraftforge.common.ForgeHooks.gatherItemComponents(this, components);
++        }
++
++        return builtComponents;
+     }
+ 
+     public int getDefaultMaxStackSize() {
+-        return this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
++        return builtComponents == null ? this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1) : this.builtComponents.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
+     }
+ 
+     public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
+     }
+ 
++    /** @deprecated Forge: {@link net.minecraftforge.common.extensions.IForgeItem#onDestroyed(ItemEntity, DamageSource) Use damage source sensitive version} */
+     public void onDestroyed(ItemEntity p_150887_) {
+     }
+ 
+@@ -238,10 +_,12 @@
+     }
+ 
+     @Nullable
++    @Deprecated // Use ItemStack sensitive version.
+     public final Item getCraftingRemainingItem() {
+         return this.craftingRemainingItem;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version.
+     public boolean hasCraftingRemainingItem() {
+         return this.craftingRemainingItem != null;
+     }
+@@ -297,6 +_,7 @@
+         return p_41436_.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
+     }
+ 
++    /** @deprecated in favor of {@link net.minecraftforge.common.extensions.IForgeItem#getEnchantmentValue(ItemStack)}  */
+     public int getEnchantmentValue() {
+         return 0;
+     }
+@@ -305,6 +_,7 @@
+         return false;
+     }
+ 
++    /** @deprecated in favor of {@link net.minecraftforge.common.extensions.IForgeItem#getDefaultAttributeModifiers(ItemStack)}  */
+     @Deprecated
+     public ItemAttributeModifiers getDefaultAttributeModifiers() {
+         return ItemAttributeModifiers.EMPTY;
+@@ -339,6 +_,30 @@
+         return this.requiredFeatures;
+     }
+ 
++    private Object renderProperties;
++
++    /*
++       DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
++       Call RenderProperties.get instead
++     */
++    public Object getRenderPropertiesInternal() {
++        return renderProperties;
++    }
++
++    private void initClient() {
++        // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
++            initializeClient(properties -> {
++                if (properties == this) {
++                    throw new IllegalStateException("Don't extend IItemRenderProperties in your item, use an anonymous class instead.");
++                }
++                this.renderProperties = properties;
++            });
++        }
++    }
++
++    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) { }
++
+     public static class Properties {
+         private static final Interner<DataComponentMap> COMPONENT_INTERNER = Interners.newStrongInterner();
+         @Nullable
+@@ -439,6 +_,11 @@
+         @Nullable
+         MapItemSavedData mapData(MapId p_335695_);
+ 
++        @Nullable
++        default Level level() {
++            return null;
++        }
++
+         static Item.TooltipContext of(@Nullable final Level p_332083_) {
+             return p_332083_ == null ? EMPTY : new Item.TooltipContext() {
+                 @Override
+@@ -454,6 +_,11 @@
+                 @Override
+                 public MapItemSavedData mapData(MapId p_330171_) {
+                     return p_332083_.getMapData(p_330171_);
++                }
++
++                @Override
++                public Level level() {
++                    return p_332083_;
+                 }
+             };
+         }

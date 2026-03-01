@@ -1,0 +1,124 @@
+--- a/net/minecraft/client/particle/ParticleEngine.java
++++ b/net/minecraft/client/particle/ParticleEngine.java
+@@ -77,11 +_,11 @@
+         ParticleRenderType.TERRAIN_SHEET, ParticleRenderType.PARTICLE_SHEET_OPAQUE, ParticleRenderType.PARTICLE_SHEET_LIT, ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT, ParticleRenderType.CUSTOM
+     );
+     protected ClientLevel level;
+-    private final Map<ParticleRenderType, Queue<Particle>> particles = Maps.newIdentityHashMap();
++    private final Map<ParticleRenderType, Queue<Particle>> particles = Maps.newTreeMap(net.minecraftforge.client.ForgeHooksClient.makeParticleRenderTypeComparator(RENDER_ORDER));
+     private final Queue<TrackingEmitter> trackingEmitters = Queues.newArrayDeque();
+     private final TextureManager textureManager;
+     private final RandomSource random = RandomSource.create();
+-    private final Int2ObjectMap<ParticleProvider<?>> providers = new Int2ObjectOpenHashMap<>();
++    private final Map<ResourceLocation, ParticleProvider<?>> providers = new java.util.HashMap<>();
+     private final Queue<Particle> particlesToAdd = Queues.newArrayDeque();
+     private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> spriteSets = Maps.newHashMap();
+     private final TextureAtlas textureAtlas;
+@@ -212,10 +_,14 @@
+         this.register(ParticleTypes.OMINOUS_SPAWNING, FlyStraightTowardsParticle.OminousSpawnProvider::new);
+     }
+ 
++    /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
++    @Deprecated
+     public <T extends ParticleOptions> void register(ParticleType<T> p_107382_, ParticleProvider<T> p_107383_) {
+-        this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getId(p_107382_), p_107383_);
++        this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107382_), p_107383_);
+     }
+ 
++    /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
++    @Deprecated
+     public <T extends ParticleOptions> void register(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
+         this.register(
+             p_273423_,
+@@ -232,10 +_,12 @@
+         );
+     }
+ 
++    /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
++    @Deprecated
+     public <T extends ParticleOptions> void register(ParticleType<T> p_107379_, ParticleEngine.SpriteParticleRegistration<T> p_107380_) {
+         ParticleEngine.MutableSpriteSet particleengine$mutablespriteset = new ParticleEngine.MutableSpriteSet();
+         this.spriteSets.put(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107379_), particleengine$mutablespriteset);
+-        this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getId(p_107379_), p_107380_.create(particleengine$mutablespriteset));
++        this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107379_), p_107380_.create(particleengine$mutablespriteset));
+     }
+ 
+     @Override
+@@ -361,7 +_,7 @@
+     private <T extends ParticleOptions> Particle makeParticle(
+         T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_
+     ) {
+-        ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.providers.get(BuiltInRegistries.PARTICLE_TYPE.getId(p_107396_.getType()));
++        ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.providers.get(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107396_.getType()));
+         return particleprovider == null
+             ? null
+             : particleprovider.createParticle(p_107396_, this.level, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
+@@ -437,11 +_,19 @@
+         }
+     }
+ 
++
++    /**@deprecated Forge: use {@link #render(LightTexture, Camera, float, net.minecraft.client.renderer.culling.Frustum)} with Frustum as additional parameter*/
++    @Deprecated
+     public void render(LightTexture p_107339_, Camera p_107340_, float p_107341_) {
++        render(p_107339_, p_107340_, p_107341_);
++    }
++
++    public void render(LightTexture p_107339_, Camera p_107340_, float p_107341_, @Nullable net.minecraft.client.renderer.culling.Frustum frustum) {
+         p_107339_.turnOnLightLayer();
+         RenderSystem.enableDepthTest();
+ 
+-        for (ParticleRenderType particlerendertype : RENDER_ORDER) {
++        for (ParticleRenderType particlerendertype : this.particles.keySet()) { // Forge: allow custom IParticleRenderType's
++            if (particlerendertype == ParticleRenderType.NO_RENDER) continue;
+             Queue<Particle> queue = this.particles.get(particlerendertype);
+             if (queue != null && !queue.isEmpty()) {
+                 RenderSystem.setShader(GameRenderer::getParticleShader);
+@@ -449,6 +_,7 @@
+                 BufferBuilder bufferbuilder = particlerendertype.begin(tesselator, this.textureManager);
+                 if (bufferbuilder != null) {
+                     for (Particle particle : queue) {
++                        if (frustum != null && particle.shouldCull() && !frustum.isVisible(particle.getBoundingBox())) continue;
+                         try {
+                             particle.render(bufferbuilder, p_107340_, p_107341_);
+                         } catch (Throwable throwable) {
+@@ -480,7 +_,7 @@
+     }
+ 
+     public void destroy(BlockPos p_107356_, BlockState p_107357_) {
+-        if (!p_107357_.isAir() && p_107357_.shouldSpawnTerrainParticles()) {
++        if (!p_107357_.isAir() && !net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_107357_).addDestroyEffects(p_107357_, this.level, p_107356_, this)) {
+             VoxelShape voxelshape = p_107357_.getShape(this.level, p_107356_);
+             double d0 = 0.25;
+             voxelshape.forAllBoxes(
+@@ -513,6 +_,7 @@
+                                         p_107357_,
+                                         p_107356_
+                                     )
++                                    .updateSprite(p_107357_, p_107356_)
+                                 );
+                             }
+                         }
+@@ -522,6 +_,13 @@
+         }
+     }
+ 
++    public void addBlockHitEffects(BlockPos pos, net.minecraft.world.phys.BlockHitResult target) {
++        var state = level.getBlockState(pos);
++        if (!net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(state).addHitEffects(state, level, target, this))
++            crack(pos, target.getDirection());
++    }
++
++    @Deprecated // Forge - Use addBlockHitEffects as it has more context and gives more control to modders
+     public void crack(BlockPos p_107368_, Direction p_107369_) {
+         BlockState blockstate = this.level.getBlockState(p_107368_);
+         if (blockstate.getRenderShape() != RenderShape.INVISIBLE && blockstate.shouldSpawnTerrainParticles()) {
+@@ -557,7 +_,7 @@
+                 d0 = (double)i + aabb.maxX + 0.1F;
+             }
+ 
+-            this.add(new TerrainParticle(this.level, d0, d1, d2, 0.0, 0.0, 0.0, blockstate, p_107368_).setPower(0.2F).scale(0.6F));
++            this.add(new TerrainParticle(this.level, d0, d1, d2, 0.0, 0.0, 0.0, blockstate, p_107368_).updateSprite(blockstate, p_107368_).setPower(0.2F).scale(0.6F));
+         }
+     }
+ 

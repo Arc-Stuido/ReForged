@@ -1,0 +1,35 @@
+--- a/net/minecraft/server/level/ChunkMap.java
++++ b/net/minecraft/server/level/ChunkMap.java
+@@ -388,6 +_,7 @@
+                 this.modified = true;
+             }
+ 
++            net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.level, p_140177_, p_140180_, p_140178_, p_140179_);
+             return p_140179_;
+         }
+     }
+@@ -498,6 +_,7 @@
+                 if (this.pendingUnloads.remove(p_140182_, p_140183_) && chunkaccess != null) {
+                     if (chunkaccess instanceof LevelChunk levelchunk) {
+                         levelchunk.setLoaded(false);
++                        net.minecraftforge.event.ForgeEventFactory.onChunkUnload(chunkaccess);
+                     }
+ 
+                     this.save(chunkaccess);
+@@ -744,6 +_,7 @@
+ 
+                 this.level.getProfiler().incrementCounter("chunkSave");
+                 CompoundTag compoundtag = ChunkSerializer.write(this.level, p_140259_);
++                net.minecraftforge.event.ForgeEventFactory.onChunkDataSave(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.level, compoundtag);
+                 this.write(chunkpos, compoundtag).exceptionally(p_341222_ -> {
+                     this.level.getServer().reportChunkSaveFailure(p_341222_, this.storageInfo(), chunkpos);
+                     return null;
+@@ -1061,7 +_,7 @@
+     }
+ 
+     protected void addEntity(Entity p_140200_) {
+-        if (!(p_140200_ instanceof EnderDragonPart)) {
++        if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
+             EntityType<?> entitytype = p_140200_.getType();
+             int i = entitytype.clientTrackingRange() * 16;
+             if (i != 0) {

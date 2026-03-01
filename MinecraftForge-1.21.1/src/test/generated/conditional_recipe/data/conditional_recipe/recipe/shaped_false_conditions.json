@@ -1,0 +1,28 @@
+{
+  "type": "forge:conditional",
+  "forge:condition": {
+    "type": "forge:false"
+  },
+  "recipes": [
+    {
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "X": {
+            "item": "minecraft:dirt"
+          }
+        },
+        "pattern": [
+          "XXX",
+          "XXX",
+          "XXX"
+        ],
+        "result": {
+          "count": 64,
+          "id": "minecraft:diamond_block"
+        }
+      }
+    }
+  ]
+}

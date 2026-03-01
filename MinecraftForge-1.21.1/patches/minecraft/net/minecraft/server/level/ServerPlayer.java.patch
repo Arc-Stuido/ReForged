@@ -1,0 +1,245 @@
+--- a/net/minecraft/server/level/ServerPlayer.java
++++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -162,7 +_,8 @@
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import org.slf4j.Logger;
+ 
+-public class ServerPlayer extends Player {
++public class ServerPlayer extends Player implements net.minecraftforge.common.extensions.IForgeServerPlayer {
++    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
+     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
+@@ -653,6 +_,7 @@
+ 
+     @Override
+     public void die(DamageSource p_9035_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_9035_)) return;
+         this.gameEvent(GameEvent.ENTITY_DIE);
+         boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
+         if (flag) {
+@@ -849,6 +_,7 @@
+     @Nullable
+     @Override
+     public Entity changeDimension(DimensionTransition p_344993_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_344993_.newLevel().dimension())) return null;
+         if (this.isRemoved()) {
+             return null;
+         } else {
+@@ -879,7 +_,7 @@
+                 PlayerList playerlist = this.server.getPlayerList();
+                 playerlist.sendPlayerPermissionLevel(this);
+                 serverlevel1.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-                this.unsetRemoved();
++                this.revive();
+                 serverlevel1.getProfiler().push("moving");
+                 if (resourcekey == Level.OVERWORLD && serverlevel.dimension() == Level.NETHER) {
+                     this.enteredNetherPosition = this.position();
+@@ -908,6 +_,7 @@
+                 this.lastSentExp = -1;
+                 this.lastSentHealth = -1.0F;
+                 this.lastSentFood = -1;
++                net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, resourcekey, p_344993_.newLevel().dimension());
+                 return this;
+             }
+         }
+@@ -943,6 +_,9 @@
+ 
+     @Override
+     public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
++        var optAt = java.util.Optional.of(p_9115_);
++        var ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
++        if (ret != null) return Either.left(ret);
+         Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
+         if (this.isSleeping() || !this.isAlive()) {
+             return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
+@@ -954,7 +_,7 @@
+             return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
+         } else {
+             this.setRespawnPosition(this.level().dimension(), p_9115_, this.getYRot(), false, true);
+-            if (this.level().isDay()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.onSleepingTimeCheck(this, optAt)) {
+                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+             } else {
+                 if (!this.isCreative()) {
+@@ -1000,6 +_,7 @@
+     }
+ 
+     private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
++        if (p_9118_ == null) return false;
+         return this.isReachableBedBlock(p_9117_) || this.isReachableBedBlock(p_9117_.relative(p_9118_.getOpposite()));
+     }
+ 
+@@ -1114,6 +_,7 @@
+                 this.connection.send(new ClientboundOpenScreenPacket(abstractcontainermenu.containerId, abstractcontainermenu.getType(), p_9033_.getDisplayName()));
+                 this.initMenu(abstractcontainermenu);
+                 this.containerMenu = abstractcontainermenu;
++                net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
+                 return OptionalInt.of(this.containerCounter);
+             }
+         }
+@@ -1163,6 +_,7 @@
+     public void doCloseContainer() {
+         this.containerMenu.removed(this);
+         this.inventoryMenu.transferState(this.containerMenu);
++        net.minecraftforge.event.ForgeEventFactory.onPlayerCloseContainer(this, this.containerMenu);
+         this.containerMenu = this.inventoryMenu;
+     }
+ 
+@@ -1395,6 +_,15 @@
+         this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
+         this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
+         this.setLastDeathLocation(p_9016_.getLastDeathLocation());
++
++        //Copy over a section of the Entity Data from the old player.
++        //Allows mods to specify data that persists after players respawn.
++        CompoundTag old = p_9016_.getPersistentData();
++        if (old.contains(PERSISTED_NBT_TAG))
++            getPersistentData().put(PERSISTED_NBT_TAG, old.get(PERSISTED_NBT_TAG));
++        net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
++        this.tabListHeader = p_9016_.tabListHeader;
++        this.tabListFooter = p_9016_.tabListFooter;
+     }
+ 
+     @Override
+@@ -1496,6 +_,7 @@
+ 
+     public boolean setGameMode(GameType p_143404_) {
+         boolean flag = this.isSpectator();
++        p_143404_ = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.gameMode.getGameModeForPlayer(), p_143404_);
+         if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
+             return false;
+         } else {
+@@ -1642,6 +_,9 @@
+     public void setCamera(@Nullable Entity p_9214_) {
+         Entity entity = this.getCamera();
+         this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
++        while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity) {
++            this.camera = partEntity.getParent(); // FORGE: fix MC-46486
++        }
+         if (entity != this.camera) {
+             if (this.camera.level() instanceof ServerLevel serverlevel) {
+                 this.teleportTo(
+@@ -1680,7 +_,11 @@
+ 
+     @Nullable
+     public Component getTabListDisplayName() {
+-        return null;
++        if (!this.hasTabListName) {
++            this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++            this.hasTabListName = true;
++        }
++        return this.tabListDisplayName;
+     }
+ 
+     @Override
+@@ -1733,6 +_,9 @@
+     }
+ 
+     public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.OVERWORLD : p_9159_, p_9160_, p_9162_)) {
++            return;
++        }
+         if (p_9160_ != null) {
+             boolean flag = p_9160_.equals(this.respawnPosition) && p_9159_.equals(this.respawnDimension);
+             if (p_9163_ && !flag) {
+@@ -1790,6 +_,9 @@
+         if (itementity == null) {
+             return null;
+         } else {
++            if (captureDrops() != null)
++                captureDrops().add(itementity);
++            else
+             this.level().addFreshEntity(itementity);
+             ItemStack itemstack = itementity.getItem();
+             if (p_9087_) {
+@@ -1861,9 +_,12 @@
+ 
+     public boolean drop(boolean p_182295_) {
+         Inventory inventory = this.getInventory();
++        ItemStack selected = inventory.getSelected();
++        if (selected.isEmpty() || !selected.onDroppedByPlayer(this)) return false;
++        if (isUsingItem() && getUsedItemHand() == InteractionHand.MAIN_HAND && (p_182295_ || selected.getCount() == 1)) stopUsingItem(); // Forge: fix MC-231097 on the serverside
+         ItemStack itemstack = inventory.removeFromSelected(p_182295_);
+         this.containerMenu.findSlot(inventory, inventory.selected).ifPresent(p_287377_ -> this.containerMenu.setRemoteSlot(p_287377_, inventory.getSelected()));
+-        return this.drop(itemstack, false, true) != null;
++        return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, itemstack, true) != null;
+     }
+ 
+     public boolean allowsListing() {
+@@ -1955,6 +_,75 @@
+     @Nullable
+     public BlockPos getRaidOmenPosition() {
+         return this.raidOmenPosition;
++    }
++
++    /**
++     * Returns the language last reported by the player as their local language.
++     * Defaults to en_us if the value is unknown.
++     */
++    public String getLanguage() {
++       return this.language;
++    }
++
++    private Component tabListHeader = Component.empty();
++    private Component tabListFooter = Component.empty();
++
++    public Component getTabListHeader() {
++        return this.tabListHeader;
++    }
++
++    /**
++     * Set the tab list header while preserving the footer.
++     *
++     * @param header the new header, or {@link Component#empty()} to clear
++     */
++    public void setTabListHeader(final Component header) {
++        this.setTabListHeaderFooter(header, this.tabListFooter);
++    }
++
++    public Component getTabListFooter() {
++        return this.tabListFooter;
++    }
++
++    /**
++     * Set the tab list footer while preserving the header.
++     *
++     * @param footer the new footer, or {@link Component#empty()} to clear
++     */
++    public void setTabListFooter(final Component footer) {
++        this.setTabListHeaderFooter(this.tabListHeader, footer);
++    }
++
++    /**
++     * Set the tab list header and footer at once.
++     *
++     * @param header the new header, or {@link Component#empty()} to clear
++     * @param footer the new footer, or {@link Component#empty()} to clear
++     */
++    public void setTabListHeaderFooter(final Component header, final Component footer) {
++        if (java.util.Objects.equals(header, this.tabListHeader)
++            && java.util.Objects.equals(footer, this.tabListFooter)) {
++            return;
++        }
++
++        this.tabListHeader = java.util.Objects.requireNonNull(header, "header");
++        this.tabListFooter = java.util.Objects.requireNonNull(footer, "footer");
++
++        this.connection.send(new net.minecraft.network.protocol.game.ClientboundTabListPacket(header, footer));
++    }
++
++    // We need this as tablistDisplayname may be null even if the event was fired.
++    private boolean hasTabListName = false;
++    private Component tabListDisplayName = null;
++    /**
++     * Force the name displayed in the tab list to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat}.
++     */
++    public void refreshTabListName() {
++        Component oldName = this.tabListDisplayName;
++        this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++        if (!java.util.Objects.equals(oldName, this.tabListDisplayName)) {
++            this.getServer().getPlayerList().broadcastAll(new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this));
++        }
+     }
+ 
+     @Override

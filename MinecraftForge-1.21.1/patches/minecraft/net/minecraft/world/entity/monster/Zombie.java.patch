@@ -1,0 +1,75 @@
+--- a/net/minecraft/world/entity/monster/Zombie.java
++++ b/net/minecraft/world/entity/monster/Zombie.java
+@@ -257,6 +_,7 @@
+     }
+ 
+     protected void doUnderWaterConversion() {
++        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) return;
+         this.convertToZombieType(EntityType.DROWNED);
+         if (!this.isSilent()) {
+             this.level().levelEvent(null, 1040, this.blockPosition(), 0);
+@@ -268,6 +_,7 @@
+         if (zombie != null) {
+             zombie.handleAttributes(zombie.level().getCurrentDifficultyAt(zombie.blockPosition()).getSpecialMultiplier());
+             zombie.setCanBreakDoors(zombie.supportsBreakDoorGoal() && this.canBreakDoors());
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombie);
+         }
+     }
+ 
+@@ -288,15 +_,25 @@
+                 livingentity = (LivingEntity)p_34288_.getEntity();
+             }
+ 
+-            if (livingentity != null
++            var vanilla = (livingentity != null
+                 && this.level().getDifficulty() == Difficulty.HARD
+                 && (double)this.random.nextFloat() < this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
+-                && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
++                && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING));
++
+                 int i = Mth.floor(this.getX());
+                 int j = Mth.floor(this.getY());
+                 int k = Mth.floor(this.getZ());
+-                Zombie zombie = new Zombie(this.level());
+-
++
++            var event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, level(), i, j, k, livingentity, this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE));
++
++            Zombie zombie = null;
++            if (event.getResult().isAllowed()) {
++                zombie = event.getCustomSummonedAid() != null ? event.getCustomSummonedAid() : EntityType.ZOMBIE.create(this.level());
++            } else if (vanilla && event.getResult().isDefault()) {
++                zombie = EntityType.ZOMBIE.create(this.level());
++            }
++
++            if (zombie != null) {
+                 for (int l = 0; l < 50; l++) {
+                     int i1 = i + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
+                     int j1 = j + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
+@@ -310,6 +_,7 @@
+                             && this.level().isUnobstructed(zombie)
+                             && this.level().noCollision(zombie)
+                             && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
++                            if (livingentity != null)
+                             zombie.setTarget(livingentity);
+                             zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, null);
+                             serverlevel.addFreshEntityWithPassengers(zombie);
+@@ -407,6 +_,10 @@
+                 return flag;
+             }
+ 
++            if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {})) {
++                return flag;
++            }
++
+             ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
+             if (zombievillager != null) {
+                 zombievillager.finalizeSpawn(
+@@ -416,6 +_,7 @@
+                 zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
+                 zombievillager.setTradeOffers(villager.getOffers().copy());
+                 zombievillager.setVillagerXp(villager.getVillagerXp());
++                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
+                 if (!this.isSilent()) {
+                     p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
+                 }

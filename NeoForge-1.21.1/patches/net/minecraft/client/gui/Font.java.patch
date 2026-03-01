@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/Font.java
++++ b/net/minecraft/client/gui/Font.java
+@@ -327,6 +_,8 @@
+         return this.splitter;
+     }
+ 
++    @Override public Font self() { return this; }
++
+     @OnlyIn(Dist.CLIENT)
+     public static enum DisplayMode {
+         NORMAL,

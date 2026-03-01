@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/level/storage/DimensionDataStorage.java
++++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
+@@ -63,7 +_,7 @@
+     }
+ 
+     @Nullable
+-    private <T extends SavedData> T readSavedData(BiFunction<CompoundTag, HolderLookup.Provider, T> p_324609_, DataFixTypes p_295832_, String p_164870_) {
++    private <T extends SavedData> T readSavedData(BiFunction<CompoundTag, HolderLookup.Provider, T> p_324609_, @Nullable DataFixTypes p_295832_, String p_164870_) {
+         try {
+             File file1 = this.getDataFile(p_164870_);
+             if (file1.exists()) {
+@@ -81,7 +_,7 @@
+         this.cache.put(p_164856_, p_164857_);
+     }
+ 
+-    public CompoundTag readTagFromDisk(String p_78159_, DataFixTypes p_295038_, int p_78160_) throws IOException {
++    public CompoundTag readTagFromDisk(String p_78159_, @Nullable DataFixTypes p_295038_, int p_78160_) throws IOException {
+         File file1 = this.getDataFile(p_78159_);
+ 
+         CompoundTag compoundtag1;
+@@ -98,9 +_,18 @@
+                 }
+             }
+ 
+-            int i = NbtUtils.getDataVersion(compoundtag, 1343);
+-            compoundtag1 = p_295038_.update(this.fixerUpper, compoundtag, i, p_78160_);
++            if (p_295038_ != null) {
++                int i = NbtUtils.getDataVersion(compoundtag, 1343);
++                compoundtag1 = p_295038_.update(this.fixerUpper, compoundtag, i, p_78160_);
++            } else {
++                compoundtag1 = compoundtag;
++            }
+         }
++
++        // Neo: delete any temporary files so that we don't inflate disk space unnecessarily.
++        net.neoforged.neoforge.common.IOUtilities.withIOWorker(() -> {
++            net.neoforged.neoforge.common.IOUtilities.tryCleanupTempFiles(this.dataFolder.toPath(), p_78159_);
++        });
+ 
+         return compoundtag1;
+     }

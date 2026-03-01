@@ -1,0 +1,20 @@
+--- a/net/minecraft/network/protocol/common/ClientboundCustomPayloadPacket.java
++++ b/net/minecraft/network/protocol/common/ClientboundCustomPayloadPacket.java
+@@ -35,7 +_,7 @@
+ public record ClientboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ClientCommonPacketListener> {
+     private static final int MAX_PAYLOAD_SIZE = 1048576;
+     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundCustomPayloadPacket> GAMEPLAY_STREAM_CODEC = CustomPacketPayload.<RegistryFriendlyByteBuf>codec(
+-            p_330149_ -> DiscardedPayload.codec(p_330149_, 1048576),
++            p_330149_ -> net.minecraftforge.common.ForgeHooks.getCustomPayloadCodec(p_330149_, 1048576),
+             Util.make(
+                 Lists.newArrayList(
+                     new CustomPacketPayload.TypeAndCodec<>(BrandPayload.TYPE, BrandPayload.STREAM_CODEC),
+@@ -64,7 +_,7 @@
+         )
+         .map(ClientboundCustomPayloadPacket::new, ClientboundCustomPayloadPacket::payload);
+     public static final StreamCodec<FriendlyByteBuf, ClientboundCustomPayloadPacket> CONFIG_STREAM_CODEC = CustomPacketPayload.<FriendlyByteBuf>codec(
+-            p_331803_ -> DiscardedPayload.codec(p_331803_, 1048576),
++            p_331803_ -> net.minecraftforge.common.ForgeHooks.getCustomPayloadCodec(p_331803_, 1048576),
+             List.of(new CustomPacketPayload.TypeAndCodec<>(BrandPayload.TYPE, BrandPayload.STREAM_CODEC))
+         )
+         .map(ClientboundCustomPayloadPacket::new, ClientboundCustomPayloadPacket::payload);

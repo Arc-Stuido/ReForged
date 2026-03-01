@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/item/ShieldItem.java
++++ b/net/minecraft/world/item/ShieldItem.java
+@@ -58,4 +_,9 @@
+     public EquipmentSlot getEquipmentSlot() {
+         return EquipmentSlot.OFFHAND;
+     }
++
++    @Override
++    public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++        return net.minecraftforge.common.ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
++    }
+ }

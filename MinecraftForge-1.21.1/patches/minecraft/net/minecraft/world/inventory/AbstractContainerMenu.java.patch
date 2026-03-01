@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/inventory/AbstractContainerMenu.java
++++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -401,6 +_,7 @@
+                 ItemStack itemstack10 = this.getCarried();
+                 p_150434_.updateTutorialInventoryAction(itemstack10, slot7.getItem(), clickaction);
+                 if (!this.tryItemClickBehaviourOverride(p_150434_, clickaction, slot7, itemstack9, itemstack10)) {
++                    if (!net.minecraftforge.event.ForgeEventFactory.onItemStackedOn(itemstack9, itemstack10, slot7, clickaction, p_150434_, createCarriedSlotAccess()))
+                     if (itemstack9.isEmpty()) {
+                         if (!itemstack10.isEmpty()) {
+                             int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
+@@ -598,7 +_,7 @@
+                 ItemStack itemstack = slot.getItem();
+                 if (!itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
+                     int j = itemstack.getCount() + p_38904_.getCount();
+-                    int k = slot.getMaxStackSize(itemstack);
++                    int k = Math.min(slot.getMaxStackSize(itemstack), itemstack.getMaxStackSize());
+                     if (j <= k) {
+                         p_38904_.setCount(0);
+                         itemstack.setCount(j);

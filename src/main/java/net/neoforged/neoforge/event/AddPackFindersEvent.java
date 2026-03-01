@@ -1,4 +1,4 @@
 package net.neoforged.neoforge.event;
 
-public class AddPackFindersEvent extends net.neoforged.bus.api.Event {
-}
+import net.neoforged.fml.event.IModBusEvent;
+public class AddPackFindersEvent extends net.neoforged.bus.api.Event implements IModBusEvent {}

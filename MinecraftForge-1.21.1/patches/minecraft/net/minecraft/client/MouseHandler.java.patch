@@ -1,0 +1,73 @@
+--- a/net/minecraft/client/MouseHandler.java
++++ b/net/minecraft/client/MouseHandler.java
+@@ -79,6 +_,7 @@
+                 this.activeButton = -1;
+             }
+ 
++            if (net.minecraftforge.client.event.ForgeEventFactoryClient.onMouseButtonPre(p_91532_, p_91533_, p_91534_)) return;
+             boolean[] aboolean = new boolean[]{false};
+             if (this.minecraft.getOverlay() == null) {
+                 if (this.minecraft.screen == null) {
+@@ -91,9 +_,9 @@
+                     Screen screen = this.minecraft.screen;
+                     if (flag) {
+                         screen.afterMouseAction();
+-                        Screen.wrapScreenError(() -> aboolean[0] = screen.mouseClicked(d0, d1, i), "mouseClicked event handler", screen.getClass().getCanonicalName());
++                        Screen.wrapScreenError(() -> net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseClicked(aboolean, screen, d0, d1, i), "mouseClicked event handler", screen.getClass().getCanonicalName());
+                     } else {
+-                        Screen.wrapScreenError(() -> aboolean[0] = screen.mouseReleased(d0, d1, i), "mouseReleased event handler", screen.getClass().getCanonicalName());
++                        Screen.wrapScreenError(() -> net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseReleased(aboolean, screen, d0, d1, i), "mouseReleased event handler", screen.getClass().getCanonicalName());
+                     }
+                 }
+             }
+@@ -116,6 +_,7 @@
+                     }
+                 }
+             }
++            net.minecraftforge.client.event.ForgeEventFactoryClient.onMouseButtonPost(p_91532_, p_91533_, p_91534_);
+         }
+     }
+ 
+@@ -129,7 +_,9 @@
+                 if (this.minecraft.screen != null) {
+                     double d3 = this.xpos * (double)this.minecraft.getWindow().getGuiScaledWidth() / (double)this.minecraft.getWindow().getScreenWidth();
+                     double d4 = this.ypos * (double)this.minecraft.getWindow().getGuiScaledHeight() / (double)this.minecraft.getWindow().getScreenHeight();
+-                    this.minecraft.screen.mouseScrolled(d3, d4, d1, d2);
++                    if (net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseScrollPre(this.minecraft.screen, d3, d4, d1, d2)) return;
++                    if (this.minecraft.screen.mouseScrolled(d3, d4, d1, d2)) return;
++                    net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseScrollPost(this.minecraft.screen, d3, d4, d1, d2);
+                     this.minecraft.screen.afterMouseAction();
+                 } else if (this.minecraft.player != null) {
+                     if (this.accumulatedScrollX != 0.0 && Math.signum(d1) != Math.signum(this.accumulatedScrollX)) {
+@@ -151,6 +_,7 @@
+                     this.accumulatedScrollX -= (double)j;
+                     this.accumulatedScrollY -= (double)i;
+                     int k = i == 0 ? -j : i;
++                    if (net.minecraftforge.client.event.ForgeEventFactoryClient.onMouseScroll(this, d1, d2)) return;
+                     if (this.minecraft.player.isSpectator()) {
+                         if (this.minecraft.gui.getSpectatorGui().isMenuActive()) {
+                             this.minecraft.gui.getSpectatorGui().onMouseScrolled(-k);
+@@ -236,7 +_,7 @@
+                 if (this.activeButton != -1 && this.mousePressedTime > 0.0) {
+                     double d4 = this.accumulatedDX * (double)this.minecraft.getWindow().getGuiScaledWidth() / (double)this.minecraft.getWindow().getScreenWidth();
+                     double d5 = this.accumulatedDY * (double)this.minecraft.getWindow().getGuiScaledHeight() / (double)this.minecraft.getWindow().getScreenHeight();
+-                    Screen.wrapScreenError(() -> screen.mouseDragged(d2, d3, this.activeButton, d4, d5), "mouseDragged event handler", screen.getClass().getCanonicalName());
++                    Screen.wrapScreenError(() -> net.minecraftforge.client.ForgeHooksClient.onScreenMouseDrag(screen, d2, d3, this.activeButton, d4, d5), "mouseDragged event handler", screen.getClass().getCanonicalName());
+                 }
+ 
+                 screen.afterMouseMove();
+@@ -303,6 +_,14 @@
+ 
+     public double ypos() {
+         return this.ypos;
++    }
++
++    public double getXVelocity() {
++        return this.accumulatedDX;
++    }
++
++    public double getYVelocity() {
++        return this.accumulatedDY;
+     }
+ 
+     public void setIgnoreFirstMove() {

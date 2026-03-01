@@ -1,0 +1,71 @@
+--- a/net/minecraft/world/entity/projectile/AbstractArrow.java
++++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -71,6 +_,7 @@
+     private ItemStack pickupItemStack = this.getDefaultPickupItem();
+     @Nullable
+     private ItemStack firedFromWeapon = null;
++    private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
+ 
+     protected AbstractArrow(EntityType<? extends AbstractArrow> p_332730_, Level p_335646_) {
+         super(p_332730_, p_335646_);
+@@ -188,7 +_,7 @@
+             this.shakeTime--;
+         }
+ 
+-        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW)) {
++        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+             this.clearFire();
+         }
+ 
+@@ -224,11 +_,27 @@
+                     }
+                 }
+ 
+-                if (hitresult != null && !flag) {
+-                    ProjectileDeflection projectiledeflection = this.hitTargetOrDeflectSelf(hitresult);
+-                    this.hasImpulse = true;
+-                    if (projectiledeflection != ProjectileDeflection.NONE) {
+-                        break;
++                if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
++                    switch (net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, hitresult)) {
++                        case SKIP_ENTITY:
++                            if (hitresult.getType() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
++                                this.onHit(hitresult);
++                                this.hasImpulse = true;
++                                break;
++                            }
++                            ignoredEntities.add(entityhitresult.getEntity().getId());
++                            entityhitresult = null; // Don't process any further
++                            break;
++                        case STOP_AT_CURRENT_NO_DAMAGE:
++                            this.discard();
++                            entityhitresult = null; // Don't process any further
++                            break;
++                        case STOP_AT_CURRENT:
++                            this.setPierceLevel((byte) 0);
++                        case DEFAULT:
++                            this.onHit(hitresult);
++                            this.hasImpulse = true;
++                            break;
+                     }
+                 }
+ 
+@@ -239,6 +_,9 @@
+                 hitresult = null;
+             }
+ 
++            if (this.isRemoved())
++                return;
++
+             vec3 = this.getDeltaMovement();
+             double d5 = vec3.x;
+             double d6 = vec3.y;
+@@ -504,7 +_,7 @@
+ 
+     @Override
+     protected boolean canHitEntity(Entity p_36743_) {
+-        return super.canHitEntity(p_36743_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_36743_.getId()));
++        return super.canHitEntity(p_36743_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_36743_.getId())) && !this.ignoredEntities.contains(p_36743_.getId());
+     }
+ 
+     @Override

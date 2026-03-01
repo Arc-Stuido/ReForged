@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
++++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
+@@ -66,6 +_,12 @@
+ 
+                 if (entity instanceof ServerPlayer serverplayer) {
+                     if (serverplayer.connection.isAcceptingMessages()) {
++                        var event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
++                        if (event.isCanceled()) {
++                            this.discard();
++                            return;
++                        }
++
+                         if (this.random.nextFloat() < 0.05F && serverlevel.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+                             Endermite endermite = EntityType.ENDERMITE.create(serverlevel);
+                             if (endermite != null) {
+@@ -76,12 +_,12 @@
+ 
+                         entity.changeDimension(
+                             new DimensionTransition(
+-                                serverlevel, this.position(), entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), DimensionTransition.DO_NOTHING
++                                serverlevel, event.getTarget(), entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), DimensionTransition.DO_NOTHING
+                             )
+                         );
+                         entity.resetFallDistance();
+                         serverplayer.resetCurrentImpulseContext();
+-                        entity.hurt(this.damageSources().fall(), 5.0F);
++                        entity.hurt(this.damageSources().fall(), event.getAttackDamage());
+                         this.playSound(serverlevel, this.position());
+                     }
+                 } else {

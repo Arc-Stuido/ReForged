@@ -1,0 +1,48 @@
+--- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
++++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
+@@ -477,6 +_,16 @@
+                 for (int k = -1; k <= 1; k++) {
+                     if (i != 0 || k != 0) {
+                         PathType pathtype = p_334221_.getPathTypeFromState(p_336062_ + i, p_335259_ + j, p_336315_ + k);
++
++                        var pos = new BlockPos(p_336062_ + i, p_335259_ + j, p_336315_ + k);
++                        var blockstate = p_334221_.level().getBlockState(pos);
++
++                        var blockPathType = blockstate.getAdjacentBlockPathType(p_334221_.level(), pos, null, p_333971_);
++                        if (blockPathType != null) return blockPathType;
++
++                        var fluidPathType = blockstate.getFluidState().getAdjacentBlockPathType(p_334221_.level(), pos, null, p_333971_);
++                        if (fluidPathType != null) return fluidPathType;
++
+                         if (pathtype == PathType.DAMAGE_OTHER) {
+                             return PathType.DANGER_OTHER;
+                         }
+@@ -503,6 +_,10 @@
+     protected static PathType getPathTypeFromState(BlockGetter p_335222_, BlockPos p_331935_) {
+         BlockState blockstate = p_335222_.getBlockState(p_331935_);
+         Block block = blockstate.getBlock();
++
++        var type = blockstate.getBlockPathType(p_335222_, p_331935_, null);
++        if (type != null) return type;
++
+         if (blockstate.isAir()) {
+             return PathType.OPEN;
+         } else if (blockstate.is(BlockTags.TRAPDOORS) || blockstate.is(Blocks.LILY_PAD) || blockstate.is(Blocks.BIG_DRIPLEAF)) {
+@@ -517,6 +_,8 @@
+             return PathType.COCOA;
+         } else if (!blockstate.is(Blocks.WITHER_ROSE) && !blockstate.is(Blocks.POINTED_DRIPSTONE)) {
+             FluidState fluidstate = blockstate.getFluidState();
++            var nonLoggableFluidPathType = fluidstate.getBlockPathType(p_335222_, p_331935_, null, false);
++            if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
+             if (fluidstate.is(FluidTags.LAVA)) {
+                 return PathType.LAVA;
+             } else if (isBurningBlock(blockstate)) {
+@@ -537,6 +_,8 @@
+                 if (!blockstate.isPathfindable(PathComputationType.LAND)) {
+                     return PathType.BLOCKED;
+                 } else {
++                    var loggableFluidPathType = fluidstate.getBlockPathType(p_335222_, p_331935_, null, true);
++                    if (loggableFluidPathType != null) return loggableFluidPathType;
+                     return fluidstate.is(FluidTags.WATER) ? PathType.WATER : PathType.OPEN;
+                 }
+             } else {

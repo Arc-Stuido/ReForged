@@ -1,0 +1,64 @@
+--- a/net/minecraft/client/gui/screens/TitleScreen.java
++++ b/net/minecraft/client/gui/screens/TitleScreen.java
+@@ -60,6 +_,7 @@
+     private boolean fading;
+     private long fadeInStart;
+     private final LogoRenderer logoRenderer;
++    private net.minecraftforge.client.gui.TitleScreenModUpdateIndicator modUpdateNotification;
+ 
+     public TitleScreen() {
+         this(false);
+@@ -115,11 +_,15 @@
+         int j = this.width - i - 2;
+         int k = 24;
+         int l = this.height / 4 + 48;
++        Button modButton = null;
+         if (this.minecraft.isDemo()) {
+             this.createDemoMenuOptions(l, 24);
+         } else {
+             this.createNormalMenuOptions(l, 24);
++            modButton = this.addRenderableWidget(Button.builder(Component.translatable("fml.menu.mods"), button -> this.minecraft.setScreen(new net.minecraftforge.client.gui.ModListScreen(this)))
++                    .pos(this.width / 2 - 100, l + 24 * 2).size(98, 20).build());
+         }
++        modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
+ 
+         SpriteIconButton spriteiconbutton = this.addRenderableWidget(
+             CommonButtons.language(
+@@ -170,7 +_,7 @@
+         }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).tooltip(tooltip).build()).active = flag;
+         this.addRenderableWidget(
+                 Button.builder(Component.translatable("menu.online"), p_325369_ -> this.minecraft.setScreen(new RealmsMainScreen(this)))
+-                    .bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20)
++                    .bounds(this.width / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20)
+                     .tooltip(tooltip)
+                     .build()
+             )
+@@ -276,6 +_,7 @@
+         if ((i & -67108864) != 0) {
+             super.render(p_282860_, p_281753_, p_283539_, p_282628_);
+             this.logoRenderer.renderLogo(p_282860_, this.width, f);
++            net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.font, this.width, this.height, i);
+             if (this.splash != null && !this.minecraft.options.hideSplashTexts().get()) {
+                 this.splash.render(p_282860_, this.width, this.font, i);
+             }
+@@ -291,11 +_,19 @@
+                 s = s + I18n.get("menu.modded");
+             }
+ 
+-            p_282860_.drawString(this.font, s, 2, this.height - 10, 16777215 | i);
++            net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brd, brdline) ->
++                    p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), 16777215 | i)
++            );
++
++            net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brd, brdline) ->
++                    p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), 16777215 | i)
++            );
++
+             if (this.realmsNotificationsEnabled() && f >= 1.0F) {
+                 RenderSystem.enableDepthTest();
+                 this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
+             }
++            if (f >= 1.0f) this.modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
+         }
+     }
+ 

@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/level/block/TntBlock.java
++++ b/net/minecraft/world/level/block/TntBlock.java
+@@ -44,7 +_,7 @@
+     protected void onPlace(BlockState p_57466_, Level p_57467_, BlockPos p_57468_, BlockState p_57469_, boolean p_57470_) {
+         if (!p_57469_.is(p_57466_.getBlock())) {
+             if (p_57467_.hasNeighborSignal(p_57468_)) {
+-                explode(p_57467_, p_57468_);
++                onCaughtFire(p_57466_, p_57467_, p_57468_, null, null);
+                 p_57467_.removeBlock(p_57468_, false);
+             }
+         }
+@@ -53,7 +_,7 @@
+     @Override
+     protected void neighborChanged(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
+         if (p_57458_.hasNeighborSignal(p_57459_)) {
+-            explode(p_57458_, p_57459_);
++            onCaughtFire(p_57457_, p_57458_, p_57459_, null, null);
+             p_57458_.removeBlock(p_57459_, false);
+         }
+     }
+@@ -61,7 +_,7 @@
+     @Override
+     public BlockState playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
+         if (!p_57445_.isClientSide() && !p_57448_.isCreative() && p_57447_.getValue(UNSTABLE)) {
+-            explode(p_57445_, p_57446_);
++            onCaughtFire(p_57447_, p_57445_, p_57446_, null, null);
+         }
+ 
+         return super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
+@@ -79,10 +_,12 @@
+         }
+     }
+ 
++    @Deprecated //Forge: Prefer using IForgeBlock#onCaughtFire
+     public static void explode(Level p_57434_, BlockPos p_57435_) {
+         explode(p_57434_, p_57435_, null);
+     }
+ 
++    @Deprecated //Forge: Prefer using IForgeBlock#onCaughtFire
+     private static void explode(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
+         if (!p_57437_.isClientSide) {
+             PrimedTnt primedtnt = new PrimedTnt(
+@@ -101,7 +_,7 @@
+         if (!p_329029_.is(Items.FLINT_AND_STEEL) && !p_329029_.is(Items.FIRE_CHARGE)) {
+             return super.useItemOn(p_329029_, p_331413_, p_329038_, p_333168_, p_335932_, p_331663_, p_330020_);
+         } else {
+-            explode(p_329038_, p_333168_, p_335932_);
++            onCaughtFire(p_331413_, p_329038_, p_333168_, p_330020_.getDirection(), p_335932_);
+             p_329038_.setBlock(p_333168_, Blocks.AIR.defaultBlockState(), 11);
+             Item item = p_329029_.getItem();
+             if (p_329029_.is(Items.FLINT_AND_STEEL)) {
+@@ -121,7 +_,7 @@
+             BlockPos blockpos = p_57431_.getBlockPos();
+             Entity entity = p_57432_.getOwner();
+             if (p_57432_.isOnFire() && p_57432_.mayInteract(p_57429_, blockpos)) {
+-                explode(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
++                onCaughtFire(p_57430_, p_57429_, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+                 p_57429_.removeBlock(blockpos, false);
+             }
+         }
+@@ -135,5 +_,9 @@
+     @Override
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57464_) {
+         p_57464_.add(UNSTABLE);
++    }
++
++    public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable net.minecraft.core.Direction face, @Nullable LivingEntity igniter) {
++        explode(world, pos, igniter);
+     }
+ }

@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "type": "forge:compound",
+      "children": [
+        {
+          "type": "forge:nbt",
+          "stack": {
+            "components": {
+              "minecraft:custom_data": {
+                "display_name": "{\"text\":\"Test Item\"}"
+              }
+            },
+            "count": 1,
+            "id": "minecraft:dirt"
+          }
+        },
+        {
+          "type": "forge:nbt",
+          "stack": {
+            "components": {
+              "minecraft:custom_data": {
+                "display_name": "{\"text\":\"Test Item\"}"
+              }
+            },
+            "count": 1,
+            "id": "minecraft:oak_log"
+          }
+        }
+      ]
+    }
+  },
+  "pattern": [
+    "XXX",
+    " X "
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:dirt"
+  }
+}

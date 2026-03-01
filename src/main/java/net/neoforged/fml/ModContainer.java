@@ -85,20 +85,20 @@ public class ModContainer {
      */
     public void registerConfig(net.neoforged.fml.config.ModConfig.Type type,
                                net.neoforged.fml.config.IConfigSpec spec) {
-        // Convert NeoForge ModConfig.Type to Forge ModConfig.Type
-        net.minecraftforge.fml.config.ModConfig.Type forgeType = switch (type) {
-            case COMMON -> net.minecraftforge.fml.config.ModConfig.Type.COMMON;
-            case CLIENT -> net.minecraftforge.fml.config.ModConfig.Type.CLIENT;
-            case SERVER -> net.minecraftforge.fml.config.ModConfig.Type.SERVER;
-            case STARTUP -> net.minecraftforge.fml.config.ModConfig.Type.COMMON; // Fallback
-        };
-
-        // delegate is the Forge ModContainer set as active during mod construction.
-        // When NeoForge mods are constructed, this will be the NeoModContainer with the
-        // correct modId, so configs get the correct filename (e.g. "champions-common.toml").
-        if (spec instanceof net.neoforged.neoforge.common.ModConfigSpec mcs) {
-            delegate.addConfig(new net.minecraftforge.fml.config.ModConfig(forgeType, mcs.getForgeSpec(), delegate));
+        net.minecraftforge.fml.config.ModConfig.Type forgeType = toForgeType(type);
+        net.minecraftforge.common.ForgeConfigSpec forgeSpec = toForgeConfigSpec(spec);
+        if (forgeSpec != null) {
+            delegate.addConfig(new net.minecraftforge.fml.config.ModConfig(forgeType, forgeSpec, delegate));
         }
+    }
+
+    /**
+     * Register an extension point with this mod container.
+     * NeoForge mods use this for config screen factories, display tests, etc.
+     * In our bridge this is a no-op since Forge uses a different mechanism.
+     */
+    public <T extends IExtensionPoint> void registerExtensionPoint(Class<T> point, T extension) {
+        // No-op: Forge handles extension points differently
     }
 
     /**
@@ -106,15 +106,64 @@ public class ModContainer {
      */
     public void registerConfig(net.neoforged.fml.config.ModConfig.Type type,
                                net.neoforged.fml.config.IConfigSpec spec, String fileName) {
-        net.minecraftforge.fml.config.ModConfig.Type forgeType = switch (type) {
+        net.minecraftforge.fml.config.ModConfig.Type forgeType = toForgeType(type);
+        net.minecraftforge.common.ForgeConfigSpec forgeSpec = toForgeConfigSpec(spec);
+        if (forgeSpec != null) {
+            delegate.addConfig(new net.minecraftforge.fml.config.ModConfig(forgeType, forgeSpec, delegate, fileName));
+        }
+    }
+
+    private static net.minecraftforge.fml.config.ModConfig.Type toForgeType(net.neoforged.fml.config.ModConfig.Type type) {
+        return switch (type) {
             case COMMON -> net.minecraftforge.fml.config.ModConfig.Type.COMMON;
             case CLIENT -> net.minecraftforge.fml.config.ModConfig.Type.CLIENT;
             case SERVER -> net.minecraftforge.fml.config.ModConfig.Type.SERVER;
             case STARTUP -> net.minecraftforge.fml.config.ModConfig.Type.COMMON;
         };
+    }
 
-        if (spec instanceof net.neoforged.neoforge.common.ModConfigSpec mcs) {
-            delegate.addConfig(new net.minecraftforge.fml.config.ModConfig(forgeType, mcs.getForgeSpec(), delegate, fileName));
+    private net.minecraftforge.common.ForgeConfigSpec toForgeConfigSpec(net.neoforged.fml.config.IConfigSpec spec) {
+        if (spec == null) {
+            return null;
         }
+        if (spec instanceof net.neoforged.neoforge.common.ModConfigSpec mcs) {
+            return mcs.getForgeSpec();
+        }
+        if (spec instanceof net.minecraftforge.common.ForgeConfigSpec fcs) {
+            return fcs;
+        }
+
+        try {
+            java.lang.reflect.Method method = spec.getClass().getMethod("getForgeSpec");
+            Object value = method.invoke(spec);
+            if (value instanceof net.minecraftforge.common.ForgeConfigSpec fcs) {
+                return fcs;
+            }
+        } catch (Throwable ignored) {
+        }
+
+        try {
+            java.lang.reflect.Method method = spec.getClass().getMethod("getSpec");
+            Object value = method.invoke(spec);
+            if (value instanceof net.minecraftforge.common.ForgeConfigSpec fcs) {
+                return fcs;
+            }
+        } catch (Throwable ignored) {
+        }
+
+        try {
+            java.lang.reflect.Field field = spec.getClass().getDeclaredField("forgeSpec");
+            field.setAccessible(true);
+            Object value = field.get(spec);
+            if (value instanceof net.minecraftforge.common.ForgeConfigSpec fcs) {
+                return fcs;
+            }
+        } catch (Throwable ignored) {
+        }
+
+        org.slf4j.LoggerFactory.getLogger(ModContainer.class).warn(
+                "[ReForged] Unsupported NeoForge IConfigSpec implementation for mod '{}': {}",
+                getModId(), spec.getClass().getName());
+        return null;
     }
 }

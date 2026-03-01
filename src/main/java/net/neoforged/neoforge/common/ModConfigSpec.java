@@ -1,8 +1,10 @@
 package net.neoforged.neoforge.common;
 
+import com.electronwill.nightconfig.core.EnumGetMethod;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.neoforged.fml.config.IConfigSpec;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -127,13 +129,90 @@ public final class ModConfigSpec implements IConfigSpec {
             return new LongValue(delegate.defineInRange(path, defaultValue, min, max));
         }
 
+        // ── defineEnum overloads ─────────────────────────
+
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue) {
             return new EnumValue<>(delegate.defineEnum(path, defaultValue));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter));
         }
 
         @SafeVarargs
         public final <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, V... acceptableValues) {
             return new EnumValue<>(delegate.defineEnum(path, defaultValue, acceptableValues));
+        }
+
+        @SafeVarargs
+        public final <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, V... acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter, acceptableValues));
+        }
+
+        @SafeVarargs
+        public final <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, V... acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, acceptableValues));
+        }
+
+        @SafeVarargs
+        public final <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, V... acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter, acceptableValues));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, acceptableValues));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter, acceptableValues));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, acceptableValues));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter, acceptableValues));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Predicate<Object> validator) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, validator));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, Predicate<Object> validator) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter, validator));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Predicate<Object> validator) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, validator));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Predicate<Object> validator) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultValue, converter, validator));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, Supplier<V> defaultSupplier, Predicate<Object> validator, Class<V> clazz) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultSupplier, validator, clazz));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultSupplier, converter, validator, clazz));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, Predicate<Object> validator, Class<V> clazz) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultSupplier, validator, clazz));
+        }
+
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
+            return new EnumValue<>(delegate.defineEnum(path, defaultSupplier, converter, validator, clazz));
         }
 
         @SuppressWarnings("unchecked")

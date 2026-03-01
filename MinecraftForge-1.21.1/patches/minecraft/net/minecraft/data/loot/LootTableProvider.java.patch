@@ -1,0 +1,53 @@
+--- a/net/minecraft/data/loot/LootTableProvider.java
++++ b/net/minecraft/data/loot/LootTableProvider.java
+@@ -62,7 +_,7 @@
+     private CompletableFuture<?> run(CachedOutput p_327970_, HolderLookup.Provider p_331092_) {
+         WritableRegistry<LootTable> writableregistry = new MappedRegistry<>(Registries.LOOT_TABLE, Lifecycle.experimental());
+         Map<RandomSupport.Seed128bit, ResourceLocation> map = new Object2ObjectOpenHashMap<>();
+-        this.subProviders.forEach(p_341016_ -> p_341016_.provider().apply(p_331092_).generate((p_325864_, p_325865_) -> {
++        this.getTables().forEach(p_341016_ -> p_341016_.provider().apply(p_331092_).generate((p_325864_, p_325865_) -> {
+                 ResourceLocation resourcelocation = sequenceIdForLootTable(p_325864_);
+                 ResourceLocation resourcelocation1 = map.put(RandomSequence.seedForKey(resourcelocation), resourcelocation);
+                 if (resourcelocation1 != null) {
+@@ -78,18 +_,8 @@
+         HolderGetter.Provider holdergetter$provider = new RegistryAccess.ImmutableRegistryAccess(List.of(writableregistry)).freeze().asGetterLookup();
+         ValidationContext validationcontext = new ValidationContext(problemreporter$collector, LootContextParamSets.ALL_PARAMS, holdergetter$provider);
+ 
+-        for (ResourceKey<LootTable> resourcekey : Sets.difference(this.requiredTables, writableregistry.registryKeySet())) {
+-            problemreporter$collector.report("Missing built-in table: " + resourcekey.location());
+-        }
++        validate(writableregistry, validationcontext, problemreporter$collector);
+ 
+-        writableregistry.holders()
+-            .forEach(
+-                p_325854_ -> p_325854_.value()
+-                        .validate(
+-                            validationcontext.setParams(p_325854_.value().getParamSet())
+-                                .enterElement("{" + p_325854_.key().location() + "}", p_325854_.key())
+-                        )
+-            );
+         Multimap<String, String> multimap = problemreporter$collector.get();
+         if (!multimap.isEmpty()) {
+             multimap.forEach((p_124446_, p_124447_) -> LOGGER.warn("Found validation problem in {}: {}", p_124446_, p_124447_));
+@@ -111,6 +_,21 @@
+     @Override
+     public final String getName() {
+         return "Loot Tables";
++    }
++
++    public List<LootTableProvider.SubProviderEntry> getTables() {
++        return this.subProviders;
++    }
++
++    protected void validate(net.minecraft.core.Registry<LootTable> map, ValidationContext validationcontext, ProblemReporter report) {
++        for (ResourceKey<LootTable> resourcekey : Sets.difference(this.requiredTables, map.registryKeySet())) {
++            report.report("Missing built-in table: " + resourcekey.location());
++        }
++
++        map.holders().forEach(table -> table.value().validate(
++            validationcontext.setParams(table.value().getParamSet())
++                .enterElement("{" + table.key().location() + "}", table.key())
++        ));
+     }
+ 
+     public static record SubProviderEntry(Function<HolderLookup.Provider, LootTableSubProvider> provider, LootContextParamSet paramSet) {

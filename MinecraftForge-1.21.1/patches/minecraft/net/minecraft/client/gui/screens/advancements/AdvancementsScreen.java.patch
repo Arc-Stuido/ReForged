@@ -1,0 +1,60 @@
+--- a/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
++++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
+@@ -49,6 +_,7 @@
+     @Nullable
+     private AdvancementTab selectedTab;
+     private boolean isScrolling;
++    private static int tabPage, maxPages;
+ 
+     public AdvancementsScreen(ClientAdvancements p_97340_) {
+         this(p_97340_, null);
+@@ -62,6 +_,19 @@
+ 
+     @Override
+     protected void init() {
++        if (this.tabs.size() > AdvancementTabType.MAX_TABS) {
++            maxPages = this.tabs.size() / AdvancementTabType.MAX_TABS;
++            var pageLayout = new net.minecraft.client.gui.layouts.GridLayout();
++            var text = new net.minecraft.client.gui.components.StringWidget(Component.literal(String.format("%d / %d", maxPages + 1, maxPages + 1)), this.font);
++            var update = (java.util.function.Consumer<Boolean>)back -> {
++                tabPage = back ? Math.max(tabPage - 1, 0) : Math.min(tabPage + 1, maxPages);
++                text.setMessage(Component.literal(String.format("%d / %d", 1, maxPages + 1)));
++            };
++            pageLayout.addChild(Button.builder(Component.literal("<"), b -> update.accept(true)).size(20, 20).build(), 0, 0, pageLayout.defaultCellSetting().alignHorizontallyLeft());
++            pageLayout.addChild(text, 0, 1, pageLayout.defaultCellSetting().alignHorizontallyCenter());
++            pageLayout.addChild(Button.builder(Component.literal(">"), b -> update.accept(false)).size(20, 20).build(), 0, 2, pageLayout.defaultCellSetting().alignHorizontallyRight());
++            this.layout.addToHeader(pageLayout);
++        }
+         this.layout.addTitleHeader(TITLE, this.font);
+         this.tabs.clear();
+         this.selectedTab = null;
+@@ -106,7 +_,7 @@
+             int j = (this.height - 140) / 2;
+ 
+             for (AdvancementTab advancementtab : this.tabs.values()) {
+-                if (advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
++                if (advancementtab.getPage() == tabPage && advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
+                     this.advancements.setSelectedTab(advancementtab.getRootNode().holder(), true);
+                     break;
+                 }
+@@ -180,10 +_,12 @@
+         p_283395_.blit(WINDOW_LOCATION, p_281890_, p_282532_, 0, 0, 252, 140);
+         if (this.tabs.size() > 1) {
+             for (AdvancementTab advancementtab : this.tabs.values()) {
++                if (advancementtab.getPage() == tabPage)
+                 advancementtab.drawTab(p_283395_, p_281890_, p_282532_, advancementtab == this.selectedTab);
+             }
+ 
+             for (AdvancementTab advancementtab1 : this.tabs.values()) {
++                if (advancementtab1.getPage() == tabPage)
+                 advancementtab1.drawIcon(p_283395_, p_281890_, p_282532_);
+             }
+         }
+@@ -203,6 +_,7 @@
+ 
+         if (this.tabs.size() > 1) {
+             for (AdvancementTab advancementtab : this.tabs.values()) {
++                if (advancementtab.getPage() == tabPage)
+                 if (advancementtab.isMouseOver(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
+                     p_282784_.renderTooltip(this.font, advancementtab.getTitle(), p_283556_, p_282458_);
+                 }

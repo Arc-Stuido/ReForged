@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/level/block/FenceGateBlock.java
++++ b/net/minecraft/world/level/block/FenceGateBlock.java
+@@ -50,6 +_,8 @@
+     protected static final VoxelShape Z_OCCLUSION_SHAPE_LOW = Shapes.or(Block.box(0.0, 2.0, 7.0, 2.0, 13.0, 9.0), Block.box(14.0, 2.0, 7.0, 16.0, 13.0, 9.0));
+     protected static final VoxelShape X_OCCLUSION_SHAPE_LOW = Shapes.or(Block.box(7.0, 2.0, 0.0, 9.0, 13.0, 2.0), Block.box(7.0, 2.0, 14.0, 9.0, 13.0, 16.0));
+     private final WoodType type;
++    private final net.minecraft.sounds.SoundEvent openSound;
++    private final net.minecraft.sounds.SoundEvent closeSound;
+ 
+     @Override
+     public MapCodec<FenceGateBlock> codec() {
+@@ -57,8 +_,14 @@
+     }
+ 
+     public FenceGateBlock(WoodType p_273340_, BlockBehaviour.Properties p_273352_) {
+-        super(p_273352_.sound(p_273340_.soundType()));
+-        this.type = p_273340_;
++        this(p_273340_, p_273352_, p_273340_.fenceGateOpen(), p_273340_.fenceGateClose());
++    }
++
++    public FenceGateBlock(WoodType p_273340_, BlockBehaviour.Properties p_273352_, net.minecraft.sounds.SoundEvent openSound, net.minecraft.sounds.SoundEvent closeSound) {
++       super(p_273352_);
++       this.type = p_273340_;
++       this.openSound = openSound;
++       this.closeSound = closeSound;
+         this.registerDefaultState(
+             this.stateDefinition
+                 .any()
+@@ -169,7 +_,7 @@
+         p_53366_.playSound(
+             p_53368_,
+             p_53367_,
+-            flag ? this.type.fenceGateOpen() : this.type.fenceGateClose(),
++            flag ? this.openSound : this.closeSound,
+             SoundSource.BLOCKS,
+             1.0F,
+             p_53366_.getRandom().nextFloat() * 0.1F + 0.9F
+@@ -186,7 +_,7 @@
+             p_310915_.playSound(
+                 null,
+                 p_311232_,
+-                flag ? this.type.fenceGateClose() : this.type.fenceGateOpen(),
++                flag ? this.closeSound : this.openSound,
+                 SoundSource.BLOCKS,
+                 1.0F,
+                 p_310915_.getRandom().nextFloat() * 0.1F + 0.9F
+@@ -207,7 +_,7 @@
+                     p_53373_.playSound(
+                         null,
+                         p_53374_,
+-                        flag ? this.type.fenceGateOpen() : this.type.fenceGateClose(),
++                        flag ? this.openSound : this.closeSound,
+                         SoundSource.BLOCKS,
+                         1.0F,
+                         p_53373_.getRandom().nextFloat() * 0.1F + 0.9F

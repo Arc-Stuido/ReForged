@@ -1,0 +1,126 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.licenser'
+    id 'neoforge.formatting-conventions'
+}
+
+apply plugin : net.neoforged.neodev.NeoDevExtraPlugin
+
+evaluationDependsOn(":neoforge")
+
+def neoforgeProject = project(':neoforge')
+def testframeworkProject = project(':testframework')
+def coremodsProject = project(':neoforge-coremods')
+
+sourceSets {
+    main {
+        resources {
+            srcDir file('src/generated/resources')
+        }
+    }
+    junit {}
+}
+
+dependencies {
+    implementation(neoforgeProject)
+    implementation(testframeworkProject)
+
+    junitImplementation(platform("org.junit:junit-bom:${project.jupiter_api_version}"))
+    junitImplementation "org.junit.jupiter:junit-jupiter-params"
+    junitRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+    junitImplementation("org.assertj:assertj-core:${project.assertj_core}")
+    junitImplementation "net.neoforged.fancymodloader:junit-fml:${project.fancy_mod_loader_version}"
+    junitImplementation(neoforgeProject)
+    junitImplementation(testframeworkProject)
+
+    compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+}
+
+// Select runtimeElements rather than universalJar from the neoforge project
+sourceSets.each {
+    configurations.named(it.runtimeClasspathConfigurationName) {
+        attributes {
+            attribute(Attribute.of("net.neoforged.neoforge.includes-minecraft", Boolean), true)
+        }
+    }
+}
+
+junitTest {
+    useJUnitPlatform()
+    classpath = sourceSets.junit.output + sourceSets.junit.runtimeClasspath
+    testClassesDirs = sourceSets.junit.output.classesDirs
+    outputs.upToDateWhen { false }
+}
+
+neoDev {
+    mods {
+        neotests {
+            sourceSet sourceSets.main
+        }
+        testframework {
+            sourceSet project(":testframework").sourceSets.main
+        }
+        junit {
+            sourceSet sourceSets.junit
+        }
+        coremods {
+            sourceSet coremodsProject.sourceSets.main
+        }
+    }
+
+runs {
+        configureEach {
+            gameDirectory = layout.projectDir.dir("run/$name")
+            systemProperty("terminal.ansi", "true")
+        }
+    client {
+            client()
+    }
+    server {
+            server()
+    }
+    gameTestServer {
+            type = "gameTestServer"
+    }
+    data {
+            data()
+
+            programArguments.addAll '--flat', '--all', '--validate',
+                '--mod', 'data_gen_test',
+                '--mod', 'global_loot_test',
+                '--mod', 'scaffolding_test',
+                '--mod', 'custom_tag_types_test',
+                '--mod', 'new_model_loader_test',
+                '--mod', 'remove_tag_datagen_test',
+                '--mod', 'tag_based_tool_types',
+                '--mod', 'custom_transformtype_test',
+                '--mod', 'data_pack_registries_test',
+                '--mod', 'biome_modifiers_test',
+                '--mod', 'structure_modifiers_test',
+                '--mod', 'custom_preset_editor_test',
+                '--mod', 'custom_predicate_test',
+                '--mod', 'neotests',
+                '--existing-mod', 'testframework',
+                    '--existing', project.file("src/main/resources").absolutePath,
+                    '--output', project.file("src/generated/resources").absolutePath
+    }
+}
+
+runs.configureEach {
+        // Add NeoForge and Minecraft (both under the "minecraft" mod), and exclude junit.
+        loadedMods = [neoforgeProject.neoDev.mods.minecraft, mods.neotests, mods.testframework, mods.coremods]
+
+        gameDirectory.set project.file("runs/${it.name}") as File
+    }
+}
+
+neoDevTest {
+    loadedMods = [ project(":neoforge").neoDev.mods.minecraft, neoDev.mods.testframework, neoDev.mods.coremods, neoDev.mods.junit ]
+}
+
+license {
+    header = rootProject.file('codeformat/HEADER.txt')
+    skipExistingHeaders = true
+    include '**/*.java'
+}

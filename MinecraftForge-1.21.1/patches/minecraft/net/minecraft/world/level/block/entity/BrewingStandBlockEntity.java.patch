@@ -1,0 +1,69 @@
+--- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -170,15 +_,18 @@
+         for (int i = 0; i < 3; i++) {
+             p_155293_.set(i, potionbrewing.mix(itemstack, p_155293_.get(i)));
+         }
++        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
+ 
+-        itemstack.shrink(1);
+-        if (itemstack.getItem().hasCraftingRemainingItem()) {
+-            ItemStack itemstack1 = new ItemStack(itemstack.getItem().getCraftingRemainingItem());
++        if (itemstack.hasCraftingRemainingItem()) {
++            ItemStack itemstack1 = itemstack.getCraftingRemainingItem();
++            itemstack.shrink(1);
+             if (itemstack.isEmpty()) {
+                 itemstack = itemstack1;
+             } else {
+                 Containers.dropItemStack(p_155291_, (double)p_155292_.getX(), (double)p_155292_.getY(), (double)p_155292_.getZ(), itemstack1);
+             }
++        } else {
++            itemstack.shrink(1);
+         }
+ 
+         p_155293_.set(3, itemstack);
+@@ -211,6 +_,9 @@
+         if (p_59017_ == 3) {
+             PotionBrewing potionbrewing = this.level != null ? this.level.potionBrewing() : PotionBrewing.EMPTY;
+             return potionbrewing.isIngredient(p_59018_);
++        } else if (p_59017_ != 4) {
++            PotionBrewing potionbrewing = this.level != null ? this.level.potionBrewing() : PotionBrewing.EMPTY;
++            return this.getItem(p_59017_).isEmpty() && potionbrewing.isValidInput(p_59018_);
+         } else {
+             return p_59017_ == 4
+                 ? p_59018_.is(Items.BLAZE_POWDER)
+@@ -246,5 +_,34 @@
+     @Override
+     protected AbstractContainerMenu createMenu(int p_58990_, Inventory p_58991_) {
+         return new BrewingStandMenu(p_58990_, p_58991_, this, this.dataAccess);
++    }
++
++    net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
++        net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
++
++    @Override
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
++        if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && facing != null && !this.remove) {
++            return switch (facing) {
++                case UP -> handlers[0].cast();
++                case DOWN -> handlers[1].cast();
++                default -> handlers[2].cast();
++            };
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        for (int x = 0; x < handlers.length; x++) {
++            handlers[x].invalidate();
++        }
++    }
++
++    @Override
++    public void reviveCaps() {
++        super.reviveCaps();
++        this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+     }
+ }

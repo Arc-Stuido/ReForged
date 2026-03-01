@@ -1,0 +1,42 @@
+--- a/net/minecraft/tags/TagBuilder.java
++++ b/net/minecraft/tags/TagBuilder.java
+@@ -4,7 +_,7 @@
+ import java.util.List;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public class TagBuilder {
++public class TagBuilder implements net.minecraftforge.common.extensions.IForgeRawTagBuilder {
+     private final List<TagEntry> entries = new ArrayList<>();
+ 
+     public static TagBuilder create() {
+@@ -34,5 +_,30 @@
+ 
+     public TagBuilder addOptionalTag(ResourceLocation p_215910_) {
+         return this.add(TagEntry.optionalTag(p_215910_));
++    }
++
++    /** Forge: Used for datagen */
++    private final List<TagEntry> removeEntries = new ArrayList<>();
++    private boolean replace = false;
++
++    public java.util.stream.Stream<TagEntry> getRemoveEntries() { // should this return the List instead? Might end up with mem leaks from unterminated streams otherwise -Paint_Ninja
++        return this.removeEntries.stream();
++    }
++
++    /** Forge: Add an entry to be removed from this tag in datagen */
++    public TagBuilder remove(TagEntry entry) {
++        this.removeEntries.add(entry);
++        return this;
++    }
++
++    /** Forge: Set the replace property of this tag */
++    public TagBuilder replace(boolean value) {
++        this.replace = value;
++        return this;
++    }
++
++    /** Forge: Is this tag set to replace or not? */
++    public boolean isReplace() {
++        return this.replace;
+     }
+ }

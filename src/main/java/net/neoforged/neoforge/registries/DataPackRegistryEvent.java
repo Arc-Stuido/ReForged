@@ -1,6 +1,7 @@
 package net.neoforged.neoforge.registries;
 
-public class DataPackRegistryEvent extends net.neoforged.bus.api.Event {
+import net.neoforged.fml.event.IModBusEvent;
+public class DataPackRegistryEvent extends net.neoforged.bus.api.Event implements IModBusEvent {
 
     public static class NewRegistry extends DataPackRegistryEvent {
     }

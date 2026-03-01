@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/DimensionSpecialEffects.java
++++ b/net/minecraft/client/renderer/DimensionSpecialEffects.java
+@@ -37,7 +_,7 @@
+     }
+ 
+     public static DimensionSpecialEffects forType(DimensionType p_108877_) {
+-        return EFFECTS.get(p_108877_.effectsLocation());
++        return net.neoforged.neoforge.client.DimensionSpecialEffectsManager.getForType(p_108877_.effectsLocation());
+     }
+ 
+     @Nullable

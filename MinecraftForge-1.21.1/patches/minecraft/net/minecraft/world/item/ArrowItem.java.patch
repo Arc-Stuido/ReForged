@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/item/ArrowItem.java
++++ b/net/minecraft/world/item/ArrowItem.java
+@@ -24,4 +_,11 @@
+         arrow.pickup = AbstractArrow.Pickup.ALLOWED;
+         return arrow;
+     }
++
++    public boolean isInfinite(ItemStack stack, ItemStack bow, net.minecraft.world.entity.LivingEntity owner) {
++        return false;
++        // Infinity doesnt go on arrows anymore..
++        //int enchant = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.INFINITY_ARROWS, bow);
++        //return enchant <= 0 ? false : this.getClass() == ArrowItem.class;
++    }
+ }

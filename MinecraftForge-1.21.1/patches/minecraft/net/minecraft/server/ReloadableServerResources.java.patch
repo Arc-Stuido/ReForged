@@ -1,0 +1,59 @@
+--- a/net/minecraft/server/ReloadableServerResources.java
++++ b/net/minecraft/server/ReloadableServerResources.java
+@@ -39,15 +_,18 @@
+     private final TagManager tagManager;
+     private final ServerAdvancementManager advancements;
+     private final ServerFunctionLibrary functionLibrary;
++    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context;
+ 
+     private ReloadableServerResources(RegistryAccess.Frozen p_206857_, FeatureFlagSet p_250695_, Commands.CommandSelection p_206858_, int p_206859_) {
+         this.fullRegistryHolder = new ReloadableServerRegistries.Holder(p_206857_);
+         this.registryLookup = new ReloadableServerResources.ConfigurableRegistryLookup(p_206857_);
+         this.registryLookup.missingTagAccessPolicy(ReloadableServerResources.MissingTagAccessPolicy.CREATE_NEW);
+-        this.recipes = new RecipeManager(this.registryLookup);
+         this.tagManager = new TagManager(p_206857_);
+         this.commands = new Commands(p_206858_, CommandBuildContext.simple(this.registryLookup, p_250695_));
+-        this.advancements = new ServerAdvancementManager(this.registryLookup);
++        // Forge: Create context object and pass it to the recipe manager.
++        this.context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.tagManager);
++        this.recipes = new RecipeManager(this.registryLookup, this.context);
++        this.advancements = new ServerAdvancementManager(this.registryLookup, this.context);
+         this.functionLibrary = new ServerFunctionLibrary(p_206859_, this.commands.getDispatcher());
+     }
+ 
+@@ -88,8 +_,10 @@
+             .thenCompose(
+                 p_326196_ -> {
+                     ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_326196_.compositeAccess(), p_250212_, p_249301_, p_251126_);
++                    var listeners = new java.util.ArrayList<>(reloadableserverresources.listeners());
++                    listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources, reloadableserverresources.registryLookup, p_330376_.compositeAccess()));
+                     return SimpleReloadInstance.create(
+-                            p_248588_, reloadableserverresources.listeners(), p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()
++                            p_248588_, listeners, p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()
+                         )
+                         .done()
+                         .whenComplete(
+@@ -104,6 +_,7 @@
+         this.tagManager.getResult().forEach(p_326197_ -> updateRegistryTags(this.fullRegistryHolder.get(), (TagManager.LoadResult<?>)p_326197_));
+         AbstractFurnaceBlockEntity.invalidateCache();
+         Blocks.rebuildCache();
++        net.minecraftforge.event.ForgeEventFactory.onTagsUpdated(this.fullRegistryHolder.get(), false, false);
+     }
+ 
+     private static <T> void updateRegistryTags(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
+@@ -115,6 +_,15 @@
+                 Collectors.toUnmodifiableMap(p_214303_ -> TagKey.create(resourcekey, p_214303_.getKey()), p_214312_ -> List.copyOf(p_214312_.getValue()))
+             );
+         p_206871_.registryOrThrow(resourcekey).bindTags(map);
++    }
++
++    /**
++     * Exposes the current condition context for usage in other reload listeners.<br>
++     * This is not useful outside the reloading stage.
++     * @return The condition context for the currently active reload.
++     */
++    public net.minecraftforge.common.crafting.conditions.ICondition.IContext getConditionContext() {
++        return this.context;
+     }
+ 
+     static class ConfigurableRegistryLookup implements HolderLookup.Provider {

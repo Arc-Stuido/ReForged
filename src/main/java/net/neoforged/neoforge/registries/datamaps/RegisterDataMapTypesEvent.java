@@ -6,11 +6,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.fml.event.IModBusEvent;
 
 /**
  * Stub: NeoForge's RegisterDataMapTypesEvent.
  */
-public class RegisterDataMapTypesEvent extends Event {
+public class RegisterDataMapTypesEvent extends Event implements IModBusEvent {
     private final Map<ResourceKey<Registry<?>>, Map<ResourceLocation, DataMapType<?, ?>>> attachments;
 
     public RegisterDataMapTypesEvent() {

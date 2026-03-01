@@ -1,0 +1,7 @@
+[
+  {"version":1},
+  {"ingredient":{"FluidName":"minecraft:water","Amount":1000},"type":"fluid_stack","bookmarkType":"INGREDIENT"},
+  {"ingredient":{"id":"minecraft:enchanted_book","components":{"minecraft:stored_enchantments":{"levels":{"minecraft:thorns":1}}}},"type":"item_stack","bookmarkType":"INGREDIENT"},
+  {"ingredient":{"id":"minecraft:spawner"},"type":"item_stack","bookmarkType":"INGREDIENT"},
+  {"ingredient":{"FluidName":"minecraft:lava","Amount":1000},"type":"fluid_stack","bookmarkType":"INGREDIENT"}
+]

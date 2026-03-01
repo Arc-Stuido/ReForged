@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
++++ b/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
+@@ -91,6 +_,7 @@
+ 
+             int j = mapid != null ? p_115076_.getRotation() % 4 * 2 : p_115076_.getRotation();
+             p_115079_.mulPose(Axis.ZP.rotationDegrees((float)j * 360.0F / 8.0F));
++            if (!net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderItemInFrame(p_115076_, this, p_115079_, p_115080_, p_115081_)) {
+             if (mapid != null) {
+                 p_115079_.mulPose(Axis.ZP.rotationDegrees(180.0F));
+                 float f = 0.0078125F;
+@@ -110,6 +_,7 @@
+                         itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.NO_OVERLAY, p_115079_, p_115080_, p_115076_.level(), p_115076_.getId()
+                     );
+             }
++            }
+         }
+ 
+         p_115079_.popPose();
+@@ -121,7 +_,7 @@
+ 
+     private ModelResourceLocation getFrameModelResourceLoc(T p_174213_, ItemStack p_174214_) {
+         boolean flag = p_174213_.getType() == EntityType.GLOW_ITEM_FRAME;
+-        if (p_174214_.is(Items.FILLED_MAP)) {
++        if (p_174214_.getItem() instanceof MapItem) {
+             return flag ? GLOW_MAP_FRAME_LOCATION : MAP_FRAME_LOCATION;
+         } else {
+             return flag ? GLOW_FRAME_LOCATION : FRAME_LOCATION;

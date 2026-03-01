@@ -12,6 +12,14 @@ package net.neoforged.bus.api;
 public interface IEventBus extends net.minecraftforge.eventbus.api.IEventBus {
 
     /**
+     * NeoForge overload: post(NeoForge Event) returns the same event instance.
+     */
+    default net.neoforged.bus.api.Event post(net.neoforged.bus.api.Event event) {
+        post((net.minecraftforge.eventbus.api.Event) event);
+        return event;
+    }
+
+    /**
      * NeoForge overload: addListener(NeoForge EventPriority, Consumer).
      * Converts NeoForge priority to Forge priority and delegates.
      */
@@ -38,5 +46,26 @@ public interface IEventBus extends net.minecraftforge.eventbus.api.IEventBus {
      */
     default <T extends net.minecraftforge.eventbus.api.Event> void addListener(Class<T> eventType, java.util.function.Consumer<T> consumer) {
         addListener(net.minecraftforge.eventbus.api.EventPriority.NORMAL, false, eventType, consumer);
+    }
+
+    /**
+     * NeoForge overload: addListener(NeoForge EventPriority, Class, Consumer).
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(EventPriority priority, Class<T> eventType, java.util.function.Consumer<T> consumer) {
+        addListener(priority.toForge(), false, eventType, consumer);
+    }
+
+    /**
+     * NeoForge overload: addListener(boolean, Consumer).
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(boolean receiveCancelled, java.util.function.Consumer<T> consumer) {
+        addListener(net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCancelled, consumer);
+    }
+
+    /**
+     * NeoForge overload: addListener(boolean, Class, Consumer).
+     */
+    default <T extends net.minecraftforge.eventbus.api.Event> void addListener(boolean receiveCancelled, Class<T> eventType, java.util.function.Consumer<T> consumer) {
+        addListener(net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCancelled, eventType, consumer);
     }
 }

@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/monster/Spider.java
++++ b/net/minecraft/world/entity/monster/Spider.java
+@@ -121,7 +_,10 @@
+ 
+     @Override
+     public boolean canBeAffected(MobEffectInstance p_33809_) {
+-        return p_33809_.is(MobEffects.POISON) ? false : super.canBeAffected(p_33809_);
++        if (p_33809_.getEffect() == MobEffects.POISON) {
++            return net.minecraftforge.event.ForgeEventFactory.onLivingEffectCanApply(this, p_33809_).getResult().isAllowed();
++        }
++        return super.canBeAffected(p_33809_);
+     }
+ 
+     public boolean isClimbing() {

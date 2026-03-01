@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Proxy for NeoForge's {@code ModList}.
@@ -72,6 +72,17 @@ public class ModList {
      */
     public void forEachModContainer(java.util.function.BiConsumer<String, net.minecraftforge.fml.ModContainer> consumer) {
         net.minecraftforge.fml.ModList.get().forEachModContainer(consumer);
+    }
+
+    /**
+     * Get all scan data for loaded mods.
+     *
+     * NeoForge mods (e.g. Jade) use this during load-complete scanning.
+     */
+    public List<net.neoforged.neoforgespi.language.ModFileScanData> getAllScanData() {
+        return net.minecraftforge.fml.ModList.get().getAllScanData().stream()
+                .map(net.neoforged.neoforgespi.language.ModFileScanData::wrap)
+                .collect(Collectors.toList());
     }
 
     /**

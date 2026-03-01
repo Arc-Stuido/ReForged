@@ -1,0 +1,6 @@
+JVM:         /home/xiyu/.vscode/extensions/redhat.java-1.53.0-linux-x64/jre/21.0.10-linux-x86_64/bin/java
+JVM Args:    
+Run Args:    "--inJar", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/8510f4ac127a9b6778dfee3c8eb3a125bd8ab597/rename/output.jar", "--outJar", "/home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/8510f4ac127a9b6778dfee3c8eb3a125bd8ab597/AccessTransformer/output.jar", "--atFile", "/home/xiyu/下载/ReForged/src/main/resources/META-INF/accesstransformer.cfg", "--atFile", "/tmp/FG_ats_3117987561791954424.cfg"
+Classpath:   /home/xiyu/.gradle/caches/forge_gradle/maven_downloader/net/minecraftforge/accesstransformers/8.2.1/accesstransformers-8.2.1-fatjar.jar
+Working Dir: /home/xiyu/下载/ReForged/build/fg_cache/mcp/1.21.1-20240808.132146/joined/8510f4ac127a9b6778dfee3c8eb3a125bd8ab597/AccessTransformer
+Main Class:  net.minecraftforge.accesstransformer.TransformerProcessor

@@ -24,6 +24,13 @@ public class ModLoadingContext {
     }
 
     /**
+     * Returns the namespace (mod-id) of the currently active mod container.
+     */
+    public String getActiveNamespace() {
+        return net.minecraftforge.fml.ModLoadingContext.get().getActiveNamespace();
+    }
+
+    /**
      * Helper: registerConfig
      * Many mods call ModLoadingContext.get().registerConfig(...)
      */

@@ -162,6 +162,16 @@ public class DeferredRegister<T> {
     }
 
     /**
+     * Register an entry using a Function that receives the ResourceLocation key.
+     * NeoForge API — used by mods like Balm that call register(String, Function).
+     * Constructs the ResourceLocation and delegates to the Supplier variant.
+     */
+    public <I extends T> DeferredHolder<T, I> register(String name, java.util.function.Function<ResourceLocation, ? extends I> func) {
+        ResourceLocation key = ResourceLocation.fromNamespaceAndPath(modid, name);
+        return this.register(name, () -> func.apply(key));
+    }
+
+    /**
      * Register this DeferredRegister to the given event bus.
      * In no-op mode, this is a safe no-op.
      */
@@ -311,80 +321,116 @@ public class DeferredRegister<T> {
         }
 
         /**
+         * Override register(Function) to return DeferredItem.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public <I extends net.minecraft.world.item.Item> DeferredItem<I> register(String name, java.util.function.Function<ResourceLocation, ? extends I> func) {
+            ResourceLocation key = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
+            return this.register(name, () -> func.apply(key));
+        }
+
+        /**
          * Register a simple item with default properties.
          */
-        public DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item>
+        public DeferredItem<net.minecraft.world.item.Item>
         registerSimpleItem(String name) {
-            return registerSimpleItem(name, new net.minecraft.world.item.Item.Properties());
+            return registerItem(name, net.minecraft.world.item.Item::new, new net.minecraft.world.item.Item.Properties());
         }
 
         /**
          * Register a simple item with specified properties.
          */
-        public DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item>
+        public DeferredItem<net.minecraft.world.item.Item>
         registerSimpleItem(String name, net.minecraft.world.item.Item.Properties properties) {
-            return registerItem(name, p -> new net.minecraft.world.item.Item(p), properties);
+            return registerItem(name, net.minecraft.world.item.Item::new, properties);
         }
 
         /**
          * Register an item using a factory function and default properties.
          */
-        public <I extends net.minecraft.world.item.Item> DeferredHolder<net.minecraft.world.item.Item, I>
-        registerItem(String name, java.util.function.Function<net.minecraft.world.item.Item.Properties, I> factory) {
+        public <I extends net.minecraft.world.item.Item> DeferredItem<I>
+        registerItem(String name, java.util.function.Function<net.minecraft.world.item.Item.Properties, ? extends I> factory) {
             return registerItem(name, factory, new net.minecraft.world.item.Item.Properties());
         }
 
         /**
          * Register an item using a factory function and specified properties.
          */
-        @SuppressWarnings("unchecked")
-        public <I extends net.minecraft.world.item.Item> DeferredHolder<net.minecraft.world.item.Item, I>
-        registerItem(String name, java.util.function.Function<net.minecraft.world.item.Item.Properties, I> factory,
+        public <I extends net.minecraft.world.item.Item> DeferredItem<I>
+        registerItem(String name, java.util.function.Function<net.minecraft.world.item.Item.Properties, ? extends I> factory,
                      net.minecraft.world.item.Item.Properties properties) {
-            return (DeferredHolder<net.minecraft.world.item.Item, I>)
-                    (DeferredHolder<?, ?>) this.register(name, () -> factory.apply(properties));
+            return this.register(name, () -> factory.apply(properties));
         }
 
         /**
-         * Register a simple BlockItem for a given block.
+         * Register a simple BlockItem by name with a block Supplier and properties.
          */
-        public DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>
+        public DeferredItem<net.minecraft.world.item.BlockItem>
+        registerSimpleBlockItem(String name, Supplier<? extends net.minecraft.world.level.block.Block> block, net.minecraft.world.item.Item.Properties properties) {
+            return this.register(name, key -> new net.minecraft.world.item.BlockItem(block.get(), properties));
+        }
+
+        /**
+         * Register a simple BlockItem by name with a block Supplier and default properties.
+         */
+        public DeferredItem<net.minecraft.world.item.BlockItem>
+        registerSimpleBlockItem(String name, Supplier<? extends net.minecraft.world.level.block.Block> block) {
+            return this.registerSimpleBlockItem(name, block, new net.minecraft.world.item.Item.Properties());
+        }
+
+        /**
+         * Register a simple BlockItem for a given Holder<Block> with properties.
+         * Name is derived from the block's registry key.
+         */
+        public DeferredItem<net.minecraft.world.item.BlockItem>
+        registerSimpleBlockItem(net.minecraft.core.Holder<net.minecraft.world.level.block.Block> block, net.minecraft.world.item.Item.Properties properties) {
+            return this.registerSimpleBlockItem(block.unwrapKey().orElseThrow().location().getPath(), block::value, properties);
+        }
+
+        /**
+         * Register a simple BlockItem for a given Holder<Block> with default properties.
+         * Name is derived from the block's registry key.
+         */
+        public DeferredItem<net.minecraft.world.item.BlockItem>
+        registerSimpleBlockItem(net.minecraft.core.Holder<net.minecraft.world.level.block.Block> block) {
+            return this.registerSimpleBlockItem(block, new net.minecraft.world.item.Item.Properties());
+        }
+
+        /**
+         * Register a simple BlockItem for a given block instance.
+         */
+        public DeferredItem<net.minecraft.world.item.BlockItem>
         registerSimpleBlockItem(net.minecraft.world.level.block.Block block) {
             return registerSimpleBlockItem(block, new net.minecraft.world.item.Item.Properties());
         }
 
         /**
-         * Register a simple BlockItem for a given block with given properties.
+         * Register a simple BlockItem for a given block instance with given properties.
          */
-        @SuppressWarnings("unchecked")
-        public DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>
+        public DeferredItem<net.minecraft.world.item.BlockItem>
         registerSimpleBlockItem(net.minecraft.world.level.block.Block block, net.minecraft.world.item.Item.Properties properties) {
-            return (DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>)
-                    (DeferredHolder<?, ?>) this.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block).getPath(),
-                            () -> new net.minecraft.world.item.BlockItem(block, properties));
+            return this.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block).getPath(),
+                    () -> new net.minecraft.world.item.BlockItem(block, properties));
         }
 
         /**
          * Register a simple BlockItem using a DeferredHolder for the block.
          */
-        @SuppressWarnings("unchecked")
-        public DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>
+        public DeferredItem<net.minecraft.world.item.BlockItem>
         registerSimpleBlockItem(DeferredHolder<net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> blockHolder) {
-            return (DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>)
-                    (DeferredHolder<?, ?>) this.register(blockHolder.getId().getPath(),
-                            () -> new net.minecraft.world.item.BlockItem(blockHolder.get(), new net.minecraft.world.item.Item.Properties()));
+            return this.register(blockHolder.getId().getPath(),
+                    () -> new net.minecraft.world.item.BlockItem(blockHolder.get(), new net.minecraft.world.item.Item.Properties()));
         }
 
         /**
          * Register a simple BlockItem using a DeferredHolder for the block with given properties.
          */
-        @SuppressWarnings("unchecked")
-        public DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>
+        public DeferredItem<net.minecraft.world.item.BlockItem>
         registerSimpleBlockItem(DeferredHolder<net.minecraft.world.level.block.Block, ? extends net.minecraft.world.level.block.Block> blockHolder,
                                 net.minecraft.world.item.Item.Properties properties) {
-            return (DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.BlockItem>)
-                    (DeferredHolder<?, ?>) this.register(blockHolder.getId().getPath(),
-                            () -> new net.minecraft.world.item.BlockItem(blockHolder.get(), properties));
+            return this.register(blockHolder.getId().getPath(),
+                    () -> new net.minecraft.world.item.BlockItem(blockHolder.get(), properties));
         }
     }
 
@@ -429,6 +475,16 @@ public class DeferredRegister<T> {
             }
             RegistryObject<I> obj = delegate.register(name, sup);
             return new DeferredBlock<>(obj, sup);
+        }
+
+        /**
+         * Override register(Function) to return DeferredBlock.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public <I extends net.minecraft.world.level.block.Block> DeferredBlock<I> register(String name, java.util.function.Function<ResourceLocation, ? extends I> func) {
+            ResourceLocation key = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
+            return this.register(name, () -> func.apply(key));
         }
 
         /**
