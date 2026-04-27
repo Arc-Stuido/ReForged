@@ -169,21 +169,21 @@ The table below outlines the expected compatibility for different types and scal
 
 ## 📊 Current Progress Snapshot
 
-Latest implementation snapshot, approximate as of 2026-04-05.
+Latest implementation snapshot, approximate as of 2026-04-27.
 
 | Subsystem | Weight | Completion | Weighted Score |
 |-----------|--------|------------|----------------|
-| Mod loading pipeline | 20% | 85% | 17.0 |
+| Mod loading pipeline | 20% | 88% | 17.6 |
 | Event system | 20% | 98% | 19.6 |
 | Registry system | 15% | 95% | 14.25 |
 | Capability system | 10% | 95% | 9.5 |
-| Network / Payload | 8% | 82% | 6.56 |
-| Extension / Common API | 12% | 96% | 11.52 |
-| Client side | 10% | 97% | 9.7 |
-| Mixin coverage | 5% | 95% | 4.75 |
-| **Total** | **100%** |  | **~93%** |
+| Network / Payload | 8% | 84% | 6.72 |
+| Extension / Common API | 12% | 97% | 11.64 |
+| Client side | 10% | 98% | 9.8 |
+| Mixin coverage | 5% | 96% | 4.8 |
+| **Total** | **100%** |  | **~94%** |
 
-### Recent Changes (03-09 → 04-05)
+### Recent Changes (03-09 to 04-27)
 
 #### Phase 1 (03-09 → 03-10): Core Event & API Framework
 - **Event system (major)**: Added **60 Forge wrapper constructors** enabling automatic event bridging via `NeoForgeEventBusAdapter`. Covers server lifecycle, entity, living, player, level, village, brewing, enchanting, and grindstone events.
@@ -225,12 +225,21 @@ Latest implementation snapshot, approximate as of 2026-04-05.
 - **Standalone ModelResourceLocation**: CoreMod fixes `ModelResourceLocation.standalone()` factory method for models without block state variants.
 - **Verifier Stack Frame Fix**: BytecodeRewriter now patches stack frame types to replace NeoForge accessor interface descriptors with vanilla MC class descriptors — fixes `VerifyError` from JVM bytecode verification.
 
+#### Phase 7 (04-27): Create/Flywheel Stability and Client API Convergence
+- **Flywheel render stabilization**: `FlywheelRenderBridge` now owns the client render coordination path for camera mode changes, render origin changes, GL state sync, fog/light uniform sync, deferred visual refresh, block entity visual lifecycle, and vanilla-render skip decisions.
+- **Third-person stability**: Removed the diagnostic third-person `afterEntities` short circuit and kept first/third person on the same state synchronization path, fixing the large black Flywheel geometry failure without relying on high-frequency logs.
+- **Reload/re-entry recovery**: Added bounded visual refresh behavior for renderer reloads, camera mode transitions, render-origin moves, and light/section invalidation so Create/Flywheel block entity visuals recover after `F3+A`, world re-entry, block updates, and lighting changes.
+- **NeoForge fluid and decorator APIs**: `FluidType.wrap()` is the single Forge-to-NeoForge fluid wrapper entry point; `FluidInteractionRegistry` now follows the NeoForge `FluidType + Function<FluidState, BlockState>` shape; item decorators are normalized to Forge `IItemDecorator`.
+- **Recipe/data pack compatibility**: NeoForge recipe conditions, fluid ingredients, conditional recipe codecs, and optional entity-type tag entries are normalized for Forge's loader, reducing safe-world creation warnings from Create data.
+- **RegisterEvent classloader hardening**: Neo mod loading now anchors to the game classloader and event callbacks temporarily use the NeoMod context classloader, reducing AppClassLoader/TransformingClassLoader splits during entity and registry initialization.
+- **Model and overlay polish**: Additional geometry now receives real section context, AO/model data bridging is retained, and Create factory panel vanilla overlay rendering is preserved so center item/count overlays can render on top of Flywheel visuals.
+
 ### Notes
 
 - The percentages above are engineering estimates, not formal test pass rates.
-- 861 Java source files total (709 shim + 52 core + 100 mixin), 91 Mixin patches, 7 JavaScript CoreMods, 60 event wrapper constructors.
+- 865 Java source files total, including 688 `net.neoforged` shim files and 100 mixin files, plus 10 JavaScript CoreMods.
 - Only 4 `UnsupportedOperationException` remain — all intentional by design (e.g. `PartEntity.getAddEntityPacket()`, `ClientCommandSourceStack.getServer()`).
-- The biggest remaining gaps are advanced entity sync protocols, NeoForge-exclusive deep vanilla patch behavior (e.g. PistonPushReaction extension), and potentially uncovered edge paths in large mods.
+- The biggest remaining gaps are advanced entity sync protocols, NeoForge-exclusive deep vanilla patch behavior (e.g. PistonPushReaction extension), custom low-level loader integration, and uncovered edge paths in large mods beyond the Create/Flywheel validation matrix.
 
 ## 📝 Project Structure
 

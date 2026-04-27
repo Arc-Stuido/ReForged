@@ -26,6 +26,14 @@ public class SingleFluidIngredient extends FluidIngredient {
         this.fluid = fluid;
     }
 
+    public static FluidIngredient of(Fluid fluid) {
+        return new SingleFluidIngredient(fluid.builtInRegistryHolder());
+    }
+
+    public static FluidIngredient of(Holder<Fluid> fluid) {
+        return new SingleFluidIngredient(fluid);
+    }
+
     @Override
     public boolean test(FluidStack fluidStack) {
         return fluidStack.is(fluid);

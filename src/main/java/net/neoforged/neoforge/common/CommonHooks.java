@@ -241,7 +241,7 @@ public class CommonHooks {
 
 	public static FluidType getVanillaFluidType(net.minecraft.world.level.material.Fluid fluid) {
 		net.minecraftforge.fluids.FluidType forgeType = ForgeHooks.getVanillaFluidType(fluid);
-		return forgeType instanceof FluidType neoType ? neoType : null;
+		return FluidType.wrap(forgeType);
 	}
 
 	public static boolean onFarmlandTrample(Level level, BlockPos pos, BlockState state, float fallDistance, Entity entity) {

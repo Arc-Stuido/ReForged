@@ -1,9 +1,11 @@
 package net.neoforged.neoforge.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.IItemDecorator;
 
 import java.util.List;
 import java.util.Map;
@@ -43,8 +45,17 @@ public final class ItemDecoratorHandler {
         if (itemDecorators.isEmpty()) {
             return;
         }
+        resetRenderState();
         for (IItemDecorator itemDecorator : itemDecorators) {
-            itemDecorator.render(guiGraphics, font, stack, xOffset, yOffset);
+            if (itemDecorator.render(guiGraphics, font, stack, xOffset, yOffset)) {
+                resetRenderState();
+            }
         }
+    }
+
+    private void resetRenderState() {
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
     }
 }

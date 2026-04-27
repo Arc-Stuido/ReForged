@@ -6,7 +6,7 @@ import java.util.Map;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.fml.event.IModBusEvent;
-import net.neoforged.neoforge.client.IItemDecorator;
+import net.minecraftforge.client.IItemDecorator;
 
 /**
  * Fired to allow registration of item decorators (overlays on item icons).

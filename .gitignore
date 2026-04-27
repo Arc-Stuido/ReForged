@@ -5,6 +5,11 @@ bin/
 *.class
 
 # === Gradle ===
+.gradle-codex/
+.gradle-codex-project/
+build-codex/
+build-codex-check/
+.gradle-codex/
 .gradle/
 !gradle/wrapper/gradle-wrapper.jar
 !gradle/wrapper/gradle-wrapper.properties
@@ -38,3 +43,4 @@ desktop.ini
 *.swp
 *.swo
 *~
+javac.*.args

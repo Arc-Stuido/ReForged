@@ -23,6 +23,10 @@ public class TagFluidIngredient extends FluidIngredient {
         this.tag = tag;
     }
 
+    public static FluidIngredient tag(TagKey<Fluid> tag) {
+        return new TagFluidIngredient(tag);
+    }
+
     @Override
     public boolean test(FluidStack fluidStack) {
         return fluidStack.is(tag);

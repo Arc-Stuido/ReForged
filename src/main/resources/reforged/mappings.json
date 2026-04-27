@@ -372,6 +372,11 @@
       "to": "net.neoforged.neoforge.client.ClientHooks"
     },
     {
+      "comment": "ItemDecoratorHandler - keep identity; ReForged populates the NeoForge-compatible handler at runtime",
+      "from": "net.neoforged.neoforge.client.ItemDecoratorHandler",
+      "to": "net.neoforged.neoforge.client.ItemDecoratorHandler"
+    },
+    {
       "comment": "ModFileScanData — keep identity; Jade loadComplete accesses this from ReForged's shim layer",
       "from": "net.neoforged.neoforgespi.language.ModFileScanData",
       "to": "net.neoforged.neoforgespi.language.ModFileScanData"

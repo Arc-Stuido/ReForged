@@ -7,8 +7,10 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 import org.xiyu.reforged.bridge.FlywheelRenderBridge;
 
@@ -144,6 +146,23 @@ public abstract class FlywheelLevelRendererMixin {
             if (this.level != null) {
                 FlywheelRenderBridge.fireReloadLevelRendererEvent(this.level);
             }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
+     * Hook: block state dirtied — mirror Flywheel's visualmanage.LevelRendererMixin so
+     * block entity visuals are updated or rebuilt when vanilla triggers a section refresh.
+     */
+    @Inject(
+            method = "setBlockDirty(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V",
+            at = @At("TAIL"),
+            remap = false
+    )
+    private void reforged$flywheelTrackDirtyBlock(BlockPos pos, BlockState oldState,
+                                                   BlockState newState, CallbackInfo ci) {
+        try {
+            FlywheelRenderBridge.onBlockEntityChanged(this.level, pos, oldState, newState);
         } catch (Throwable ignored) {
         }
     }

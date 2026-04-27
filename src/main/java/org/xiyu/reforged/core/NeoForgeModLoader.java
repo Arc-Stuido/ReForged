@@ -147,8 +147,10 @@ public final class NeoForgeModLoader {
 
         // Phase 2: Create classloader with all NeoForge JARs
         List<Path> extractedJiJJars = new ArrayList<>();
+        ClassLoader parentLoader = resolveGameClassLoader();
+        LOGGER.info("[ReForged] NeoMod parent classloader: {}", parentLoader);
         URLClassLoader neoClassLoader = NeoModClassLoader.createClassLoader(
-                neoJars, NeoForgeModLoader.class.getClassLoader(), extractedJiJJars);
+                neoJars, parentLoader, extractedJiJJars);
         if (neoClassLoader == null) return;
         neoModClassLoader = neoClassLoader;
 
@@ -251,6 +253,11 @@ public final class NeoForgeModLoader {
         } catch (Throwable t) {
             LOGGER.warn("[ReForged] Config loading after NeoForge mod init failed: {}", t.getMessage());
         }
+    }
+
+    private static ClassLoader resolveGameClassLoader() {
+        ClassLoader gameLoader = net.minecraft.SharedConstants.class.getClassLoader();
+        return gameLoader != null ? gameLoader : NeoForgeModLoader.class.getClassLoader();
     }
 
     /**

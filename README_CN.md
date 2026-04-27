@@ -167,21 +167,21 @@ ReForged 旨在提供广泛的 NeoForge 模组兼容性，但可能存在一些�
 
 ## 📊 当前完成度快照
 
-以下为截至 2026-04-05 的近似工程评估。
+以下为截至 2026-04-27 的近似工程评估。
 
 | 子系统 | 权重 | 完成度 | 加权分 |
 |--------|------|--------|--------|
-| Mod 加载管线 | 20% | 85% | 17.0 |
+| Mod 加载管线 | 20% | 88% | 17.6 |
 | 事件系统 | 20% | 98% | 19.6 |
 | 注册系统 | 15% | 95% | 14.25 |
 | 能力系统 | 10% | 95% | 9.5 |
-| 网络 / Payload | 8% | 82% | 6.56 |
-| 扩展 / 通用 API | 12% | 96% | 11.52 |
-| 客户端 | 10% | 97% | 9.7 |
-| Mixin 覆盖 | 5% | 95% | 4.75 |
-| **总计** | **100%** |  | **~93%** |
+| 网络 / Payload | 8% | 84% | 6.72 |
+| 扩展 / 通用 API | 12% | 97% | 11.64 |
+| 客户端 | 10% | 98% | 9.8 |
+| Mixin 覆盖 | 5% | 96% | 4.8 |
+| **总计** | **100%** |  | **~94%** |
 
-### 近期变更（03-09 → 04-05）
+### 近期变更（03-09 → 04-27）
 
 #### Phase 1（03-09 → 03-10）：基础事件与 API 框架
 - **事件系统（重大更新）**：新增 **60 个 Forge wrapper 构造函数**，实现通过 `NeoForgeEventBusAdapter` 自动桥接事件。覆盖服务器生命周期、实体、生物、玩家、世界/区块、村庄、酿造、附魔、砂轮等事件类别。
@@ -223,12 +223,21 @@ ReForged 旨在提供广泛的 NeoForge 模组兼容性，但可能存在一些�
 - **独立 ModelResourceLocation**：CoreMod 修复 `ModelResourceLocation.standalone()` 工厂方法，支持无方块状态变体的模型。
 - **Verifier 栈帧修复**：BytecodeRewriter 现在修补栈帧类型，将 NeoForge accessor 接口描述符替换为原版 MC 类描述符 — 修复 JVM 字节码验证的 `VerifyError`。
 
+#### Phase 7（04-27）：Create/Flywheel 稳定化与客户端 API 收敛
+- **Flywheel 渲染稳定化**：`FlywheelRenderBridge` 统一承担相机模式变化、render origin 变化、GL 状态同步、fog/light uniform 同步、延迟 visual 刷新、方块实体 visual 生命周期以及 vanilla 渲染跳过判定。
+- **第三人称稳定路径**：移除了诊断期第三人称 `afterEntities` 短路，让第一/第三人称走同一套状态同步逻辑，修复大面积黑色 Flywheel 几何体问题，并不再依赖高频日志维持稳定。
+- **重载/重进恢复**：对 renderer reload、相机切换、render origin 移动、光照和 section 失效增加有界 visual refresh，覆盖 `F3+A`、重进世界、方块更新和光照变化后的 Create/Flywheel visual 恢复。
+- **NeoForge 流体与 decorator API**：`FluidType.wrap()` 成为 Forge 到 NeoForge 流体包装的唯一入口；`FluidInteractionRegistry` 对齐 NeoForge 的 `FluidType + Function<FluidState, BlockState>` 形态；item decorator 统一归一到 Forge `IItemDecorator`。
+- **配方/数据包兼容**：补齐 NeoForge recipe condition、fluid ingredient、conditional recipe codec 与可选 entity-type tag 条目的 Forge 侧归一化，减少 Create 数据在安全世界创建阶段的告警。
+- **RegisterEvent classloader 加固**：Neo mod 加载现在显式锚定到游戏 classloader，事件回调执行时临时切换到 NeoMod 上下文 classloader，减少实体和注册初始化阶段的 AppClassLoader/TransformingClassLoader 分裂。
+- **模型与叠层修补**：附加几何现在传递真实 section 上下文，保留 AO/model data 桥接，并为 Create factory panel 保留 vanilla 叠层渲染，使中心物品/数量叠层能覆盖在 Flywheel visual 上。
+
 ### 说明
 
 - 上述数值属于工程估算，不等同于正式测试通过率。
-- 共 861 个 Java 源文件（709 个 shim + 52 个核心 + 100 个 mixin），91 个 Mixin 补丁，7 个 JavaScript CoreMod，60 个事件 wrapper 构造函数。
+- 共 865 个 Java 源文件，其中包含 688 个 `net.neoforged` shim 文件和 100 个 mixin 文件，另有 10 个 JavaScript CoreMod。
 - 仅剩 4 个 `UnsupportedOperationException` — 全部为设计性保留（如 `PartEntity.getAddEntityPacket()`、`ClientCommandSourceStack.getServer()`）。
-- 当前最大缺口：复杂实体同步协议、NeoForge 独有的深层 vanilla patch 行为（如 PistonPushReaction 扩展）、以及大型模组中可能存在的未覆盖边缘路径。
+- 当前最大缺口：复杂实体同步协议、NeoForge 独有的深层 vanilla patch 行为（如 PistonPushReaction 扩展）、自定义底层 loader 集成，以及 Create/Flywheel 验证矩阵之外的大型模组边缘路径。
 
 ## 📝 项目结构
 

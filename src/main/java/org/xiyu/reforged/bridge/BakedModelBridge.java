@@ -23,12 +23,13 @@ public final class BakedModelBridge {
      * Redirect target for NeoForge's
      * {@code BakedModel.useAmbientOcclusion(BlockState, ModelData, RenderType) → TriState}.
      *
-     * <p>Returns {@link TriState#DEFAULT} to match NeoForge's default implementation,
-     * which lets the caller decide AO based on other factors (light emission, global setting).
-     * No standard BakedModel overrides this method in NeoForge — they all rely on DEFAULT.
+     * <p>Delegates to Forge's {@code useAmbientOcclusion(BlockState, RenderType) → boolean}
+     * (from IForgeBakedModel). If the model opts out of AO, returns {@link TriState#FALSE};
+     * otherwise returns {@link TriState#DEFAULT} to let the standard AO logic decide
+     * based on global settings and light emission.</p>
      */
     public static TriState useAmbientOcclusion(BakedModel model, BlockState state,
                                                 ModelData data, RenderType renderType) {
-        return TriState.DEFAULT;
+        return model.useAmbientOcclusion(state, renderType) ? TriState.DEFAULT : TriState.FALSE;
     }
 }

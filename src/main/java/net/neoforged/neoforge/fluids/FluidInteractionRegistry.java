@@ -1,66 +1,101 @@
 package net.neoforged.neoforge.fluids;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.event.EventHooks;
 
 /**
- * Registry for fluid interaction behaviors (e.g., lava + water = obsidian).
+ * Registry for source-fluid interactions with surrounding blocks and fluids.
  */
 public final class FluidInteractionRegistry {
-    private static final Map<FluidType, List<InteractionInformation>> INTERACTIONS = new ConcurrentHashMap<>();
+    private static final Map<FluidType, List<InteractionInformation>> INTERACTIONS = new HashMap<>();
 
     private FluidInteractionRegistry() {}
 
-    /**
-     * Registers a fluid interaction for the given source fluid type.
-     */
     public static synchronized void addInteraction(FluidType source, InteractionInformation interaction) {
-        INTERACTIONS.computeIfAbsent(source, k -> new ArrayList<>()).add(interaction);
+        INTERACTIONS.computeIfAbsent(source, s -> new ArrayList<>()).add(interaction);
     }
 
     /**
-     * Checks if any fluid interaction should occur at the given position.
+     * Performs the first matching interaction for the fluid at {@code pos}.
      */
     public static boolean canInteract(Level level, BlockPos pos) {
-        FluidState fluidState = level.getFluidState(pos);
-        if (fluidState.isEmpty()) return false;
-        FluidType type = (FluidType) (Object) fluidState.getFluidType();
-        List<InteractionInformation> interactions = INTERACTIONS.get(type);
-        if (interactions == null) return false;
-        for (InteractionInformation info : interactions) {
-            for (Direction dir : Direction.values()) {
-                if (info.predicate.test(new FluidInteraction(level, pos, dir))) {
-                    info.interaction.interact(level, pos, dir);
+        FluidState state = level.getFluidState(pos);
+        FluidType sourceType = FluidType.wrap(state.getFluidType());
+        if (sourceType == null) {
+            return false;
+        }
+
+        for (Direction direction : LiquidBlock.POSSIBLE_FLOW_DIRECTIONS) {
+            BlockPos relativePos = pos.relative(direction.getOpposite());
+            List<InteractionInformation> interactions = INTERACTIONS.getOrDefault(sourceType, Collections.emptyList());
+            for (InteractionInformation interaction : interactions) {
+                if (interaction.predicate().test(level, pos, relativePos, state)) {
+                    interaction.interaction().interact(level, pos, relativePos, state);
                     return true;
                 }
             }
         }
+
         return false;
     }
 
-    /**
-     * Data class for fluid interaction context.
-     */
-    public record FluidInteraction(Level level, BlockPos pos, Direction direction) {
+    static {
+        addInteraction(FluidType.wrap(NeoForgeMod.LAVA_TYPE.value()), new InteractionInformation(
+                FluidType.wrap(NeoForgeMod.WATER_TYPE.value()),
+                fluidState -> fluidState.isSource() ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.COBBLESTONE.defaultBlockState()));
+
+        addInteraction(FluidType.wrap(NeoForgeMod.LAVA_TYPE.value()), new InteractionInformation(
+                (level, currentPos, relativePos, currentState) -> level.getBlockState(currentPos.below()).is(Blocks.SOUL_SOIL)
+                        && level.getBlockState(relativePos).is(Blocks.BLUE_ICE),
+                Blocks.BASALT.defaultBlockState()));
     }
 
-    /**
-     * Functional interface for performing a fluid interaction.
-     */
+    public record InteractionInformation(HasFluidInteraction predicate, FluidInteraction interaction) {
+        public InteractionInformation(FluidType type, BlockState state) {
+            this(type, fluidState -> state);
+        }
+
+        public InteractionInformation(HasFluidInteraction predicate, BlockState state) {
+            this(predicate, fluidState -> state);
+        }
+
+        public InteractionInformation(FluidType type, Function<FluidState, BlockState> getState) {
+            this((level, currentPos, relativePos, currentState) -> type != null
+                    && type.equals(FluidType.wrap(level.getFluidState(relativePos).getFluidType())), getState);
+        }
+
+        public InteractionInformation(HasFluidInteraction predicate, Function<FluidState, BlockState> getState) {
+            this(predicate, (level, currentPos, relativePos, currentState) -> {
+                BlockState result = getState.apply(currentState);
+                if (result != null) {
+                    level.setBlockAndUpdate(currentPos,
+                            EventHooks.fireFluidPlaceBlockEvent(level, currentPos, currentPos, result));
+                    level.levelEvent(1501, currentPos, 0);
+                }
+            });
+        }
+    }
+
     @FunctionalInterface
     public interface HasFluidInteraction {
-        void interact(Level level, BlockPos pos, Direction direction);
+        boolean test(Level level, BlockPos currentPos, BlockPos relativePos, FluidState currentState);
     }
 
-    /**
-     * Holds the predicate and action for a fluid interaction.
-     */
-    public record InteractionInformation(Predicate<FluidInteraction> predicate, HasFluidInteraction interaction) {
+    @FunctionalInterface
+    public interface FluidInteraction {
+        void interact(Level level, BlockPos currentPos, BlockPos relativePos, FluidState currentState);
     }
 }

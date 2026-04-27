@@ -127,6 +127,8 @@ public final class BytecodeRewriter {
         private static final String BAKED_MODEL_BRIDGE =
                 "org/xiyu/reforged/bridge/BakedModelBridge";
 
+        private String currentClassName;
+
         // ── Create mixin accessor → MC target class mapping ────────────
         // Create's NeoForge Mixin config is not loaded by Forge's Sponge Mixin
         // system, so accessor interfaces are never injected.  We inject method
@@ -260,6 +262,13 @@ public final class BytecodeRewriter {
         }
 
         @Override
+        public void visit(int version, int access, String name, String signature,
+                          String superName, String[] interfaces) {
+            this.currentClassName = name;
+            super.visit(version, access, name, signature, superName, interfaces);
+        }
+
+        @Override
         public FieldVisitor visitField(int access, String name, String descriptor,
                                        String signature, Object value) {
             return super.visitField(access, name, rewriteAccessorDescriptor(descriptor),
@@ -271,6 +280,8 @@ public final class BytecodeRewriter {
                                          String signature, String[] exceptions) {
             String newDesc = rewriteAccessorDescriptor(descriptor);
             MethodVisitor mv = super.visitMethod(access, name, newDesc, signature, exceptions);
+            final String ownerClassName = currentClassName;
+            final String ownerMethodName = name;
             return new MethodVisitor(Opcodes.ASM9, mv) {
 
                 // ── Replace Create accessor types in stack map frames ──────
@@ -311,6 +322,22 @@ public final class BytecodeRewriter {
                             super.visitTypeInsn(Opcodes.CHECKCAST, target);
                             return;
                         }
+                        // NeoForge FluidType → wrap Forge base types into NeoForge shim subclass
+                        // Can't just CHECKCAST to Forge base (fails verify for subsequent calls).
+                        // Instead: CHECKCAST to Forge base + INVOKESTATIC FluidType.wrap()
+                        if ("net/neoforged/neoforge/fluids/FluidType".equals(type)) {
+                            super.visitTypeInsn(Opcodes.CHECKCAST, "net/minecraftforge/fluids/FluidType");
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                    "net/neoforged/neoforge/fluids/FluidType", "wrap",
+                                    "(Lnet/minecraftforge/fluids/FluidType;)Lnet/neoforged/neoforge/fluids/FluidType;",
+                                    false);
+                            return;
+                        }
+                    }
+                    if (opcode == Opcodes.INSTANCEOF
+                            && "net/neoforged/neoforge/fluids/FluidType".equals(type)) {
+                        super.visitTypeInsn(Opcodes.INSTANCEOF, "net/minecraftforge/fluids/FluidType");
+                        return;
                     }
                     super.visitTypeInsn(opcode, type);
                 }
@@ -320,6 +347,43 @@ public final class BytecodeRewriter {
                                             String mDescriptor, boolean isInterface) {
                     // Rewrite accessor types in method descriptors throughout
                     String desc = rewriteAccessorDescriptor(mDescriptor);
+
+                    // ── Flywheel config backend parsing fix ────────────────
+                    // Flywheel's command path accepts bare IDs like "instancing" using
+                    // the flywheel namespace, but NeoForgeFlwConfig.parseBackend() uses
+                    // ResourceLocation.parse(), which interprets the same value as
+                    // minecraft:instancing. Redirect this specific call so config values
+                    // match Flywheel's own backend IDs.
+                    if (opcode == Opcodes.INVOKESTATIC
+                            && "dev/engine_room/flywheel/impl/NeoForgeFlwConfig".equals(ownerClassName)
+                            && "parseBackend".equals(ownerMethodName)
+                            && "net/minecraft/resources/ResourceLocation".equals(owner)
+                            && "parse".equals(mName)
+                            && "(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;".equals(desc)) {
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                "dev/engine_room/flywheel/lib/util/ResourceUtil",
+                                "parseFlywheelDefault",
+                                "(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;",
+                                false);
+                        return;
+                    }
+
+                    // ── PackMetadataSection 2-arg → 3-arg constructor redirect ──
+                    // NeoForge: PackMetadataSection(Component, int)
+                    // Forge:    PackMetadataSection(Component, int, Optional<InclusiveRange<Integer>>)
+                    if (opcode == Opcodes.INVOKESPECIAL
+                            && "net/minecraft/server/packs/metadata/pack/PackMetadataSection".equals(owner)
+                            && "<init>".equals(mName)
+                            && "(Lnet/minecraft/network/chat/Component;I)V".equals(desc)) {
+                        // Push Optional.empty() as the third argument
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                "java/util/Optional", "empty", "()Ljava/util/Optional;", false);
+                        // Call the 3-arg constructor
+                        super.visitMethodInsn(opcode, owner, mName,
+                                "(Lnet/minecraft/network/chat/Component;ILjava/util/Optional;)V",
+                                isInterface);
+                        return;
+                    }
 
                     // ── IEventBus.post redirect ────────────────────────────
                     if (opcode == Opcodes.INVOKEINTERFACE
@@ -432,7 +496,18 @@ public final class BytecodeRewriter {
                 @Override
                 public void visitFieldInsn(int opcode, String owner, String name,
                                            String descriptor) {
-                    super.visitFieldInsn(opcode, owner, name, rewriteAccessorDescriptor(descriptor));
+                    String desc = rewriteAccessorDescriptor(descriptor);
+                    if (opcode == Opcodes.GETSTATIC
+                            && "net/minecraft/world/item/crafting/Recipe".equals(owner)
+                            && "CONDITIONAL_CODEC".equals(name)
+                            && "Lcom/mojang/serialization/Codec;".equals(desc)) {
+                        super.visitFieldInsn(Opcodes.GETSTATIC,
+                                "org/xiyu/reforged/bridge/RecipeBridge",
+                                "CONDITIONAL_CODEC",
+                                "Lcom/mojang/serialization/Codec;");
+                        return;
+                    }
+                    super.visitFieldInsn(opcode, owner, name, desc);
                 }
 
                 // ── Rewrite accessor types in local variable debug info ────

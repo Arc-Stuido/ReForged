@@ -3,6 +3,7 @@ package net.neoforged.neoforge.client.event;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.event.IModBusEvent;
+import org.xiyu.reforged.shim.NeoForgeShim;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -103,8 +104,21 @@ public class RegisterGuiLayersEvent extends net.minecraftforge.eventbus.api.Even
      * Apply all registered layers to the given vanilla {@link LayeredDraw}.
      */
     public void applyTo(LayeredDraw draw) {
-        for (LayeredDraw.Layer layer : layers.values()) {
-            draw.add(layer);
+        for (Map.Entry<ResourceLocation, LayeredDraw.Layer> entry : layers.entrySet()) {
+            draw.add(wrapLayer(entry.getKey(), entry.getValue()));
         }
+    }
+
+    private static LayeredDraw.Layer wrapLayer(ResourceLocation name, LayeredDraw.Layer layer) {
+        return (guiGraphics, partialTick) -> {
+            RenderGuiLayerEvent.Pre pre = new RenderGuiLayerEvent.Pre(guiGraphics, partialTick, name, layer);
+            NeoForgeShim.EVENT_BUS.post(pre);
+            if (pre.isCanceled()) {
+                return;
+            }
+
+            layer.render(guiGraphics, partialTick);
+            NeoForgeShim.EVENT_BUS.post(new RenderGuiLayerEvent.Post(guiGraphics, partialTick, name, layer));
+        };
     }
 }

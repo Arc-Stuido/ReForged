@@ -54,7 +54,7 @@ public final class NeoForgeEventBusAdapter {
         if (listeners == null || listeners.isEmpty()) return false;
         for (Consumer<Object> listener : listeners) {
             try {
-                listener.accept(event);
+                invokeWithNeoContext(listener, event);
             } catch (Throwable t) {
                 LOGGER.error("[ReForged] Fallback listener error for {}: {}",
                         event.getClass().getSimpleName(), t.getMessage(), t);
@@ -392,7 +392,7 @@ public final class NeoForgeEventBusAdapter {
                 if (!forgeEventType.isInstance(forgeEvent)) return;
                 try {
                     Object neoEvent = finalWrapperCtor.newInstance(forgeEvent);
-                    ((Consumer<Object>) finalConsumer).accept(neoEvent);
+                    invokeWithNeoContext(finalConsumer, neoEvent);
                     // Propagate cancellation from NeoForge wrapper back to Forge event
                     if (neoEvent instanceof Event neoEvt && neoEvt.isCanceled()
                             && forgeEvent.isCancelable()) {
@@ -441,7 +441,7 @@ public final class NeoForgeEventBusAdapter {
                     (Class) eventType, (Consumer<Event>) event -> {
                         if (!finalEventType2.isInstance(event)) return;
                         try {
-                            ((Consumer<Object>) finalConsumer2).accept(event);
+                            invokeWithNeoContext(finalConsumer2, event);
                         } catch (Throwable t2) {
                             String msg = t2.getMessage() != null ? t2.getMessage() : "";
                             if (msg.contains("config") && msg.contains("null")
@@ -464,7 +464,7 @@ public final class NeoForgeEventBusAdapter {
                         .add(event -> {
                             if (!finalEventType2.isInstance(event)) return;
                             try {
-                                ((Consumer<Object>) finalConsumer2).accept(event);
+                                invokeWithNeoContext(finalConsumer2, event);
                             } catch (Throwable t2) {
                                 LOGGER.error("[ReForged] Fallback handler error for {}: {}",
                                         finalEventType2.getSimpleName(), t2.getMessage(), t2);
@@ -476,6 +476,28 @@ public final class NeoForgeEventBusAdapter {
 
         LOGGER.warn("[ReForged] Cannot register addListener for {} — not a Forge Event or NeoForge wrapper",
                 eventType.getName());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void invokeWithNeoContext(Consumer<?> consumer, Object event) {
+        Thread thread = Thread.currentThread();
+        ClassLoader previous = thread.getContextClassLoader();
+        ClassLoader neoLoader = NeoForgeModLoader.getNeoModClassLoader();
+        if (neoLoader == null && consumer != null) {
+            neoLoader = consumer.getClass().getClassLoader();
+        }
+
+        boolean changed = neoLoader != null && neoLoader != previous;
+        try {
+            if (changed) {
+                thread.setContextClassLoader(neoLoader);
+            }
+            ((Consumer<Object>) consumer).accept(event);
+        } finally {
+            if (changed) {
+                thread.setContextClassLoader(previous);
+            }
+        }
     }
 
     /**

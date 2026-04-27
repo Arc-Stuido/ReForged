@@ -59,6 +59,7 @@
         "ItemStackHandlerAccessorMixin",
         "FlywheelBlockEntityRemoveMixin",
         "FlywheelChunkBlockEntityMixin",
+        "FlywheelClientChunkCacheMixin",
         "FlywheelLevelExtensionMixin",
         "FlywheelLayerLightStorageAccessorMixin",
         "FlywheelLightEngineAccessorMixin",

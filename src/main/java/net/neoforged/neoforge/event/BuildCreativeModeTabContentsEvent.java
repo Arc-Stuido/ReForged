@@ -4,10 +4,12 @@ import java.util.LinkedHashSet;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.eventbus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
 
@@ -100,6 +102,14 @@ public final class BuildCreativeModeTabContentsEvent extends Event implements IM
         if (isSearchTab(visibility)) {
             searchEntries.add(newEntry);
         }
+    }
+
+    public void accept(Supplier<? extends ItemLike> item, CreativeModeTab.TabVisibility visibility) {
+        this.accept(item.get().asItem().getDefaultInstance(), visibility);
+    }
+
+    public void accept(Supplier<? extends ItemLike> item) {
+        this.accept(item, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
     }
 
     static boolean isParentTab(CreativeModeTab.TabVisibility visibility) {

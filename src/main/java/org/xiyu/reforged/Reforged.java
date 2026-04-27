@@ -16,6 +16,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.xiyu.reforged.core.NeoForgeModLoader;
 import org.xiyu.reforged.core.DataMapInitializer;
+import org.xiyu.reforged.core.NeoForgePackResources;
 import org.slf4j.Logger;
 
 import java.nio.file.*;
@@ -194,7 +195,7 @@ public class Reforged {
         // 6. RegisterItemDecorationsEvent (Create uses item decorators)
         try {
             var decorators = new java.util.HashMap<net.minecraft.world.item.Item,
-                    java.util.List<net.neoforged.neoforge.client.IItemDecorator>>();
+                    java.util.List<net.minecraftforge.client.IItemDecorator>>();
             var idEvent = new net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent(decorators);
             NeoForgeModLoader.dispatchNeoForgeModEvent(idEvent);
             // Apply to ItemDecoratorHandler
@@ -271,7 +272,18 @@ public class Reforged {
                 jarFileSystems.add(jarFs);
 
                 Path root = jarFs.getPath("/");
-                var supplier = new PathPackResources.PathResourcesSupplier(root);
+                var pathSupplier = new PathPackResources.PathResourcesSupplier(root);
+                Pack.ResourcesSupplier supplier = new Pack.ResourcesSupplier() {
+                    @Override
+                    public net.minecraft.server.packs.PackResources openPrimary(PackLocationInfo info) {
+                        return new NeoForgePackResources(pathSupplier.openPrimary(info));
+                    }
+
+                    @Override
+                    public net.minecraft.server.packs.PackResources openFull(PackLocationInfo info, Pack.Metadata metadata) {
+                        return new NeoForgePackResources(pathSupplier.openFull(info, metadata));
+                    }
+                };
                 String jarName = jarPath.getFileName().toString();
                 String packId = "neomod:" + jarName.replace(".jar", "");
 

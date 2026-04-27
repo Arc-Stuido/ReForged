@@ -7,12 +7,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import java.io.File;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.client.Camera;
@@ -115,6 +117,8 @@ import org.joml.Vector3f;
  * Method signatures match NeoForge's API; the implementation forwards to Forge.
  */
 public class ClientHooks {
+    private static final Map<List<AddSectionGeometryEvent.AdditionalSectionRenderer>, net.minecraft.core.SectionPos> ADDITIONAL_RENDERER_SECTIONS =
+            Collections.synchronizedMap(new WeakHashMap<>());
 
     // ── GUI Layer Management ──────────────────────────────
 
@@ -690,7 +694,11 @@ public class ClientHooks {
             var sectionPos = net.minecraft.core.SectionPos.of(sectionOrigin);
             var event = new AddSectionGeometryEvent(sectionPos, level);
             NeoForgeShim.EVENT_BUS.post(event);
-            return event.getAdditionalRenderers();
+            var renderers = event.getAdditionalRenderers();
+            if (!renderers.isEmpty()) {
+                ADDITIONAL_RENDERER_SECTIONS.put(renderers, sectionPos);
+            }
+            return renderers;
         } catch (Throwable t) {
             return List.of();
         }
@@ -700,7 +708,8 @@ public class ClientHooks {
         if (additionalRenderers.isEmpty()) return;
         try {
             // Build a SectionRenderingContext from the region
-            net.minecraft.core.SectionPos sectionPos = net.minecraft.core.SectionPos.of(0, 0, 0); // placeholder
+            net.minecraft.core.SectionPos sectionPos = ADDITIONAL_RENDERER_SECTIONS.get(additionalRenderers);
+            if (sectionPos == null) return;
             BlockAndTintGetter blockGetter = region instanceof BlockAndTintGetter bat ? bat : null;
             if (blockGetter == null) return;
             var ctx = new AddSectionGeometryEvent.SectionRenderingContext(blockGetter, sectionPos);

@@ -2,7 +2,8 @@ package net.neoforged.neoforge.client.event;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 /**
  * Fired when the HUD is rendered to the screen.
@@ -25,7 +26,7 @@ public abstract class RenderGuiEvent extends Event {
     public GuiGraphics getGuiGraphics() { return guiGraphics; }
     public DeltaTracker getPartialTick() { return partialTick; }
 
-    public static class Pre extends RenderGuiEvent {
+    public static class Pre extends RenderGuiEvent implements ICancellableEvent {
         public Pre() { super(); }
         public Pre(GuiGraphics g, DeltaTracker pt) { super(g, pt); }
     }

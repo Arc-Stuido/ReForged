@@ -92,7 +92,7 @@ public interface IEntityExtension {
     @Nullable
     default FluidType getMaxHeightFluidType() {
         net.minecraftforge.fluids.FluidType fluidType = ((IForgeEntity) self()).getMaxHeightFluidType();
-        return fluidType instanceof FluidType neoFluid ? neoFluid : null;
+        return FluidType.wrap(fluidType);
     }
 
     default boolean isInFluidType(FluidType type) {
@@ -100,7 +100,10 @@ public interface IEntityExtension {
     }
 
     default boolean isInFluidType(BiPredicate<FluidType, Double> predicate, boolean forAllTypes) {
-        return ((IForgeEntity) self()).isInFluidType((forgeType, height) -> forgeType instanceof FluidType neoType && predicate.test(neoType, height), forAllTypes);
+        return ((IForgeEntity) self()).isInFluidType((forgeType, height) -> {
+            FluidType neoType = FluidType.wrap(forgeType);
+            return neoType != null && predicate.test(neoType, height);
+        }, forAllTypes);
     }
 
     default boolean isInFluidType() {
@@ -110,7 +113,7 @@ public interface IEntityExtension {
     @Nullable
     default FluidType getEyeInFluidType() {
         net.minecraftforge.fluids.FluidType fluidType = ((IForgeEntity) self()).getEyeInFluidType();
-        return fluidType instanceof FluidType neoFluid ? neoFluid : null;
+        return FluidType.wrap(fluidType);
     }
 
     default boolean isEyeInFluidType(FluidType type) {
