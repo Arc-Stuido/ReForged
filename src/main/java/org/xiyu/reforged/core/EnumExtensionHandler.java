@@ -29,8 +29,15 @@ import java.util.jar.JarFile;
 public final class EnumExtensionHandler {
 
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Map<String, List<String>> EXTENDED_ENUM_CONSTANTS = new HashMap<>();
 
     private EnumExtensionHandler() {}
+
+    public static List<String> getExtendedEnumConstantNames(Class<?> enumClass) {
+        if (enumClass == null) return List.of();
+        List<String> constants = EXTENDED_ENUM_CONSTANTS.get(enumClass.getName());
+        return constants == null ? List.of() : List.copyOf(constants);
+    }
 
     /**
      * Process enum extensions from all NeoForge mod JARs.
@@ -59,6 +66,9 @@ public final class EnumExtensionHandler {
                             String constantName = ext.get("name").getAsString();
 
                             if (injectEnumConstant(enumClassName, constantName)) {
+                                EXTENDED_ENUM_CONSTANTS
+                                        .computeIfAbsent(enumClassName, ignored -> new ArrayList<>())
+                                        .add(constantName);
                                 totalExtensions++;
                             }
                         } catch (Exception e) {

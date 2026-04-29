@@ -61,6 +61,7 @@ public class Reforged {
         // ── 1. Discover the mods directory ───────────────────
         Path modsDir = FMLPaths.MODSDIR.get();
         LOGGER.info("[ReForged] Mods directory: {}", modsDir);
+        ensureForgeGameDataReady();
 
         // ── 2. Load NeoForge mods at runtime ─────────────────
         NeoForgeModLoader.loadAll(modsDir, context.getModEventBus());
@@ -72,6 +73,15 @@ public class Reforged {
         context.getModEventBus().addListener(this::addPackFinders);
 
         LOGGER.info("[ReForged] Bootstrap complete");
+    }
+
+    private static void ensureForgeGameDataReady() {
+        try {
+            net.minecraftforge.registries.GameData.init();
+            LOGGER.info("[ReForged] Forge GameData initialized before NeoForge mod construction");
+        } catch (Throwable t) {
+            LOGGER.warn("[ReForged] Forge GameData pre-initialization failed: {}", t.getMessage());
+        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -259,15 +269,16 @@ public class Reforged {
                 neoJars.size(), event.getPackType());
 
         for (Path jarPath : neoJars) {
+            Path resourceJarPath = resolveResourcePackJar(jarPath);
             try {
                 // Open the JAR as a NIO FileSystem so PathPackResources can read from it.
                 // We cache the FileSystem to keep it alive for the game session.
                 FileSystem jarFs;
                 try {
-                    jarFs = FileSystems.newFileSystem(jarPath, (ClassLoader) null);
+                    jarFs = FileSystems.newFileSystem(resourceJarPath, (ClassLoader) null);
                 } catch (FileSystemAlreadyExistsException e) {
                     // Already opened (e.g. CLIENT_RESOURCES event fired before SERVER_DATA)
-                    jarFs = FileSystems.getFileSystem(jarPath.toUri());
+                    jarFs = FileSystems.getFileSystem(resourceJarPath.toUri());
                 }
                 jarFileSystems.add(jarFs);
 
@@ -284,7 +295,7 @@ public class Reforged {
                         return new NeoForgePackResources(pathSupplier.openFull(info, metadata));
                     }
                 };
-                String jarName = jarPath.getFileName().toString();
+                String jarName = resourceJarPath.getFileName().toString();
                 String packId = "neomod:" + jarName.replace(".jar", "");
 
                 var info = new PackLocationInfo(
@@ -311,8 +322,19 @@ public class Reforged {
                 }
             } catch (Exception e) {
                 LOGGER.error("[ReForged] Failed to register resource pack for {}",
-                        jarPath.getFileName(), e);
+                        resourceJarPath.getFileName(), e);
             }
         }
+    }
+
+    private static Path resolveResourcePackJar(Path jarPath) {
+        String fileName = jarPath.getFileName().toString();
+        String suffix = ".neoforge-original";
+        if (!fileName.endsWith(suffix)) {
+            return jarPath;
+        }
+
+        Path patchedJar = jarPath.resolveSibling(fileName.substring(0, fileName.length() - suffix.length()));
+        return Files.isRegularFile(patchedJar) ? patchedJar : jarPath;
     }
 }

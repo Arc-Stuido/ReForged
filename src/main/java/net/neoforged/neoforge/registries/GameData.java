@@ -5,7 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import java.util.Map;
-import java.util.Collections;
+import org.xiyu.reforged.bridge.BlockStateIdMapBridge;
 
 /**
  * Central registry data management.
@@ -18,7 +18,7 @@ public class GameData {
     }
 
     public static IdMapper<BlockState> getBlockStateIDMap() {
-        return Block.BLOCK_STATE_REGISTRY;
+        return BlockStateIdMapBridge.fallbackBlockStateIdMap();
     }
 
     private GameData() {}

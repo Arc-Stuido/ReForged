@@ -121,27 +121,39 @@ public final class ModConfigSpec implements IConfigSpec,
         }
 
         @Override
-        public T get() { return delegate.get(); }
+        public T get() {
+            try {
+                return delegate.get();
+            } catch (IllegalStateException e) {
+                String message = e.getMessage() != null ? e.getMessage() : "";
+                if (message.contains("before config is loaded")) {
+                    return delegate.getDefault();
+                }
+                throw e;
+            }
+        }
         public T getDefault() { return delegate.getDefault(); }
         public void set(T value) { delegate.set(value); }
     }
 
     public static class BooleanValue extends ConfigValue<Boolean> {
         public BooleanValue(ForgeConfigSpec.BooleanValue delegate) { super(delegate); }
+        public boolean getAsBoolean() { return get(); }
     }
 
     public static class IntValue extends ConfigValue<Integer> {
-        private final ForgeConfigSpec.IntValue intDelegate;
-        public IntValue(ForgeConfigSpec.IntValue delegate) { super(delegate); this.intDelegate = delegate; }
-        public int getAsInt() { return intDelegate.get(); }
+        public IntValue(ForgeConfigSpec.IntValue delegate) { super(delegate); }
+        public int getAsInt() { return get(); }
     }
 
     public static class DoubleValue extends ConfigValue<Double> {
         public DoubleValue(ForgeConfigSpec.DoubleValue delegate) { super(delegate); }
+        public double getAsDouble() { return get(); }
     }
 
     public static class LongValue extends ConfigValue<Long> {
         public LongValue(ForgeConfigSpec.LongValue delegate) { super(delegate); }
+        public long getAsLong() { return get(); }
     }
 
     public static class EnumValue<T extends Enum<T>> extends ConfigValue<T> {
@@ -296,6 +308,15 @@ public final class ModConfigSpec implements IConfigSpec,
 
         public <T> ConfigValue<List<? extends T>> defineList(String path,
                 List<? extends T> defaultValue, Predicate<Object> elementValidator) {
+            List<? extends T> safeDefault = defaultValue != null ? defaultValue : List.of();
+            return new ConfigValue<>(delegate.defineList(path, safeDefault, elementValidator));
+        }
+
+        public <T> ConfigValue<List<? extends T>> defineList(String path,
+                List<? extends T> defaultValue, Supplier<T> newElementSupplier,
+                Predicate<Object> elementValidator) {
+            // NeoForge uses the supplier for config UI element creation; Forge's
+            // runtime spec only needs the default list and validator.
             List<? extends T> safeDefault = defaultValue != null ? defaultValue : List.of();
             return new ConfigValue<>(delegate.defineList(path, safeDefault, elementValidator));
         }

@@ -26,6 +26,14 @@ import net.minecraft.server.packs.resources.IoSupplier;
  */
 public final class NeoForgePackResources implements PackResources {
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+    private static final byte[] FALLBACK_PACK_MCMETA = """
+            {
+              "pack": {
+                "description": "ReForged NeoForge mod resources",
+                "pack_format": 32
+              }
+            }
+            """.getBytes(StandardCharsets.UTF_8);
 
     private final PackResources delegate;
 
@@ -35,7 +43,11 @@ public final class NeoForgePackResources implements PackResources {
 
     @Override
     public IoSupplier<InputStream> getRootResource(String... path) {
-        return delegate.getRootResource(path);
+        IoSupplier<InputStream> supplier = delegate.getRootResource(path);
+        if (supplier == null && path.length == 1 && PackResources.PACK_META.equals(path[0])) {
+            return () -> new ByteArrayInputStream(FALLBACK_PACK_MCMETA);
+        }
+        return supplier;
     }
 
     @Override

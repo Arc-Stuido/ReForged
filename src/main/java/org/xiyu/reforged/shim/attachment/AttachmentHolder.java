@@ -66,7 +66,7 @@ public class AttachmentHolder implements IAttachmentHolder {
         Objects.requireNonNull(type);
         T ret = (T) getAttachmentMap().get(type);
         if (ret == null) {
-            ret = type.defaultValueSupplier() != null ? type.defaultValueSupplier().get() : null;
+            ret = type.createDefaultValue(getExposedHolder());
             if (ret != null) {
                 attachments.put(type, ret);
             }

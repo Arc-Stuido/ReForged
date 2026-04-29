@@ -35,12 +35,18 @@ minecraft {
             // logging
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            environment 'MOD_CLASSES', "${mod_id}%%${layout.buildDirectory.dir('sourcesSets/main').get().asFile.absolutePath}"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
         }
 
         client {
             property 'forge.enabledGameTestNamespaces', mod_id
             property 'mixin.env.remapRefMap', 'true'
-            arg '-mixin.config=reforged.mixins.json'
         }
 
         server {
@@ -76,6 +82,9 @@ repositories {
 dependencies {
     // Forge
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // ModLauncher early transformation service API
+    compileOnly 'net.minecraftforge:modlauncher:10.2.1'
 
     // asm
     compileOnly 'org.ow2.asm:asm:9.7'
@@ -142,6 +151,29 @@ tasks.named('jar', Jar).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.register('patchNeoForgeMods', JavaExec) {
+    group = 'reforged'
+    description = 'Injects Forge discovery metadata into NeoForge jars in run/mods before launching.'
+    dependsOn tasks.named('classes')
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.xiyu.reforged.core.NeoForgeModPatcher'
+    args layout.projectDirectory.dir('run/mods').asFile.absolutePath
+}
+
+tasks.register('copyReForgedDevMod', Copy) {
+    group = 'reforged'
+    description = 'Copies the current ReForged jar into run/mods so Forge userdev discovers it consistently.'
+    dependsOn tasks.named('jar')
+    from(tasks.named('jar').flatMap { it.archiveFile })
+    into layout.projectDirectory.dir('run/mods')
+    rename { "${mod_id}-dev.jar" }
+}
+
+tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
+    dependsOn tasks.named('copyReForgedDevMod')
+    dependsOn tasks.named('patchNeoForgeMods')
 }
 
 sourceSets.each {

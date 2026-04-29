@@ -39,7 +39,7 @@ public class TagLoaderMixin {
             Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagMap,
             CallbackInfoReturnable<Map<ResourceLocation, ?>> cir) {
 
-        REFORGED_LOGGER.info("[ReForged] TagLoaderMixin.build() intercepted, processing {} tags", tagMap.size());
+        REFORGED_LOGGER.debug("[ReForged] TagLoaderMixin.build() intercepted, processing {} tags", tagMap.size());
 
         int aliased = 0;
 
@@ -89,7 +89,7 @@ public class TagLoaderMixin {
         if (!additions.isEmpty()) {
             try {
                 tagMap.putAll(additions);
-                REFORGED_LOGGER.info("[ReForged] Aliased {} convention tags between c: and forge: namespaces", aliased);
+                REFORGED_LOGGER.debug("[ReForged] Aliased {} convention tags between c: and forge: namespaces", aliased);
             } catch (UnsupportedOperationException e) {
                 // Map is immutable — can't modify in place, this shouldn't happen with TagLoader
                 REFORGED_LOGGER.error("[ReForged] Tag map is immutable, cannot add aliases! Map type: {}", tagMap.getClass().getName());

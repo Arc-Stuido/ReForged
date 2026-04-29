@@ -176,6 +176,22 @@ public final class FlywheelRenderBridge {
         return visMgr == null ? null : mVMEntities.invoke(visMgr);
     }
 
+    private static boolean hasEntityVisualizer(Entity entity) {
+        try {
+            return entity != null && FlywheelVisualizerBridge.getEntityVisualizer(entity.getType()) != null;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private static boolean hasBlockEntityVisualizer(BlockEntity blockEntity) {
+        try {
+            return blockEntity != null && FlywheelVisualizerBridge.getBlockEntityVisualizer(blockEntity.getType()) != null;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
     private static void scheduleVisualRefresh(ClientLevel level, int reAddDelay, String reason) {
         reAddDelayFrames = reAddDelay;
         reAddPendingLevel = level;
@@ -423,6 +439,7 @@ public final class FlywheelRenderBridge {
                     if (chunk == null) continue;
                     for (BlockEntity be : chunk.getBlockEntities().values()) {
                         if (be == null || be.isRemoved()) continue;
+                        if (!hasBlockEntityVisualizer(be)) continue;
                         mQueueRemove.invoke(beStorage, be);
                         mQueueAdd.invoke(beStorage, be);
                         count++;
@@ -450,6 +467,7 @@ public final class FlywheelRenderBridge {
             int count = 0;
             for (Entity entity : level.entitiesForRendering()) {
                 if (entity == null || !entity.isAlive()) continue;
+                if (!hasEntityVisualizer(entity)) continue;
                 mQueueRemove.invoke(entityStorage, entity);
                 mQueueAdd.invoke(entityStorage, entity);
                 count++;
@@ -771,6 +789,7 @@ public final class FlywheelRenderBridge {
         if (!available) return false;
         try {
             if (!supportsVisualization(entity.level())) return false;
+            if (!hasEntityVisualizer(entity)) return false;
             return (boolean) mSkipVanillaRender.invoke(null, entity);
         } catch (Throwable t) {
             return false;
@@ -790,6 +809,7 @@ public final class FlywheelRenderBridge {
             Level level = blockEntity.getLevel();
             if (level == null) return false;
             if (!supportsVisualization(level)) return false;
+            if (!hasBlockEntityVisualizer(blockEntity)) return false;
             return (boolean) mSkipVanillaRenderBE.invoke(null, blockEntity);
         } catch (Throwable t) {
             return false;
@@ -814,6 +834,7 @@ public final class FlywheelRenderBridge {
         ensureInit();
         if (!available || level == null) return;
         try {
+            if (!hasBlockEntityVisualizer(blockEntity)) return;
             Object beStorage = getBlockEntityStorage(level);
             if (beStorage == null) return;
             mQueueAdd.invoke(beStorage, blockEntity);
@@ -837,6 +858,7 @@ public final class FlywheelRenderBridge {
         ensureInit();
         if (!available || level == null) return;
         try {
+            if (!hasBlockEntityVisualizer(blockEntity)) return;
             Object beStorage = getBlockEntityStorage(level);
             if (beStorage == null) return;
             mQueueRemove.invoke(beStorage, blockEntity);
@@ -858,6 +880,7 @@ public final class FlywheelRenderBridge {
         try {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity == null) return;
+            if (!hasBlockEntityVisualizer(blockEntity)) return;
 
             Object beStorage = getBlockEntityStorage(level);
             if (beStorage == null) return;

@@ -46,6 +46,7 @@ public class DeferredRegister<T> {
     protected final net.minecraftforge.registries.DeferredRegister<T> delegate; // null in no-op mode
     private final String modid;
     private final ResourceKey<? extends Registry<T>> registryKey; // stored for key generation
+    protected final List<DeferredHolder<T, ? extends T>> entries = new ArrayList<>();
     protected boolean isNoOp;
     /** True when this DeferredRegister owns a custom registry built via makeRegistry(). */
     private boolean customRegistry;
@@ -172,11 +173,15 @@ public class DeferredRegister<T> {
                 I value = sup.get();
                 Registry.register((Registry<T>) customRegistryInstance, id, value);
                 LOGGER.info("[ReForged] Registered '{}' into custom registry '{}'", id, registryKey.location());
-                return (DeferredHolder<T, I>) DeferredHolder.createDirect(entryKey, () -> value);
+                DeferredHolder<T, I> holder = (DeferredHolder<T, I>) DeferredHolder.createDirect(entryKey, () -> value);
+                entries.add(holder);
+                return holder;
             } catch (Throwable t) {
                 LOGGER.error("[ReForged] Failed to register '{}' into custom registry '{}': {}",
                         id, registryKey.location(), t.getMessage());
-                return (DeferredHolder<T, I>) DeferredHolder.createDirect(entryKey, sup);
+                DeferredHolder<T, I> holder = (DeferredHolder<T, I>) DeferredHolder.createDirect(entryKey, sup);
+                entries.add(holder);
+                return holder;
             }
         }
         if (isNoOp) {
@@ -188,16 +193,20 @@ public class DeferredRegister<T> {
                 ResourceKey<T> entryKey = ResourceKey.create((ResourceKey<Registry<T>>) registryKey, id);
                 DeferredHolder<T, I> holder = (DeferredHolder<T, I>) DeferredHolder.createDirect(entryKey, sup);
                 pendingHolders.add(new PendingHolder<>(holder, name, sup));
+                entries.add(holder);
                 return holder;
             }
             DeferredHolder<T, I> holder = DeferredHolder.createDirect(id, sup);
             pendingHolders.add(new PendingHolder<>(holder, name, sup));
+            entries.add(holder);
             return holder;
         }
         LOGGER.info("[ReForged] Registering entry '{}'  for mod '{}' via Forge DeferredRegister", name, modid);
         RegistryObject<I> obj = delegate.register(name, sup);
         LOGGER.info("[ReForged] RegistryObject created: {} (id={})", obj, obj.getId());
-        return DeferredHolder.wrap(obj, sup);
+        DeferredHolder<T, I> holder = DeferredHolder.wrap(obj, sup);
+        entries.add(holder);
+        return holder;
     }
 
     /**
@@ -233,9 +242,8 @@ public class DeferredRegister<T> {
     /**
      * Get all registered entries.
      */
-    public Collection<RegistryObject<T>> getEntries() {
-        if (isNoOp || delegate == null) return Collections.emptyList();
-        return delegate.getEntries();
+    public Collection<DeferredHolder<T, ? extends T>> getEntries() {
+        return Collections.unmodifiableCollection(entries);
     }
 
     /**
@@ -469,6 +477,13 @@ public class DeferredRegister<T> {
     /**
      * NeoForge factory for DataComponents.
      */
+    public static DataComponents createDataComponents(String modid) {
+        return new DataComponents(modid);
+    }
+
+    /**
+     * NeoForge factory for DataComponents.
+     */
     public static DataComponents createDataComponents(
             ResourceKey<? extends Registry<net.minecraft.core.component.DataComponentType<?>>> registryKey,
             String modid) {
@@ -506,10 +521,14 @@ public class DeferredRegister<T> {
         public <I extends net.minecraft.world.item.Item> DeferredItem<I> register(String name, Supplier<? extends I> sup) {
             if (isNoOp) {
                 ResourceLocation id = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-                return DeferredItem.createDirectItem(id, sup);
+                DeferredItem<I> holder = DeferredItem.createDirectItem(id, sup);
+                entries.add(holder);
+                return holder;
             }
             RegistryObject<I> obj = delegate.register(name, sup);
-            return DeferredItem.wrapItem(obj, sup);
+            DeferredItem<I> holder = DeferredItem.wrapItem(obj, sup);
+            entries.add(holder);
+            return holder;
         }
 
         /**
@@ -663,10 +682,14 @@ public class DeferredRegister<T> {
         public <I extends net.minecraft.world.level.block.Block> DeferredBlock<I> register(String name, Supplier<? extends I> sup) {
             if (isNoOp) {
                 ResourceLocation id = ResourceLocation.fromNamespaceAndPath(getNamespace(), name);
-                return new DeferredBlock<>(id, sup);
+                DeferredBlock<I> holder = new DeferredBlock<>(id, sup);
+                entries.add(holder);
+                return holder;
             }
             RegistryObject<I> obj = delegate.register(name, sup);
-            return new DeferredBlock<>(obj, sup);
+            DeferredBlock<I> holder = new DeferredBlock<>(obj, sup);
+            entries.add(holder);
+            return holder;
         }
 
         /**

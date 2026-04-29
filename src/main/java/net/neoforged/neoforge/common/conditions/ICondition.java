@@ -33,6 +33,26 @@ public interface ICondition {
 
     boolean test(IContext context);
 
+    /**
+     * NeoForge helper used by data reloaders to evaluate a JSON condition list.
+     */
+    static <T> boolean conditionsMatched(DynamicOps<T> ops, T input) {
+        if (input == null) {
+            return true;
+        }
+
+        IContext context = ConditionalOps.retrieveContext().codec()
+                .decode(ops, ops.emptyMap())
+                .result()
+                .map(Pair::getFirst)
+                .orElse(IContext.EMPTY);
+
+        DataResult<List<ICondition>> conditionsResult = LIST_CODEC.parse(ops, input);
+        List<ICondition> conditions = conditionsResult.result().orElseGet(() ->
+                CODEC.parse(ops, input).result().map(List::of).orElse(List.of(FalseCondition.INSTANCE)));
+        return conditions.stream().allMatch(condition -> condition.test(context));
+    }
+
     default MapCodec<? extends ICondition> codec() {
         return MapCodec.unit(this);
     }

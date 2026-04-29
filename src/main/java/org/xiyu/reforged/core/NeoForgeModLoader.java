@@ -15,8 +15,8 @@ import java.util.*;
  *
  * <h3>How it works:</h3>
  * <ol>
- *   <li>Scans the {@code mods/} folder for JARs containing {@code META-INF/neoforge.mods.toml}
- *       but NOT {@code META-INF/mods.toml} (to avoid interfering with real Forge mods)</li>
+ *   <li>Scans {@code mods/}, {@code neoforge-mods/}, and the dev classpath for JARs
+ *       containing {@code META-INF/neoforge.mods.toml}</li>
  *   <li>Creates a {@link URLClassLoader} parented by the game's classloader,
  *       containing the NeoForge mod JARs</li>
  *   <li>Uses ASM to scan for {@code @net.neoforged.fml.common.Mod} annotated classes</li>
@@ -109,26 +109,26 @@ public final class NeoForgeModLoader {
      */
     public static void loadAll(Path modsDir, IEventBus modBus) {
         storedModEventBus = modBus;
-        if (!Files.isDirectory(modsDir)) {
+
+        // Phase 1: Find NeoForge mod JARs (mods/ directory + neoforge-mods/ + classpath)
+        List<Path> neoJars = new ArrayList<>();
+        if (Files.isDirectory(modsDir)) {
+            neoJars.addAll(NeoJarDiscovery.discoverNeoForgeJars(modsDir));
+        } else {
             LOGGER.debug("[ReForged] Mods directory not found: {}", modsDir);
-            return;
         }
 
-        // Phase 1: Find NeoForge mod JARs (mods/ directory + classpath)
-        List<Path> neoJars = new ArrayList<>(NeoJarDiscovery.discoverNeoForgeJars(modsDir));
+        Path neoModsDir = modsDir.getParent() == null
+                ? Path.of("neoforge-mods")
+                : modsDir.getParent().resolve("neoforge-mods");
+        if (Files.isDirectory(neoModsDir)) {
+            addDeduplicated(neoJars, NeoJarDiscovery.discoverNeoForgeJars(neoModsDir), "neoforge-mods");
+        }
 
         // Phase 1.5: Also scan the classpath for NeoForge mod JARs (dev environment)
         List<Path> classpathJars = NeoJarDiscovery.discoverNeoForgeJarsOnClasspath();
         if (!classpathJars.isEmpty()) {
-            // Deduplicate by filename
-            Set<String> existing = new HashSet<>();
-            for (Path p : neoJars) existing.add(p.getFileName().toString());
-            for (Path cp : classpathJars) {
-                if (existing.add(cp.getFileName().toString())) {
-                    neoJars.add(cp);
-                    LOGGER.info("[ReForged] Found NeoForge mod on classpath: {}", cp.getFileName());
-                }
-            }
+            addDeduplicated(neoJars, classpathJars, "classpath");
         }
 
         if (neoJars.isEmpty()) {
@@ -199,6 +199,7 @@ public final class NeoForgeModLoader {
 
         // Phase 4: Scan and load each mod, collecting containers for ModList injection
         List<ModListInjector.NeoModContainer> neoContainers = new ArrayList<>();
+        List<Path> subscriberJars = new ArrayList<>();
         List<String> failedMods = new ArrayList<>();
         for (Path jar : neoJars) {
             try {
@@ -207,6 +208,7 @@ public final class NeoForgeModLoader {
                 if (loadedModInstances.size() > before) {
                     // At least one mod from this JAR loaded successfully — track it for resource packs
                     loadedNeoJarPaths.add(jar);
+                    subscriberJars.add(jar);
                 }
             } catch (Throwable e) {
                 String jarName = jar.getFileName().toString();
@@ -235,7 +237,7 @@ public final class NeoForgeModLoader {
         ModListInjector.inject(neoContainers);
 
         // Phase 6: Auto-register @EventBusSubscriber classes from NeoForge JARs
-        EventBusSubscriberRegistrar.registerAll(neoJars, neoClassLoader, modBus);
+        EventBusSubscriberRegistrar.registerAll(subscriberJars, neoClassLoader, modBus);
 
         // Phase 7: Load configs registered by NeoForge mods
         // Forge's ConfigTracker loads COMMON/CLIENT configs during early startup, before
@@ -252,6 +254,17 @@ public final class NeoForgeModLoader {
             LOGGER.info("[ReForged] Re-loaded COMMON and CLIENT configs for NeoForge mod config initialization");
         } catch (Throwable t) {
             LOGGER.warn("[ReForged] Config loading after NeoForge mod init failed: {}", t.getMessage());
+        }
+    }
+
+    private static void addDeduplicated(List<Path> target, List<Path> candidates, String source) {
+        Set<String> existing = new HashSet<>();
+        for (Path p : target) existing.add(p.getFileName().toString());
+        for (Path candidate : candidates) {
+            if (existing.add(candidate.getFileName().toString())) {
+                target.add(candidate);
+                LOGGER.info("[ReForged] Found NeoForge mod in {}: {}", source, candidate.getFileName());
+            }
         }
     }
 

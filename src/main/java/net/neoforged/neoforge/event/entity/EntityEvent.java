@@ -25,6 +25,14 @@ public class EntityEvent extends Event {
 
     public Entity getEntity() { return entity; }
 
+    public static class EntityConstructing extends EntityEvent {
+        public EntityConstructing() {}
+
+        public EntityConstructing(Entity entity) {
+            super(entity);
+        }
+    }
+
     public static class EnteringSection extends EntityEvent {
         private long packedOldPos;
         private long packedNewPos;

@@ -27,6 +27,10 @@ public abstract class ScreenRenderSafetyMixin {
 
     @Inject(method = "renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", at = @At("HEAD"), cancellable = true, remap = false)
     private void reforged$safeRenderWithTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        if (!Boolean.getBoolean("reforged.safeNeoScreens")) {
+            return;
+        }
+
         Screen self = (Screen) (Object) this;
         ClassLoader screenLoader = self.getClass().getClassLoader();
 

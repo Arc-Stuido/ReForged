@@ -70,8 +70,17 @@ public interface IAttachmentHolder {
     default <T> Optional<T> getExistingData(AttachmentType<T> type) {
         return hasData(type) ? Optional.of(getData(type)) : Optional.empty();
     }
+
+    default <T> T getExistingDataOrNull(AttachmentType<T> type) {
+        return hasData(type) ? getData(type) : null;
+    }
+
     default <T> Optional<T> getExistingData(Supplier<AttachmentType<T>> type) {
         return getExistingData(type.get());
+    }
+
+    default <T> T getExistingDataOrNull(Supplier<AttachmentType<T>> type) {
+        return getExistingDataOrNull(type.get());
     }
 
     /**
@@ -91,6 +100,10 @@ public interface IAttachmentHolder {
      * <p>When classes have an injected {@link AttachmentHolder.AsField} field via Mixin,
      * they should override the default methods to delegate to that field directly.</p>
      */
+    default void syncData(Supplier<? extends AttachmentType<?>> type) {
+        syncData(type.get());
+    }
+
     final class GlobalAttachmentStorage {
         private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -117,7 +130,7 @@ public interface IAttachmentHolder {
                 }
             }
             // Auto-initialize with default value and store it
-            T defaultVal = type.defaultValueSupplier() != null ? type.defaultValueSupplier().get() : null;
+            T defaultVal = type.createDefaultValue(holder);
             if (defaultVal != null) {
                 getOrCreate(holder).attachments.put(type, defaultVal);
             }

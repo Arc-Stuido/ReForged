@@ -37,6 +37,7 @@ import java.util.function.Consumer;
 public final class NeoForgeEventBusAdapter {
 
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static int poseRestoreLogCount;
 
     /**
      * Fallback listener store for events that cannot be registered on Forge's EventBus.
@@ -54,7 +55,7 @@ public final class NeoForgeEventBusAdapter {
         if (listeners == null || listeners.isEmpty()) return false;
         for (Consumer<Object> listener : listeners) {
             try {
-                invokeWithNeoContext(listener, event);
+                invokeConsumerWithPoseGuard(listener, event);
             } catch (Throwable t) {
                 LOGGER.error("[ReForged] Fallback listener error for {}: {}",
                         event.getClass().getSimpleName(), t.getMessage(), t);
@@ -232,7 +233,7 @@ public final class NeoForgeEventBusAdapter {
                     if (!forgeEventType.isInstance(forgeEvent)) return;
                     try {
                         Object neoEvent = wrapperCtor.newInstance(forgeEvent);
-                        method.invoke(invokeTarget, neoEvent);
+                        invokeMethodWithPoseGuard(method, invokeTarget, neoEvent);
                         // Propagate cancellation from NeoForge wrapper back to Forge event
                         if (neoEvent instanceof Event neoEvt && neoEvt.isCanceled()
                                 && forgeEvent.isCancelable()) {
@@ -281,14 +282,27 @@ public final class NeoForgeEventBusAdapter {
 
                 Object invokeTarget = target instanceof Class<?> ? null : target;
                 Class<?> finalNeoType = neoType;
-                targetBus.addListener(priority, receiveCancelled, eventType, event -> {
+                Consumer<Event> directHandler = event -> {
                     if (!finalNeoType.isInstance(event)) return;
-                    try { method.invoke(invokeTarget, event); }
+                    try { invokeMethodWithPoseGuard(method, invokeTarget, event); }
                     catch (Throwable t) { LOGGER.error("[ReForged] NeoForge handler error: {}", method.getName(), t); }
-                });
-                LOGGER.info("[ReForged] Registered direct NeoForge @SubscribeEvent: {}.{}({}){}",
-                        method.getDeclaringClass().getSimpleName(), method.getName(), neoType.getSimpleName(),
-                        isModBusEvent ? " (MOD bus)" : "");
+                };
+                try {
+                    targetBus.addListener(priority, receiveCancelled, (Class) eventType, (Consumer) directHandler);
+                    LOGGER.info("[ReForged] Registered direct NeoForge @SubscribeEvent: {}.{}({}){}",
+                            method.getDeclaringClass().getSimpleName(), method.getName(), neoType.getSimpleName(),
+                            isModBusEvent ? " (MOD bus)" : "");
+                } catch (Throwable t) {
+                    FALLBACK_LISTENERS.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>())
+                            .add(event -> {
+                                if (event instanceof Event forgeEvent) {
+                                    directHandler.accept(forgeEvent);
+                                }
+                            });
+                    LOGGER.info("[ReForged] Forge bus registration failed for @SubscribeEvent {}.{}({}) - using fallback listener: {}",
+                            method.getDeclaringClass().getSimpleName(), method.getName(), neoType.getSimpleName(),
+                            t.getMessage());
+                }
                 return true;
             }
 
@@ -392,7 +406,7 @@ public final class NeoForgeEventBusAdapter {
                 if (!forgeEventType.isInstance(forgeEvent)) return;
                 try {
                     Object neoEvent = finalWrapperCtor.newInstance(forgeEvent);
-                    invokeWithNeoContext(finalConsumer, neoEvent);
+                    invokeConsumerWithPoseGuard(finalConsumer, neoEvent);
                     // Propagate cancellation from NeoForge wrapper back to Forge event
                     if (neoEvent instanceof Event neoEvt && neoEvt.isCanceled()
                             && forgeEvent.isCancelable()) {
@@ -441,7 +455,7 @@ public final class NeoForgeEventBusAdapter {
                     (Class) eventType, (Consumer<Event>) event -> {
                         if (!finalEventType2.isInstance(event)) return;
                         try {
-                            invokeWithNeoContext(finalConsumer2, event);
+                            invokeConsumerWithPoseGuard(finalConsumer2, event);
                         } catch (Throwable t2) {
                             String msg = t2.getMessage() != null ? t2.getMessage() : "";
                             if (msg.contains("config") && msg.contains("null")
@@ -464,7 +478,7 @@ public final class NeoForgeEventBusAdapter {
                         .add(event -> {
                             if (!finalEventType2.isInstance(event)) return;
                             try {
-                                invokeWithNeoContext(finalConsumer2, event);
+                                invokeConsumerWithPoseGuard(finalConsumer2, event);
                             } catch (Throwable t2) {
                                 LOGGER.error("[ReForged] Fallback handler error for {}: {}",
                                         finalEventType2.getSimpleName(), t2.getMessage(), t2);
@@ -498,6 +512,74 @@ public final class NeoForgeEventBusAdapter {
                 thread.setContextClassLoader(previous);
             }
         }
+    }
+
+    private static void invokeConsumerWithPoseGuard(Consumer<?> consumer, Object event) {
+        int poseDepth = capturePoseStackDepth(event);
+        try {
+            invokeWithNeoContext(consumer, event);
+        } finally {
+            restorePoseStackDepth(event, poseDepth);
+        }
+    }
+
+    private static void invokeMethodWithPoseGuard(Method method, Object target, Object event) throws Throwable {
+        int poseDepth = capturePoseStackDepth(event);
+        try {
+            method.invoke(target, event);
+        } finally {
+            restorePoseStackDepth(event, poseDepth);
+        }
+    }
+
+    private static int capturePoseStackDepth(Object event) {
+        Object poseStack = extractPoseStack(event);
+        if (!(poseStack instanceof com.mojang.blaze3d.vertex.PoseStack ps)) return -1;
+        return getPoseStackDepth(ps);
+    }
+
+    private static void restorePoseStackDepth(Object event, int targetDepth) {
+        if (targetDepth < 0) return;
+        Object poseStack = extractPoseStack(event);
+        if (!(poseStack instanceof com.mojang.blaze3d.vertex.PoseStack ps)) return;
+        int current = getPoseStackDepth(ps);
+        int restored = 0;
+        while (current > targetDepth) {
+            try {
+                ps.popPose();
+            } catch (Throwable ignored) {
+                break;
+            }
+            current--;
+            restored++;
+        }
+        if (restored > 0 && poseRestoreLogCount++ < 8) {
+            LOGGER.warn("[ReForged] Restored {} leaked PoseStack frame(s) after NeoForge {} handler",
+                    restored, event.getClass().getSimpleName());
+        }
+    }
+
+    private static Object extractPoseStack(Object event) {
+        if (event == null) return null;
+        try {
+            Method getter = event.getClass().getMethod("getPoseStack");
+            if (getter.getParameterCount() == 0) {
+                return getter.invoke(event);
+            }
+        } catch (Throwable ignored) {}
+        return null;
+    }
+
+    private static int getPoseStackDepth(com.mojang.blaze3d.vertex.PoseStack poseStack) {
+        try {
+            for (java.lang.reflect.Field field : com.mojang.blaze3d.vertex.PoseStack.class.getDeclaredFields()) {
+                if (java.util.Deque.class.isAssignableFrom(field.getType())) {
+                    field.setAccessible(true);
+                    return ((java.util.Deque<?>) field.get(poseStack)).size();
+                }
+            }
+        } catch (Throwable ignored) {}
+        return 0;
     }
 
     /**

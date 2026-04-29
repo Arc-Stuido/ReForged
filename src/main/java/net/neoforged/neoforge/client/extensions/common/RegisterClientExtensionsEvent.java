@@ -1,5 +1,6 @@
 package net.neoforged.neoforge.client.extensions.common;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.Event;
@@ -51,6 +52,16 @@ public class RegisterClientExtensionsEvent extends Event implements IModBusEvent
     }
 
     /**
+     * Register client item extensions for holder-backed item references.
+     */
+    @SuppressWarnings("unchecked")
+    public void registerItem(IClientItemExtensions extensions, Holder<Item>... items) {
+        for (Holder<Item> holder : items) {
+            registerItem(extensions, holder.value());
+        }
+    }
+
+    /**
      * Register client block extensions for the given blocks.
      */
     public void registerBlock(IClientBlockExtensions extensions, Block... blocks) {
@@ -63,6 +74,16 @@ public class RegisterClientExtensionsEvent extends Event implements IModBusEvent
             } catch (Throwable t) {
                 // Fallback: log and continue
             }
+        }
+    }
+
+    /**
+     * Register client block extensions for holder-backed block references.
+     */
+    @SuppressWarnings("unchecked")
+    public void registerBlock(IClientBlockExtensions extensions, Holder<Block>... blocks) {
+        for (Holder<Block> holder : blocks) {
+            registerBlock(extensions, holder.value());
         }
     }
 }

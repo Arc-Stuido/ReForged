@@ -1,66 +1,84 @@
 package org.xiyu.reforged.mixin;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
 import com.mojang.logging.LogUtils;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.xiyu.reforged.core.ForgeTomlConfigWrapper;
+import org.xiyu.reforged.core.ModDescriptorConverter;
 
-import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 /**
- * Mixin into Forge's ModFileParser to also accept {@code neoforge.mods.toml}.
- *
- * <h3>Problem</h3>
- * <p>Forge's {@code ModFileParser.readModList()} only looks for {@code META-INF/mods.toml}.
- * NeoForge mods have {@code META-INF/neoforge.mods.toml} instead.</p>
- *
- * <h3>Solution</h3>
- * <p>Intercept the mod file parsing. When a mod file doesn't have {@code mods.toml}
- * but does have {@code neoforge.mods.toml}, convert the NeoForge descriptor on-the-fly
- * and inject it as if it were a standard {@code mods.toml}.</p>
- *
- * <p>Target class: {@code net.minecraftforge.fml.loading.moddiscovery.ModFileParser}</p>
+ * Lets Forge's parser understand NeoForge descriptors when this mixin is applied
+ * early enough. The dev/runtime patcher is the primary path for jars in mods/;
+ * this remains as a non-invasive fallback for command-line early mixin loading.
  */
 @Mixin(ModFileParser.class)
 public abstract class ModFileInfoMixin {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    /**
-     * Inject at the HEAD of readModList to intercept mod file loading.
-     * If the mod file contains neoforge.mods.toml but no mods.toml,
-     * convert and inject the descriptor.
-     */
-    @Inject(method = "readModList", at = @At("HEAD"), cancellable = false, remap = false)
-    private static void reforged$onReadModList(IModFile modFile, CallbackInfoReturnable<?> cir) {
-        try {
-            Path modPath = modFile.getFilePath();
-            LOGGER.debug("[ReForged] ModFileInfoMixin: Checking {}", modPath.getFileName());
-
-            // Check if this mod file has neoforge.mods.toml
-            Path neoToml = modPath.resolve("META-INF").resolve("neoforge.mods.toml");
-            Path forgeToml = modPath.resolve("META-INF").resolve("mods.toml");
-
-            if (Files.exists(neoToml) && !Files.exists(forgeToml)) {
-                LOGGER.info("[ReForged] Detected NeoForge mod: {} — converting neoforge.mods.toml → mods.toml",
-                        modPath.getFileName());
-
-                // Read and convert the NeoForge descriptor
-                String neoContent = Files.readString(neoToml);
-                String forgeContent = org.xiyu.reforged.core.ModDescriptorConverter.convert(neoContent);
-
-                // Write the converted mods.toml into the mod file
-                Files.createDirectories(forgeToml.getParent());
-                Files.writeString(forgeToml, forgeContent);
-
-                LOGGER.info("[ReForged] Successfully injected mods.toml for NeoForge mod: {}", modPath.getFileName());
-            }
-        } catch (Exception e) {
-            LOGGER.error("[ReForged] ModFileInfoMixin: Failed to process mod file", e);
+    @Inject(method = "modsTomlParser", at = @At("HEAD"), cancellable = true, remap = false)
+    private static void reforged$parseNeoForgeToml(IModFile rawModFile,
+                                                   CallbackInfoReturnable<IModFileInfo> cir) {
+        if (!(rawModFile instanceof ModFile modFile)) {
+            return;
         }
+
+        try {
+            Path forgeToml = modFile.findResource("META-INF", "mods.toml");
+            if (Files.exists(forgeToml)) {
+                return;
+            }
+
+            Path neoToml = modFile.findResource("META-INF", "neoforge.mods.toml");
+            if (!Files.exists(neoToml)) {
+                return;
+            }
+
+            String neoContent = Files.readString(neoToml, StandardCharsets.UTF_8);
+            String forgeContent = ModDescriptorConverter.convertForForgeDiscovery(neoContent);
+            Path generatedToml = writeGeneratedToml(modFile, forgeContent);
+
+            FileConfig config = FileConfig.builder(generatedToml).build();
+            config.load();
+            config.close();
+
+            var wrapper = new ForgeTomlConfigWrapper(config);
+            var info = new ModFileInfo(modFile, wrapper, ignored -> {}, List.of());
+            LOGGER.info("[ReForged] Parsed NeoForge metadata for {} through generated Forge discovery descriptor",
+                    modFile.getFileName());
+            cir.setReturnValue(info);
+        } catch (Throwable t) {
+            LOGGER.warn("[ReForged] Failed to parse NeoForge metadata for {}", modFile.getFilePath(), t);
+        }
+    }
+
+    private static Path writeGeneratedToml(ModFile modFile, String forgeContent) throws Exception {
+        Path dir;
+        try {
+            dir = FMLPaths.GAMEDIR.get().resolve(".reforged").resolve("generated-mod-metadata");
+        } catch (Throwable ignored) {
+            dir = Path.of(System.getProperty("user.dir", ".")).resolve(".reforged").resolve("generated-mod-metadata");
+        }
+        Files.createDirectories(dir);
+
+        String safeName = modFile.getFileName().replaceAll("[^A-Za-z0-9._-]", "_");
+        Path generatedToml = dir.resolve(safeName + ".mods.toml");
+        Files.writeString(generatedToml, forgeContent, StandardCharsets.UTF_8);
+        return generatedToml;
     }
 }

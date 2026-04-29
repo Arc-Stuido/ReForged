@@ -137,6 +137,7 @@ public final class NeoForgeModAnalyzer {
                 "net/neoforged/neoforge/common/util/",
                 "net/neoforged/neoforge/common/util/strategy/",
                 "net/neoforged/neoforge/common/crafting/",
+                "net/neoforged/neoforge/data/event/",
                 "net/neoforged/neoforge/fluids/",
                 "net/neoforged/neoforge/energy/",
                 "net/neoforged/neoforge/entity/",

@@ -12,6 +12,7 @@ import net.minecraft.server.level.BlockDestructionProgress;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
+import org.xiyu.reforged.bridge.ClientRenderStateBridge;
 import org.xiyu.reforged.bridge.FlywheelRenderBridge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -63,6 +64,7 @@ public abstract class FlywheelLevelRendererMixin {
                                                LightTexture lightTexture, Matrix4f modelMatrix,
                                                Matrix4f projectionMatrix, CallbackInfo ci) {
         try {
+            ClientRenderStateBridge.captureLevelMatrices(modelMatrix, projectionMatrix);
             float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
             FlywheelRenderBridge.beginRender(
                     (LevelRenderer) (Object) this,

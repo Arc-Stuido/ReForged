@@ -126,6 +126,14 @@ public final class BytecodeRewriter {
                 "org/xiyu/reforged/bridge/FlywheelVisualizerBridge";
         private static final String BAKED_MODEL_BRIDGE =
                 "org/xiyu/reforged/bridge/BakedModelBridge";
+        private static final String CURIOS_API =
+                "top/theillusivec4/curios/api/CuriosApi";
+        private static final String CURIOS_HOOKS =
+                "top/theillusivec4/curios/mixin/CuriosImplMixinHooks";
+        private static final String SIMPLE_ENTITY_VISUALIZER =
+                "dev/engine_room/flywheel/lib/visualization/SimpleEntityVisualizer";
+        private static final String SIMPLE_ENTITY_VISUALIZER_FACTORY =
+                "dev/engine_room/flywheel/lib/visualization/SimpleEntityVisualizer$Factory";
 
         private String currentClassName;
 
@@ -348,6 +356,63 @@ public final class BytecodeRewriter {
                     // Rewrite accessor types in method descriptors throughout
                     String desc = rewriteAccessorDescriptor(mDescriptor);
 
+                    if (SIMPLE_ENTITY_VISUALIZER.equals(ownerClassName)) {
+                        if (opcode == Opcodes.INVOKEINTERFACE
+                                && SIMPLE_ENTITY_VISUALIZER_FACTORY.equals(owner)
+                                && "create".equals(mName)
+                                && desc.endsWith("Ldev/engine_room/flywheel/api/visual/EntityVisual;")) {
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                    BRIDGE,
+                                    "createEntityVisualSafe",
+                                    "(Ljava/lang/Object;Ljava/lang/Object;Lnet/minecraft/world/entity/Entity;F)Ljava/lang/Object;",
+                                    false);
+                            super.visitTypeInsn(Opcodes.CHECKCAST,
+                                    "dev/engine_room/flywheel/api/visual/EntityVisual");
+                            return;
+                        }
+                        if (opcode == Opcodes.INVOKEINTERFACE
+                                && "java/util/function/Predicate".equals(owner)
+                                && "test".equals(mName)
+                                && "(Ljava/lang/Object;)Z".equals(desc)) {
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                    BRIDGE,
+                                    "testEntityPredicateSafe",
+                                    "(Ljava/lang/Object;Ljava/lang/Object;)Z",
+                                    false);
+                            return;
+                        }
+                    }
+
+                    // Curios' public API is implemented by its own Mixin on NeoForge.
+                    // ReForged loads Curios in a child loader, so mirror those static
+                    // redirects here instead of leaving CuriosApi as a logging stub.
+                    if (opcode == Opcodes.INVOKESTATIC && CURIOS_API.equals(owner)) {
+                        if ("apiError".equals(mName) && "()V".equals(desc)) {
+                            return;
+                        }
+                        if (isCuriosApiHook(mName, desc)) {
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC, CURIOS_HOOKS,
+                                    mName, desc, false);
+                            return;
+                        }
+                    }
+
+                    // NeoForge's ModLoader methods are static API calls. The broad
+                    // net.neoforged.fml -> net.minecraftforge.fml package remap would
+                    // otherwise bind them to incompatible Forge ModLoader methods.
+                    if (opcode == Opcodes.INVOKESTATIC
+                            && "net/minecraftforge/fml/ModLoader".equals(owner)
+                            && ("postEvent".equals(mName) || "postEventWrapContainerInModOrder".equals(mName))
+                            && Type.getArgumentTypes(desc).length == 1
+                            && desc.endsWith(")V")) {
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                "net/neoforged/fml/ModLoader",
+                                mName,
+                                "(Ljava/lang/Object;)V",
+                                false);
+                        return;
+                    }
+
                     // ── Flywheel config backend parsing fix ────────────────
                     // Flywheel's command path accepts bare IDs like "instancing" using
                     // the flywheel namespace, but NeoForgeFlwConfig.parseBackend() uses
@@ -483,6 +548,46 @@ public final class BytecodeRewriter {
                     super.visitMethodInsn(opcode, owner, mName, desc, isInterface);
                 }
 
+                private boolean isCuriosApiHook(String name, String desc) {
+                    return switch (name) {
+                        case "registerCurio" ->
+                                "(Lnet/minecraft/world/item/Item;Ltop/theillusivec4/curios/api/type/capability/ICurioItem;)V".equals(desc);
+                        case "getSlots" ->
+                                "(Z)Ljava/util/Map;".equals(desc);
+                        case "getEntitySlots" ->
+                                "(Lnet/minecraft/world/entity/EntityType;Z)Ljava/util/Map;".equals(desc);
+                        case "getItemStackSlots" ->
+                                "(Lnet/minecraft/world/item/ItemStack;Z)Ljava/util/Map;".equals(desc)
+                                || "(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)Ljava/util/Map;".equals(desc);
+                        case "getCurio" ->
+                                "(Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;".equals(desc);
+                        case "getCuriosInventory" ->
+                                "(Lnet/minecraft/world/entity/LivingEntity;)Ljava/util/Optional;".equals(desc);
+                        case "isStackValid" ->
+                                "(Ltop/theillusivec4/curios/api/SlotContext;Lnet/minecraft/world/item/ItemStack;)Z".equals(desc);
+                        case "getAttributeModifiers" ->
+                                "(Ltop/theillusivec4/curios/api/SlotContext;Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/ItemStack;)Lcom/google/common/collect/Multimap;".equals(desc);
+                        case "addSlotModifier" ->
+                                "(Lcom/google/common/collect/Multimap;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;DLnet/minecraft/world/entity/ai/attributes/AttributeModifier$Operation;)V".equals(desc)
+                                || "(Lnet/minecraft/world/item/ItemStack;Ljava/lang/String;Lnet/minecraft/resources/ResourceLocation;DLnet/minecraft/world/entity/ai/attributes/AttributeModifier$Operation;Ljava/lang/String;)V".equals(desc);
+                        case "addModifier" ->
+                                "(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Holder;Lnet/minecraft/resources/ResourceLocation;DLnet/minecraft/world/entity/ai/attributes/AttributeModifier$Operation;Ljava/lang/String;)V".equals(desc);
+                        case "registerCurioPredicate" ->
+                                "(Lnet/minecraft/resources/ResourceLocation;Ljava/util/function/Predicate;)V".equals(desc);
+                        case "getCurioPredicate" ->
+                                "(Lnet/minecraft/resources/ResourceLocation;)Ljava/util/Optional;".equals(desc);
+                        case "getCurioPredicates" ->
+                                "()Ljava/util/Map;".equals(desc);
+                        case "testCurioPredicates" ->
+                                "(Ljava/util/Set;Ltop/theillusivec4/curios/api/SlotResult;)Z".equals(desc);
+                        case "getSlotId" ->
+                                "(Ltop/theillusivec4/curios/api/SlotContext;)Lnet/minecraft/resources/ResourceLocation;".equals(desc);
+                        case "broadcastCurioBreakEvent" ->
+                                "(Ltop/theillusivec4/curios/api/SlotContext;)V".equals(desc);
+                        default -> false;
+                    };
+                }
+
                 // ── Rewrite accessor types in INVOKEDYNAMIC (lambdas) ──────
                 @Override
                 public void visitInvokeDynamicInsn(String name, String descriptor,
@@ -505,6 +610,17 @@ public final class BytecodeRewriter {
                                 "org/xiyu/reforged/bridge/RecipeBridge",
                                 "CONDITIONAL_CODEC",
                                 "Lcom/mojang/serialization/Codec;");
+                        return;
+                    }
+                    if (opcode == Opcodes.PUTFIELD
+                            && "net/minecraft/world/entity/Entity".equals(owner)
+                            && "boardingCooldown".equals(name)
+                            && "I".equals(desc)) {
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                "org/xiyu/reforged/bridge/EntityAccessBridge",
+                                "setBoardingCooldown",
+                                "(Lnet/minecraft/world/entity/Entity;I)V",
+                                false);
                         return;
                     }
                     super.visitFieldInsn(opcode, owner, name, desc);

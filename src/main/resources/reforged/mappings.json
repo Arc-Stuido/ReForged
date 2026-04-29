@@ -120,6 +120,11 @@
       "to": "net.neoforged.neoforge.event.entity."
     },
     {
+      "comment": "Brewing events use Forge's 1.21 brewing event package; class-level rules handle renamed events.",
+      "from": "net.neoforged.neoforge.event.brewing.",
+      "to": "net.minecraftforge.event.brewing."
+    },
+    {
       "comment": "Level events — identity. All have shims with wrapper constructors.",
       "from": "net.neoforged.neoforge.event.level.",
       "to": "net.neoforged.neoforge.event.level."
@@ -178,6 +183,11 @@
       "comment": "Energy — IEnergyStorage, EnergyStorage",
       "from": "net.neoforged.neoforge.energy.",
       "to": "net.minecraftforge.energy."
+    },
+    {
+      "comment": "NeoForge datagen events — keep identity; ReForged provides client/runtime-safe stubs.",
+      "from": "net.neoforged.neoforge.data.event.",
+      "to": "net.neoforged.neoforge.data.event."
     },
     {
       "comment": "Data providers — datagen",
@@ -340,6 +350,11 @@
       "comment": "RegisterEvent",
       "from": "net.neoforged.neoforge.registries.RegisterEvent",
       "to": "net.minecraftforge.registries.RegisterEvent"
+    },
+    {
+      "comment": "NeoForge RegisterBrewingRecipesEvent was renamed on Forge 1.21.",
+      "from": "net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent",
+      "to": "net.minecraftforge.event.brewing.BrewingRecipeRegisterEvent"
     },
     {
       "comment": "ForgeRegistries",

@@ -73,7 +73,17 @@ public abstract class RecipeManagerMixin {
         remap = false
     )
     private boolean reforged$readAndTestNeoForgeConditions(RegistryOps<JsonElement> ops, JsonObject recipeJson) {
-        return reforged$testNeoForgeConditions(recipeJson) && ForgeHooks.readAndTestCondition(ops, recipeJson);
+        ConditionResult conditionResult = reforged$testNeoForgeConditions(recipeJson);
+        if (!conditionResult.matches()) {
+            return false;
+        }
+
+        JsonObject forgeJson = recipeJson;
+        if (conditionResult.consumedForgeConditionsKey()) {
+            forgeJson = recipeJson.deepCopy();
+            forgeJson.remove("conditions");
+        }
+        return ForgeHooks.readAndTestCondition(ops, forgeJson);
     }
 
     private static Object reforged$normalizeNeoForgeRecipeJson(Object input) {
@@ -107,7 +117,7 @@ public abstract class RecipeManagerMixin {
 
         return switch (type) {
             case "neoforge:single" -> reforged$asCreateFluidStack(normalized);
-            case "neoforge:components" -> reforged$asCreateComponentFluidStack(normalized);
+            case "neoforge:components" -> reforged$normalizeComponentIngredient(normalized);
             case "neoforge:tag" -> reforged$asCreateFluidTag(normalized);
             case "neoforge:block_tag" -> reforged$expandBlockTagIngredient(normalized);
             case "neoforge:compound" -> reforged$flattenCompoundIngredient(normalized);
@@ -126,6 +136,34 @@ public abstract class RecipeManagerMixin {
             json.add("fluid", json.remove("fluids"));
         }
         return json;
+    }
+
+    private static JsonElement reforged$normalizeComponentIngredient(JsonObject json) {
+        if (json.has("items") || json.has("item") || json.has("tag")) {
+            return reforged$asVanillaItemIngredient(json);
+        }
+        return reforged$asCreateComponentFluidStack(json);
+    }
+
+    private static JsonElement reforged$asVanillaItemIngredient(JsonObject json) {
+        JsonElement items = json.has("items") ? json.remove("items") : json.get("item");
+        if (items == null) {
+            return json;
+        }
+
+        if (items.isJsonArray()) {
+            JsonArray result = new JsonArray();
+            for (JsonElement item : items.getAsJsonArray()) {
+                JsonObject entry = new JsonObject();
+                entry.add("item", item);
+                result.add(entry);
+            }
+            return result;
+        }
+
+        JsonObject result = new JsonObject();
+        result.add("item", items);
+        return result;
     }
 
     private static JsonObject reforged$asCreateFluidTag(JsonObject json) {
@@ -191,12 +229,35 @@ public abstract class RecipeManagerMixin {
         return items;
     }
 
-    private static boolean reforged$testNeoForgeConditions(JsonObject recipeJson) {
+    private static ConditionResult reforged$testNeoForgeConditions(JsonObject recipeJson) {
         JsonElement conditions = recipeJson.get("neoforge:conditions");
-        if (conditions == null || conditions.isJsonNull()) {
-            return true;
+        if (conditions != null && !conditions.isJsonNull()) {
+            return new ConditionResult(reforged$testConditionList(conditions), false);
         }
-        return reforged$testConditionList(conditions);
+
+        conditions = recipeJson.get("conditions");
+        if (conditions == null || conditions.isJsonNull() || !reforged$containsNeoForgeCondition(conditions)) {
+            return new ConditionResult(true, false);
+        }
+        return new ConditionResult(reforged$testConditionList(conditions), true);
+    }
+
+    private static boolean reforged$containsNeoForgeCondition(JsonElement conditions) {
+        if (conditions == null || conditions.isJsonNull()) {
+            return false;
+        }
+        if (conditions.isJsonObject()) {
+            String type = reforged$getString(conditions.getAsJsonObject(), "type");
+            return type != null && type.startsWith("neoforge:");
+        }
+        if (conditions.isJsonArray()) {
+            for (JsonElement condition : conditions.getAsJsonArray()) {
+                if (reforged$containsNeoForgeCondition(condition)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean reforged$testConditionList(JsonElement conditions) {
@@ -321,4 +382,6 @@ public abstract class RecipeManagerMixin {
             REFORGED_LOGGER.warn("[ReForged] {}", message);
         }
     }
+
+    private record ConditionResult(boolean matches, boolean consumedForgeConditionsKey) {}
 }

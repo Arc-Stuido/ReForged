@@ -1,7 +1,10 @@
 package org.xiyu.reforged.shim.attachment;
 
 import com.mojang.serialization.Codec;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -18,14 +21,14 @@ import org.jetbrains.annotations.Nullable;
 public final class AttachmentType<T> {
 
     private final String id;
-    private final Supplier<T> defaultValue;
+    private final Function<IAttachmentHolder, T> defaultValueFactory;
     private final boolean serialize;
     @Nullable
     private final Codec<T> codec;
 
     private AttachmentType(Builder<T> builder) {
         this.id = builder.id != null ? builder.id : "unknown";
-        this.defaultValue = builder.defaultValue;
+        this.defaultValueFactory = builder.defaultValueFactory;
         this.serialize = builder.serialize;
         this.codec = builder.codec;
     }
@@ -35,7 +38,11 @@ public final class AttachmentType<T> {
     }
 
     public Supplier<T> defaultValueSupplier() {
-        return defaultValue;
+        return defaultValueFactory == null ? null : () -> defaultValueFactory.apply(null);
+    }
+
+    public T createDefaultValue(@Nullable IAttachmentHolder holder) {
+        return defaultValueFactory == null ? null : defaultValueFactory.apply(holder);
     }
 
     public boolean shouldSerialize() {
@@ -56,25 +63,46 @@ public final class AttachmentType<T> {
      * Create a builder with a default value supplier.
      */
     public static <T> Builder<T> builder(Supplier<T> defaultValue) {
-        return new Builder<>(defaultValue);
+        return new Builder<>(holder -> defaultValue.get());
+    }
+
+    /**
+     * Create a holder-aware builder.
+     */
+    public static <T> Builder<T> builder(Function<IAttachmentHolder, T> defaultValueConstructor) {
+        return new Builder<>(defaultValueConstructor);
+    }
+
+    /**
+     * NeoForge overload for INBTSerializable-style attachments.
+     */
+    public static <T> Builder<T> serializable(Supplier<T> defaultValueSupplier) {
+        return builder(defaultValueSupplier).serialize(new Object());
+    }
+
+    /**
+     * NeoForge overload for holder-aware INBTSerializable-style attachments.
+     */
+    public static <T> Builder<T> serializable(Function<IAttachmentHolder, T> defaultValueConstructor) {
+        return builder(defaultValueConstructor).serialize(new Object());
     }
 
     /**
      * Create a builder without a default value.
      */
     public static <T> Builder<T> builder() {
-        return new Builder<>(null);
+        return new Builder<>((Function<IAttachmentHolder, T>) null);
     }
 
     public static final class Builder<T> {
-        private Supplier<T> defaultValue;
+        private Function<IAttachmentHolder, T> defaultValueFactory;
         private String id;
         private boolean serialize = false;
         @Nullable
         private Codec<T> codec;
 
-        Builder(Supplier<T> defaultValue) {
-            this.defaultValue = defaultValue;
+        Builder(Function<IAttachmentHolder, T> defaultValueFactory) {
+            this.defaultValueFactory = defaultValueFactory;
         }
 
         /**
@@ -112,6 +140,18 @@ public final class AttachmentType<T> {
          * Copy handler.
          */
         public Builder<T> copyHandler(Object handler) {
+            return this;
+        }
+
+        /**
+         * Synchronization handler; networking is bridged elsewhere, so the builder
+         * accepts the NeoForge call shape without changing local storage.
+         */
+        public Builder<T> sync(Object syncHandler) {
+            return this;
+        }
+
+        public Builder<T> sync(BiPredicate<IAttachmentHolder, ServerPlayer> sendToPlayer, Object streamCodec) {
             return this;
         }
 

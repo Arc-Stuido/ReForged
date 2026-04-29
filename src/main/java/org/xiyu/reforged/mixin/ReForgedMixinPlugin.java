@@ -6,8 +6,11 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 /**
  * Conditionally applies Mixins that depend on optional NeoForge mods.
@@ -29,8 +32,8 @@ public class ReForgedMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
         // Detect mods via Forge's mod list — class loading is unreliable at mixin init time
-        jadePresent = isModLoaded("jade");
-        balmPresent = isModLoaded("balm");
+        jadePresent = isModLoaded("jade") || isNeoForgeModOnClasspath("jade");
+        balmPresent = isModLoaded("balm") || isNeoForgeModOnClasspath("balm");
     }
 
     /**
@@ -46,6 +49,36 @@ public class ReForgedMixinPlugin implements IMixinConfigPlugin {
             // FMLLoader may not be ready yet in very early init — fall back to false
             return false;
         }
+    }
+
+    private static boolean isNeoForgeModOnClasspath(String modId) {
+        String classpath = System.getProperty("java.class.path", "");
+        if (classpath.isEmpty()) return false;
+
+        String marker = "modId=\"" + modId + "\"";
+        String spacedMarker = "modId = \"" + modId + "\"";
+        String[] entries = classpath.split(System.getProperty("path.separator", ":"));
+        for (String entry : entries) {
+            try {
+                Path path = Path.of(entry);
+                if (!Files.isRegularFile(path) || !entry.endsWith(".jar")) continue;
+
+                try (JarFile jar = new JarFile(path.toFile())) {
+                    var toml = jar.getEntry("META-INF/neoforge.mods.toml");
+                    if (toml == null) continue;
+
+                    try (var in = jar.getInputStream(toml)) {
+                        String content = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                        if (content.contains(marker) || content.contains(spacedMarker)) {
+                            return true;
+                        }
+                    }
+                }
+            } catch (Throwable ignored) {
+                // Optional-mod detection must never fail mixin bootstrap.
+            }
+        }
+        return false;
     }
 
     @Override

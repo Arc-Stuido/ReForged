@@ -7,6 +7,7 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * A basic implementation of VillagerTrades.ItemListing for use in trade events.
@@ -29,6 +30,14 @@ public class BasicItemListing implements VillagerTrades.ItemListing {
         this.priceMult = priceMult;
     }
 
+    public BasicItemListing(ItemStack price, ItemStack forSale, int maxTrades, int xp, float priceMult) {
+        this(price, ItemStack.EMPTY, forSale, maxTrades, xp, priceMult);
+    }
+
+    public BasicItemListing(ItemStack price, ItemStack forSale, int maxTrades, int xp) {
+        this(price, forSale, maxTrades, xp, 0.05f);
+    }
+
     public BasicItemListing(int emeralds, ItemStack forSale, int maxTrades, int xp, float priceMult) {
         this(new ItemStack(Items.EMERALD, emeralds), ItemStack.EMPTY, forSale, maxTrades, xp, priceMult);
     }
@@ -41,9 +50,18 @@ public class BasicItemListing implements VillagerTrades.ItemListing {
     @Override
     public MerchantOffer getOffer(net.minecraft.world.entity.Entity trader, net.minecraft.util.RandomSource rand) {
         return new MerchantOffer(
-                new ItemCost(price.getItem(), price.getCount()),
+                toCost(price),
+                toOptionalCost(price2),
                 forSale.copy(),
                 maxTrades, xp, priceMult
         );
+    }
+
+    private static ItemCost toCost(ItemStack stack) {
+        return new ItemCost(stack.getItem(), stack.getCount());
+    }
+
+    private static Optional<ItemCost> toOptionalCost(@Nullable ItemStack stack) {
+        return stack == null || stack.isEmpty() ? Optional.empty() : Optional.of(toCost(stack));
     }
 }

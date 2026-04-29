@@ -2,6 +2,8 @@ package net.neoforged.neoforge.common;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Supplier;
 
@@ -30,5 +32,25 @@ public class DeferredSpawnEggItem extends net.minecraft.world.item.SpawnEggItem 
                                 int backgroundColor, int highlightColor, Properties props) {
         super(type, backgroundColor, highlightColor, props);
         this.typeSupplier = () -> type;
+    }
+
+    @Override
+    public EntityType<?> getType(ItemStack provider) {
+        EntityType<?> resolved = resolveType();
+        return resolved != null ? resolved : super.getType(provider);
+    }
+
+    @Override
+    public FeatureFlagSet requiredFeatures() {
+        EntityType<?> resolved = resolveType();
+        return resolved != null ? resolved.requiredFeatures() : FeatureFlagSet.of();
+    }
+
+    private EntityType<?> resolveType() {
+        try {
+            return typeSupplier.get();
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 }

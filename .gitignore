@@ -25,6 +25,7 @@ build-codex-check/
 .vscode/
 
 # === Runtime ===
+/META-INF/
 run/
 logs/
 crash-reports/
@@ -44,3 +45,4 @@ desktop.ini
 *.swo
 *~
 javac.*.args
+/assets/

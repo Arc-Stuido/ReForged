@@ -6,5 +6,6 @@
   "saveddata_factory_patch": "coremods/saveddata_factory_patch.js",
   "entity_render_safety": "coremods/entity_render_safety.js",
   "model_resource_location_standalone": "coremods/model_resource_location_standalone.js",
-  "aabb_infinite_field": "coremods/aabb_infinite_field.js"
+  "aabb_infinite_field": "coremods/aabb_infinite_field.js",
+  "block_state_id_map_fallback": "coremods/block_state_id_map_fallback.js"
 }
