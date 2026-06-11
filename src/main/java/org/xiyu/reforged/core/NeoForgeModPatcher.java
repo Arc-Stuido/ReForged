@@ -12,6 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -24,6 +27,12 @@ import java.util.jar.Manifest;
  * <p>The injected {@code META-INF/mods.toml} is a lowcode discovery descriptor:
  * Forge can record the mod id, but it will not execute the NeoForge entrypoint.
  * ReForged still loads the real mod from {@code neoforge.mods.toml} later.</p>
+ *
+ * <p>Since the placeholder jar is the only part of a NeoForge mod that lives on
+ * the game layer (TRANSFORMER classloader), it now also carries the mod's own
+ * Mixin payload — configs, mixin classes and their reference closure — so that
+ * Sponge Mixin can patch vanilla classes on behalf of the NeoForge mod (see
+ * {@link NeoMixinExtractor}).</p>
  */
 public final class NeoForgeModPatcher {
 
@@ -75,9 +84,12 @@ public final class NeoForgeModPatcher {
     public static int patchAll(Path modsDir) {
         if (!Files.isDirectory(modsDir)) return 0;
 
-        int count = 0;
+        Set<Path> recovered = cleanStaleArtifacts(modsDir);
+
+        int count = recovered.size();
         try (var stream = Files.list(modsDir)) {
             for (Path jar : stream.filter(p -> p.toString().endsWith(".jar")).toList()) {
+                if (recovered.contains(jar.toAbsolutePath().normalize())) continue;
                 if (patchIfNeeded(jar)) count++;
             }
         } catch (Exception e) {
@@ -86,13 +98,56 @@ public final class NeoForgeModPatcher {
         return count;
     }
 
+    /**
+     * Recover from interrupted patch runs:
+     * <ul>
+     *   <li>delete leftover {@code *.jar.tmp} files,</li>
+     *   <li>re-create any {@code X.jar} whose {@code X.jar.neoforge-original}
+     *       backup exists but whose placeholder vanished (a previous run was
+     *       killed between writing the tmp file and the final move).</li>
+     * </ul>
+     */
+    private static Set<Path> cleanStaleArtifacts(Path modsDir) {
+        Set<Path> recovered = new HashSet<>();
+        try (var stream = Files.list(modsDir)) {
+            for (Path path : stream.toList()) {
+                String name = path.getFileName().toString();
+                if (name.endsWith(".jar.tmp")) {
+                    try {
+                        Files.deleteIfExists(path);
+                        log("[ReForged] Removed stale temp file: " + name);
+                    } catch (Exception e) {
+                        warn("[ReForged] Could not remove stale temp file " + name, e);
+                    }
+                } else if (name.endsWith(".jar.neoforge-original")) {
+                    Path baseJar = path.resolveSibling(
+                            name.substring(0, name.length() - ".neoforge-original".length()));
+                    if (!Files.exists(baseJar)) {
+                        log("[ReForged] Restoring missing mod jar from backup: " + baseJar.getFileName());
+                        // patchIfNeeded() reads from the backup when present and
+                        // recreates the placeholder at the base path.
+                        if (patchIfNeeded(baseJar)) {
+                            recovered.add(baseJar.toAbsolutePath().normalize());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            warn("[ReForged] Stale artifact cleanup failed in " + modsDir, e);
+        }
+        return recovered;
+    }
+
     public static boolean patchIfNeeded(Path jarPath) {
         Path backup = jarPath.resolveSibling(jarPath.getFileName() + ".neoforge-original");
         Path sourcePath = Files.exists(backup) ? backup : jarPath;
+        if (!Files.exists(sourcePath)) return false;
+
         String neoContent;
         byte[][] entryData;
         String[] entryNames;
         boolean hasPackMeta = false;
+        NeoMixinExtractor.Result mixinPayload;
 
         try (JarFile jar = new JarFile(sourcePath.toFile())) {
             JarEntry neoEntry = jar.getJarEntry("META-INF/neoforge.mods.toml");
@@ -107,6 +162,20 @@ public final class NeoForgeModPatcher {
                 neoContent = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             }
 
+            // Extract the mod's own mixin payload (configs + class closure) so it
+            // can be applied by Forge's Mixin environment via the placeholder jar.
+            NeoMixinExtractor.Result payload;
+            try {
+                payload = NeoMixinExtractor.extract(jar, neoContent,
+                        msg -> log("[ReForged] [" + jarPath.getFileName() + "] " + msg));
+            } catch (Throwable t) {
+                warn("[ReForged] Mixin extraction failed for " + jarPath.getFileName()
+                        + " — continuing without mixin payload", t);
+                payload = new NeoMixinExtractor.Result(java.util.Map.of(), java.util.Map.of(),
+                        java.util.Map.of(), List.of());
+            }
+            mixinPayload = payload;
+
             var entries = jar.entries();
             var nameList = new ArrayList<String>();
             var dataList = new ArrayList<byte[]>();
@@ -114,6 +183,12 @@ public final class NeoForgeModPatcher {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 if (shouldDropFromForgePlaceholder(entryName)) {
+                    continue;
+                }
+                // Mixin payload entries are written separately with rewritten content.
+                if (mixinPayload.mixinConfigs().containsKey(entryName)
+                        || mixinPayload.classFiles().containsKey(entryName)
+                        || mixinPayload.extraResources().containsKey(entryName)) {
                     continue;
                 }
 
@@ -130,7 +205,7 @@ public final class NeoForgeModPatcher {
                 try (InputStream is = jar.getInputStream(entry)) {
                     byte[] bytes = is.readAllBytes();
                     if ("META-INF/MANIFEST.MF".equalsIgnoreCase(entryName)) {
-                        bytes = sanitizeManifest(bytes);
+                        bytes = sanitizeManifest(bytes, mixinPayload.configNames());
                     }
                     dataList.add(bytes);
                 }
@@ -143,15 +218,32 @@ public final class NeoForgeModPatcher {
         }
 
         String forgeContent = ModDescriptorConverter.convertForForgeDiscovery(neoContent);
-        log("[ReForged] Patching NeoForge mod: " + jarPath.getFileName());
+        log("[ReForged] Patching NeoForge mod: " + jarPath.getFileName()
+                + (mixinPayload.isEmpty() ? "" : " (+mixin payload)"));
 
         Path tempJar = jarPath.resolveSibling(jarPath.getFileName() + ".tmp");
         try (JarOutputStream out = new JarOutputStream(new FileOutputStream(tempJar.toFile()))) {
+            boolean wroteManifest = false;
             for (int i = 0; i < entryNames.length; i++) {
+                if ("META-INF/MANIFEST.MF".equalsIgnoreCase(entryNames[i])) {
+                    wroteManifest = true;
+                }
                 out.putNextEntry(new JarEntry(entryNames[i]));
                 if (entryData[i].length > 0) {
                     out.write(entryData[i]);
                 }
+                out.closeEntry();
+            }
+
+            // Jars without a manifest still need one if a mixin payload exists,
+            // because Mixin discovers configs via the MixinConfigs attribute.
+            if (!wroteManifest && !mixinPayload.isEmpty()) {
+                Manifest manifest = new Manifest();
+                manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+                manifest.getMainAttributes().putValue("MixinConfigs",
+                        String.join(",", mixinPayload.configNames()));
+                out.putNextEntry(new JarEntry("META-INF/MANIFEST.MF"));
+                manifest.write(out);
                 out.closeEntry();
             }
 
@@ -162,6 +254,23 @@ public final class NeoForgeModPatcher {
             if (!hasPackMeta) {
                 out.putNextEntry(new JarEntry("pack.mcmeta"));
                 out.write(DEFAULT_PACK_MCMETA);
+                out.closeEntry();
+            }
+
+            // ── Mixin payload ──
+            for (var entry : mixinPayload.mixinConfigs().entrySet()) {
+                out.putNextEntry(new JarEntry(entry.getKey()));
+                out.write(entry.getValue().getBytes(StandardCharsets.UTF_8));
+                out.closeEntry();
+            }
+            for (var entry : mixinPayload.classFiles().entrySet()) {
+                out.putNextEntry(new JarEntry(entry.getKey()));
+                out.write(entry.getValue());
+                out.closeEntry();
+            }
+            for (var entry : mixinPayload.extraResources().entrySet()) {
+                out.putNextEntry(new JarEntry(entry.getKey()));
+                out.write(entry.getValue());
                 out.closeEntry();
             }
         } catch (Exception e) {
@@ -184,16 +293,24 @@ public final class NeoForgeModPatcher {
 
     private static boolean shouldDropFromForgePlaceholder(String entryName) {
         String lower = entryName.toLowerCase(java.util.Locale.ROOT);
+        if (lower.startsWith("meta-inf/services/")) {
+            // Keep ordinary ServiceLoader declarations so placeholder-side mod
+            // classes (mixin closure) can self-initialize on the TRANSFORMER
+            // loader. Drop launch-level services that would let the mod hook
+            // into ModLauncher/Mixin bootstrap.
+            return lower.startsWith("meta-inf/services/cpw.mods.")
+                    || lower.startsWith("meta-inf/services/org.spongepowered.")
+                    || lower.startsWith("meta-inf/services/net.minecraftforge.")
+                    || lower.startsWith("meta-inf/services/net.neoforged.neoforgespi.")
+                    || lower.startsWith("meta-inf/services/javax.annotation.");
+        }
         return "meta-inf/mods.toml".equals(lower)
                 || lower.endsWith(".class")
-                || lower.startsWith("meta-inf/services/")
                 || lower.startsWith("meta-inf/jarjar/")
                 || lower.startsWith("meta-inf/accesstransformer")
                 || lower.endsWith(".mixins.json")
                 || lower.endsWith(".mixin.json")
-                || lower.endsWith(".refmap.json")
-                || lower.contains("/mixin/")
-                || lower.contains("/mixins/");
+                || lower.endsWith(".refmap.json");
     }
 
     private static boolean isReForgedDiscoveryDescriptor(JarFile jar, JarEntry entry) {
@@ -205,13 +322,16 @@ public final class NeoForgeModPatcher {
         }
     }
 
-    private static byte[] sanitizeManifest(byte[] input) {
+    private static byte[] sanitizeManifest(byte[] input, List<String> mixinConfigNames) {
         try {
             Manifest manifest = new Manifest(new ByteArrayInputStream(input));
             Attributes attrs = manifest.getMainAttributes();
             attrs.remove(new Attributes.Name("MixinConfigs"));
             attrs.remove(new Attributes.Name("TweakClass"));
             attrs.remove(new Attributes.Name("TweakOrder"));
+            if (mixinConfigNames != null && !mixinConfigNames.isEmpty()) {
+                attrs.putValue("MixinConfigs", String.join(",", mixinConfigNames));
+            }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             manifest.write(out);

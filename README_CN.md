@@ -167,19 +167,19 @@ ReForged 旨在提供广泛的 NeoForge 模组兼容性，但可能存在一些�
 
 ## 📊 当前完成度快照
 
-以下为截至 2026-04-27 的近似工程评估。
+以下为截至 2026-06-11 的近似工程评估。
 
 | 子系统 | 权重 | 完成度 | 加权分 |
 |--------|------|--------|--------|
-| Mod 加载管线 | 20% | 88% | 17.6 |
+| Mod 加载管线 | 20% | 94% | 18.8 |
 | 事件系统 | 20% | 98% | 19.6 |
-| 注册系统 | 15% | 95% | 14.25 |
-| 能力系统 | 10% | 95% | 9.5 |
+| 注册系统 | 15% | 96% | 14.4 |
+| 能力系统 | 10% | 96% | 9.6 |
 | 网络 / Payload | 8% | 84% | 6.72 |
 | 扩展 / 通用 API | 12% | 97% | 11.64 |
 | 客户端 | 10% | 98% | 9.8 |
-| Mixin 覆盖 | 5% | 96% | 4.8 |
-| **总计** | **100%** |  | **~94%** |
+| Mixin 覆盖（含模组自带 Mixin） | 5% | 97% | 4.85 |
+| **总计** | **100%** |  | **~95%** |
 
 ### 近期变更（03-09 → 04-27）
 
@@ -222,6 +222,20 @@ ReForged 旨在提供广泛的 NeoForge 模组兼容性，但可能存在一些�
 - **AABB.INFINITE CoreMod**：JavaScript 核心模组修补 `AABB` 类，添加 `INFINITE` 静态字段（NeoForge 新增，Forge 中不存在）。
 - **独立 ModelResourceLocation**：CoreMod 修复 `ModelResourceLocation.standalone()` 工厂方法，支持无方块状态变体的模型。
 - **Verifier 栈帧修复**：BytecodeRewriter 现在修补栈帧类型，将 NeoForge accessor 接口描述符替换为原版 MC 类描述符 — 修复 JVM 字节码验证的 `VerifyError`。
+
+#### Phase 8（06-11）：NeoForge 模组自带 Mixin 管线（重大架构补全）
+- **模组自带 Mixin 完整支持**：新增 `NeoMixinExtractor` —— 从 `neoforge.mods.toml` 的 `[[mixins]]` 提取模组自带的 Mixin 配置与类，经 BytecodeRewriter 重写后注入 Forge 发现占位 jar（manifest `MixinConfigs` 属性注册），由 Forge 的 Sponge Mixin 环境真正应用到原版类。SuperbWarfare（28 mixins）、GeckoLib（7）、Curios（13）、ywzj_vehicle（14）的自带 mixin 全部进入应用管线。
+- **跨类加载器身份管理**：占位 jar 保留 mixin 类引用闭包（含 Jar-in-Jar 类索引）；钉扎（parent-first）集合 = duck 接口 ∪ mixin 方法体引用 ∪ 钉扎类体引用一层扩展，再对签名引用与嵌套类组（nest group）做传递闭包 —— 消除 `ClassCastException`（ICustomKnockback 类）、`LinkageError`（接口签名 loader constraint）、nest 校验失败三类跨域错误；`@Mod` 入口类组保留 child 域语义。
+- **占位 jar 类规范化**：TRANSFORMER 侧副本统一 public 化（消除跨 loader 的 package-private/nest 访问限制）；`@SubscribeEvent` 私有方法提权（Forge EventAccessTransformer 拒绝 private 订阅者）；mixin 种子类保持原始访问级（Mixin 规范要求 static 成员 private）。
+- **mixin 配置软化**：`required=false` + `injectors.defaultRequire=0` —— 目标为 NeoForge 专属 vanilla patch 的注入失败降级为日志，不再炸整个游戏。
+- **MixinExtras 集成**：引入 `mixinextras-forge 0.5.4`（NeoForge 20.2.84+ 内置而 Forge 没有），`@WrapOperation` 等注解可用。
+- **LivingEntity.damageContainers CoreMod**：复刻 NeoForge 伤害管线字段补丁，模组 mixin 的 `@Shadow damageContainers` 可解析（SuperbWarfare LivingEntityMixin 完整应用，duck 接口注入成功）。
+- **NeoModClassLoader 解压模式**：mod jar 解压到 `.reforged/extracted/` 缓存（按 size+mtime 指纹复用），资源 URL 从 opaque `jar:` 变为 hierarchical `file:` —— 修复 `Paths.get(getResource(...))` + `URI.relativize` 模式崩溃（ywzj_vehicle 默认载具包解包）；资源查找改为 child-first（与 Neo union fs 语义对齐）。
+- **Jar-in-Jar 递归提取**：支持嵌套 JiJ（ywzj_vehicle → simplebedrockmodel → mae 两层嵌套）。
+- **接口桥接**：Neo `IItemHandler`/`IItemHandlerModifiable`/`IBrewingRecipe` shim 继承 Forge 对应接口（修复 PlayerInvWrapper 强转崩溃）；`IContainerFactory` 以 `RegistryFriendlyByteBuf` 为唯一抽象方法并桥接 Forge 的 `FriendlyByteBuf` 调用链（修复菜单打开 AbstractMethodError，且 `NetworkHooks.openScreen` 附加数据不再丢失）；`PotionBrewing.Builder.addRecipe` 字节码重定向至 Forge 的 `add`。
+- **DeferredRegister 幂等化**：全局注册表（registry|modid:name → holder）允许 TRANSFORMER/NeoMod 双域重复注册返回首个 holder（修复 GeckoLib `stack_animatable_id` 重复注册崩溃）。
+- **Patcher 自愈**：启动时清理孤儿 `.tmp`、从 `.neoforge-original` 备份重建丢失的占位 jar（修复 curios/geckolib/superbwarfare jar 静默消失）。
+- **验证结果**：16 个 NeoForge 模组实例（含 SuperbWarfare、ywzj_vehicle 首次成功）在客户端与专用服务器全部加载，服务器 4 秒内 Done 并稳定 tick，最终轮零崩溃、零 mixin 应用失败。
 
 #### Phase 7（04-27）：Create/Flywheel 稳定化与客户端 API 收敛
 - **Flywheel 渲染稳定化**：`FlywheelRenderBridge` 统一承担相机模式变化、render origin 变化、GL 状态同步、fog/light uniform 同步、延迟 visual 刷新、方块实体 visual 生命周期以及 vanilla 渲染跳过判定。

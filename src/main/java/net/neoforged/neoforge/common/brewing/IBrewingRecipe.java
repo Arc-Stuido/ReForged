@@ -4,8 +4,11 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Interface for custom brewing recipes.
+ *
+ * <p>Extends Forge's {@code IBrewingRecipe} (identical shape) so shim-typed
+ * recipes can be passed straight into Forge's {@code PotionBrewing.Builder.add}.</p>
  */
-public interface IBrewingRecipe {
+public interface IBrewingRecipe extends net.minecraftforge.common.brewing.IBrewingRecipe {
     /**
      * Returns true if the given item stack is a valid input for this recipe.
      */

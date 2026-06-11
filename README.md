@@ -225,6 +225,13 @@ Latest implementation snapshot, approximate as of 2026-04-27.
 - **Standalone ModelResourceLocation**: CoreMod fixes `ModelResourceLocation.standalone()` factory method for models without block state variants.
 - **Verifier Stack Frame Fix**: BytecodeRewriter now patches stack frame types to replace NeoForge accessor interface descriptors with vanilla MC class descriptors — fixes `VerifyError` from JVM bytecode verification.
 
+#### Phase 8 (06-11): Mod-Bundled Mixin Pipeline (Major Architecture Completion)
+- **Full support for mods' own mixins**: new `NeoMixinExtractor` lifts `[[mixins]]` configs and mixin classes (rewritten) into the Forge discovery placeholder jar, registered via the `MixinConfigs` manifest attribute so Sponge Mixin applies them to vanilla classes on the TRANSFORMER loader.
+- **Cross-classloader identity management**: parent-first pinning of duck interfaces, mixin-body references (plus one body-level expansion), closed over signature references and nest groups — eliminating `ClassCastException`, interface `LinkageError`, and nest verification failures; `@Mod` entrypoint groups keep child-loader semantics.
+- **Placeholder normalization**: TRANSFORMER-side copies widened to public (cross-loader package/nest access), private `@SubscribeEvent` promotion, configs softened with `required=false` + `defaultRequire=0`.
+- **MixinExtras 0.5.4** bundled (Forge lacks it; NeoForge ships it), **`LivingEntity.damageContainers` coremod** (NeoForge damage-pipeline field for `@Shadow` resolution), **recursive Jar-in-Jar extraction**, **extracted-directory classloading** (hierarchical `file:` resource URLs fix `Paths.get(getResource(...))` patterns), **idempotent DeferredRegister**, **interface bridges** (`IItemHandler`, `IBrewingRecipe`, `IContainerFactory` with `RegistryFriendlyByteBuf`), and **self-healing jar patcher**.
+- **Verified**: 16 NeoForge mod instances (SuperbWarfare and ywzj_vehicle loading for the first time) on both client and dedicated server; final runs crash-free with zero mixin apply failures.
+
 #### Phase 7 (04-27): Create/Flywheel Stability and Client API Convergence
 - **Flywheel render stabilization**: `FlywheelRenderBridge` now owns the client render coordination path for camera mode changes, render origin changes, GL state sync, fog/light uniform sync, deferred visual refresh, block entity visual lifecycle, and vanilla-render skip decisions.
 - **Third-person stability**: Removed the diagnostic third-person `afterEntities` short circuit and kept first/third person on the same state synchronization path, fixing the large black Flywheel geometry failure without relying on high-frequency logs.

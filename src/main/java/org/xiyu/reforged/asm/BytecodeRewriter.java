@@ -433,6 +433,22 @@ public final class BytecodeRewriter {
                         return;
                     }
 
+                    // ── PotionBrewing.Builder.addRecipe → Forge's add ──────
+                    // NeoForge patches Builder with void addRecipe(neo IBrewingRecipe);
+                    // Forge's patch is Builder add(forge IBrewingRecipe). The shim
+                    // interface extends the Forge one, so the argument is assignable
+                    // as-is; the fluent return value is popped to keep void semantics.
+                    if (opcode == Opcodes.INVOKEVIRTUAL
+                            && "net/minecraft/world/item/alchemy/PotionBrewing$Builder".equals(owner)
+                            && "addRecipe".equals(mName)
+                            && "(Lnet/neoforged/neoforge/common/brewing/IBrewingRecipe;)V".equals(desc)) {
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, "add",
+                                "(Lnet/minecraftforge/common/brewing/IBrewingRecipe;)Lnet/minecraft/world/item/alchemy/PotionBrewing$Builder;",
+                                false);
+                        super.visitInsn(Opcodes.POP);
+                        return;
+                    }
+
                     // ── PackMetadataSection 2-arg → 3-arg constructor redirect ──
                     // NeoForge: PackMetadataSection(Component, int)
                     // Forge:    PackMetadataSection(Component, int, Optional<InclusiveRange<Integer>>)

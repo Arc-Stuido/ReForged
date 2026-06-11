@@ -96,6 +96,11 @@ dependencies {
     compileOnly 'org.spongepowered:mixin:0.8.7'
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
 
+    // MixinExtras — NeoForge 20.2.84+ bundles it, Forge does not. NeoForge mod
+    // mixins (@WrapOperation etc.) need it on the classpath; the forge artifact
+    // self-initializes through its IMixinConnector service.
+    implementation 'io.github.llamalad7:mixinextras-forge:0.5.4'
+
     // jopt-simple
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
@@ -157,6 +162,9 @@ tasks.register('patchNeoForgeMods', JavaExec) {
     group = 'reforged'
     description = 'Injects Forge discovery metadata into NeoForge jars in run/mods before launching.'
     dependsOn tasks.named('classes')
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.xiyu.reforged.core.NeoForgeModPatcher'
     args layout.projectDirectory.dir('run/mods').asFile.absolutePath

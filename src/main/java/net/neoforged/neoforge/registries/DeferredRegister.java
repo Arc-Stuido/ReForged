@@ -43,6 +43,19 @@ public class DeferredRegister<T> {
             "neoforge:attachment_types"
     );
 
+    /**
+     * Global duplicate-tolerance table: registry|modid:name → first holder.
+     *
+     * <p>With the mixin-payload architecture, mod registration entrypoints can
+     * run once on the NeoMod classloader and once via TRANSFORMER-side class
+     * initialization (e.g. GeckoLib's {@code GeckoLibConstants.<clinit>}
+     * triggered from a mixin-injected call). Forge's DeferredRegister throws on
+     * the second attempt; we make re-registration idempotent instead, returning
+     * the holder from the first registration.</p>
+     */
+    private static final java.util.concurrent.ConcurrentHashMap<String, DeferredHolder<?, ?>> GLOBAL_REGISTRATIONS =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     protected final net.minecraftforge.registries.DeferredRegister<T> delegate; // null in no-op mode
     private final String modid;
     private final ResourceKey<? extends Registry<T>> registryKey; // stored for key generation
@@ -163,6 +176,20 @@ public class DeferredRegister<T> {
      */
     @SuppressWarnings("unchecked")
     public <I extends T> DeferredHolder<T, I> register(String name, Supplier<? extends I> sup) {
+        String globalKey = (registryKey != null ? registryKey.location().toString() : "<unknown>")
+                + "|" + modid + ":" + name;
+        DeferredHolder<?, ?> existing = GLOBAL_REGISTRATIONS.get(globalKey);
+        if (existing != null) {
+            LOGGER.debug("[ReForged] Duplicate-tolerant register: '{}' already registered, reusing first holder", globalKey);
+            return (DeferredHolder<T, I>) existing;
+        }
+        DeferredHolder<T, I> created = registerInternal(name, sup);
+        GLOBAL_REGISTRATIONS.putIfAbsent(globalKey, created);
+        return created;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <I extends T> DeferredHolder<T, I> registerInternal(String name, Supplier<? extends I> sup) {
         if (customRegistry && customRegistryInstance != null) {
             // Custom registry mode: register directly into the MappedRegistry
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modid, name);
@@ -459,9 +486,13 @@ public class DeferredRegister<T> {
             try {
                 Registry<net.minecraft.core.component.DataComponentType<?>> registry =
                         net.minecraft.core.registries.BuiltInRegistries.DATA_COMPONENT_TYPE;
-                unfreezeRegistry(registry);
-                Registry.register(registry, id, builtType);
-                LOGGER.info("[ReForged] Eagerly registered DataComponentType '{}' into BuiltInRegistries", id);
+                if (registry.containsKey(id)) {
+                    LOGGER.debug("[ReForged] DataComponentType '{}' already present — skipping eager registration", id);
+                } else {
+                    unfreezeRegistry(registry);
+                    Registry.register(registry, id, builtType);
+                    LOGGER.info("[ReForged] Eagerly registered DataComponentType '{}' into BuiltInRegistries", id);
+                }
             } catch (Throwable t) {
                 LOGGER.warn("[ReForged] Could not eagerly register DataComponentType '{}': {}", id, t.getMessage());
             }
