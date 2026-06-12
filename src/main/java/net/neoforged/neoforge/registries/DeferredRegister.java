@@ -1,7 +1,10 @@
 package net.neoforged.neoforge.registries;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -231,9 +234,48 @@ public class DeferredRegister<T> {
         LOGGER.info("[ReForged] Registering entry '{}'  for mod '{}' via Forge DeferredRegister", name, modid);
         RegistryObject<I> obj = delegate.register(name, sup);
         LOGGER.info("[ReForged] RegistryObject created: {} (id={})", obj, obj.getId());
+        if (isCommandArgumentTypeRegistry()) {
+            eagerlyRegisterCommandArgumentType(name, sup);
+        }
         DeferredHolder<T, I> holder = DeferredHolder.wrap(obj, sup);
         entries.add(holder);
         return holder;
+    }
+
+    private boolean isCommandArgumentTypeRegistry() {
+        return registryKey != null && registryKey.equals(Registries.COMMAND_ARGUMENT_TYPE);
+    }
+
+    /**
+     * NeoForge mods register command argument serializers with a supplier that calls
+     * {@code ArgumentTypeInfos.registerByClass}. Forge's {@code RegisterEvent} may
+     * already have passed by the time NeoForge mods are constructed through ReForged,
+     * so evaluate immediately to populate {@code BY_CLASS} and the built-in registry.
+     */
+    @SuppressWarnings("unchecked")
+    private <I extends T> void eagerlyRegisterCommandArgumentType(String name, Supplier<? extends I> sup) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modid, name);
+        try {
+            // Always evaluate the supplier so ArgumentTypeInfos.registerByClass runs even when
+            // the vanilla registry is already frozen (NeoForge mods load after Forge registry events).
+            I argumentTypeInfo = sup.get();
+
+            Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
+            if (registry.containsKey(id)) {
+                LOGGER.debug("[ReForged] Command argument type '{}' already present — BY_CLASS refreshed", id);
+                return;
+            }
+            try {
+                unfreezeRegistry(registry);
+                Registry.register(registry, id, (ArgumentTypeInfo<?, ?>) argumentTypeInfo);
+                LOGGER.info("[ReForged] Eagerly registered command argument type '{}'", id);
+            } catch (Throwable registryError) {
+                LOGGER.info("[ReForged] Registered command argument serializer for '{}' via BY_CLASS (registry insert skipped: {})",
+                        id, registryError.getMessage());
+            }
+        } catch (Throwable t) {
+            LOGGER.warn("[ReForged] Failed to register command argument type '{}': {}", id, t.getMessage());
+        }
     }
 
     /**

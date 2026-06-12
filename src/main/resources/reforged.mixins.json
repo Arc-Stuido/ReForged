@@ -13,6 +13,8 @@
         "TagLoaderMixin",
         "RegistryDataLoaderMixin",
         "ForgeHooksMixin",
+        "ArgumentTypeInfosMixin",
+        "ArgumentTypeInfosAccessorMixin",
         "DependencySorterMixin",
         "RecipeManagerMixin",
         "ChunkGeneratorStructureStateMixin",
