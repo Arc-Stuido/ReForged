@@ -18,7 +18,7 @@ ReForged is an innovative runtime adapter that bridges the gap between NeoForge 
 
 **Author:** Mai_xiyu  
 **Version:** 1.0.0  
-**License:** All Rights Reserved
+**License:** LGPL-2.1-only
 
 ## ✨ Key Features
 
