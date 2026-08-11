@@ -18,7 +18,7 @@ ReForged 是一个创新的运行时适配器，它在 NeoForge 和 Forge 模组
 
 **作者：** Mai_xiyu  
 **版本：** 1.0.0  
-**许可证：** All Rights Reserved（保留所有权利）
+**许可证：** LGPL-2.1-only
 
 ## ✨ 核心特性
 
