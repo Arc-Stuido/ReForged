@@ -276,7 +276,7 @@ ReForged/
 
 ## 🔐 许可证
 
-All Rights Reserved © 2025-2026 Mai_xiyu
+LGPL-2.1-only
 
 ## 🙋 支持
 
